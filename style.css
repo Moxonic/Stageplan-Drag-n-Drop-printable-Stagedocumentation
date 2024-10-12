@@ -1,0 +1,152 @@
+body {
+    height:100vh;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#main{
+    display:flex;
+    
+}
+
+/* Sidebar */
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 350px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+  }
+/* Specific style for the custom speaker triangle */
+.custom-speaker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content; /* Adjust width to fit content */
+}
+
+.cq {
+  border-bottom: 20px solid rgb(44, 43, 43);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  width: 15px; /* Fixed width for the triangle */
+  height: 0;
+}
+  
+.vue{
+  border-bottom: 10px solid rgb(44, 43, 43);
+  border-left: px solid transparent;
+  border-right: px solid transparent;
+  width: 19px; /* Fixed width for the triangle */
+  height: 0;
+}
+.editable-text{
+  color:white;
+}
+  #sidebar h2 {
+    text-align: center;
+  }
+  #playNameInput {
+    height:20px;
+  }
+  .equipment {
+    font-size: small;
+    margin: 10px 0;
+    padding: 5px;
+    width:fit-content;
+    background-color: #dddddd00;
+    text-align: center;
+    cursor: grab;
+  }
+  .element{
+    width: fit-content;
+  }
+  .dropped {
+    display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center; /* Center the icon and text */
+    position: absolute;
+    width: fit-content;
+    text-align: center;
+    user-select: none;
+    gap:5px;}
+  /* Stage (Canvas) */
+  #stage {
+    position: relative;
+    flex-grow: 1;
+    background-color: #575454;
+    border: 2px solid #333;
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    max-height:90vh;
+    
+  }
+
+  .draggable {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+  }
+  #export {
+    margin-top: 10px; /* Add some space above */
+    padding: 10px; /* Button styling */
+    background-color: #4CAF50; /* Button color */
+    color: white; /* Text color */
+    border: none; /* Remove border */
+    cursor: pointer; /* Pointer on hover */
+    text-align: center; /* Center text */
+    width: fit-content; /* Full width of its container */
+}
+.slissa{
+    display: grid;
+    grid-template-columns: repeat(20, 1fr); /* 10 equal columns */
+    grid-template-rows: repeat(20, 1fr); /* 10 equal rows */
+    width: 100%; /* Set the size of the square */
+    height: 100%; /* Make it a square */
+    
+}
+.sv{
+    flex-direction: column;
+    justify-content: space-around;
+    width:15px;
+    border: #ccc;
+    border-width: thin;
+    border-style: dashed;
+    grid-column: 2 / 3; /* Example placement for SH */
+    grid-row: 5 / 19;     /* Example placement for SH */
+    display: flex;
+    align-items: center;
+}
+.sh{
+    flex-direction: column;
+    justify-content: space-around;
+
+    width:15px;
+    border: #ccc;
+    border-width: thin;
+    border-style: dashed;
+    grid-column: 19 / 19; /* Example placement for SH */
+    grid-row: 5 / 19;     /* Example placement for SH */
+    display: flex;
+    align-items: center;
+}
+.op{
+    color: #ccc;
+}
+.mygg{
+    
+    border: #ccc;
+    border-width: thin;
+    border-style: dashed;
+    grid-column: 1 / 4; /* Example placement for SH */
+    grid-row: 1 / 3;     /* Example placement for SH */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+}
+.hoytaler{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
