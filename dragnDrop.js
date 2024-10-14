@@ -21,36 +21,38 @@ function dragOver(e) {
 }
 
 function dropElement(e) {
-    e.preventDefault();
-    
-    const type = e.dataTransfer.getData('text/plain');
-    const element = createDroppedElement(type);
+  e.preventDefault();
+  
+  const type = e.dataTransfer.getData('text/plain'); // Get the type of element being dragged
+  const element = createDroppedElement(type); // Create a new element based on the type
 
-    // Position the dropped element
-    const offsetX = e.offsetX;
-    const offsetY = e.offsetY;
-    element.style.left = `${offsetX}px`;
-    element.style.top = `${offsetY}px`;
+  // Position the dropped element
+  const offsetX = e.offsetX;
+  const offsetY = e.offsetY;
+  element.style.left = `${offsetX}px`;
+  element.style.top = `${offsetY}px`;
 
-    // Append to stage
-    const stage = document.getElementById('stage');
-    stage.appendChild(element);
+  // Append to stage
+  const stage = document.getElementById('stage');
+  stage.appendChild(element);
 }
 
 function createDroppedElement(type) {
   const container = document.createElement('div');
   container.classList.add('dropped');
   container.style.position = 'absolute';
-  container.style.width = 'fit-content'; // Allow it to fit its content
-  container.style.height = 'auto'; // Auto height to prevent stretching
+  container.style.width = 'fit-content';
+  container.style.height = 'auto';
 
   const element = document.createElement('div');
 
-  if (type === 'custom-speaker') {
-      element.classList.add('custom-speaker');
-      const cq = document.createElement('div');
-      cq.classList.add('cq');
-      element.appendChild(cq); // Add the CQ triangle shape
+  // Adjusted to differentiate between CQ and Vue based on the data-type
+  if (type === 'custom-speaker-cq') {
+      element.classList.add('cq'); // Assign CQ class
+  } else if (type === 'custom-speaker-vue') {
+      element.classList.add('vue'); // Assign Vue class
+  } else if (type === 'custom-speaker-vueXL') {
+    element.classList.add('vueXL'); // Assign Vue class
   } else {
       element.classList.add('element');
       element.textContent = getIcon(type);
@@ -79,11 +81,9 @@ function createDroppedElement(type) {
       }
   });
 
-  container.appendChild(element); // Append the custom speaker to the container
+  container.appendChild(element); // Append the new element to the container
   return container;
 }
-
-
 
 
 function dragEnd(e) {

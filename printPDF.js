@@ -9,7 +9,7 @@ document.getElementById("export").addEventListener("click", () => {
       scrollY: 0,
       allowTaint: true, // Allow cross-origin images
       logging: true, // Enable logging for debugging
-      backgroundColor: null // Ensure the background is transparent
+      backgroundColor: 'white' // Ensure the background is transparent
   }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       

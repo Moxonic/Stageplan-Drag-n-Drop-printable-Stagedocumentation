@@ -1,10 +1,14 @@
-body {
-    height:100vh;
-    font-family: Arial, Helvetica, sans-serif;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden; /* Ensure no scrollbar if content fits */
+  font-family: Arial, Helvetica, sans-serif;
 }
+
 #main{
     display:flex;
-    
+    height: 100%;
 }
 
 /* Sidebar */
@@ -12,44 +16,27 @@ body {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    width: 350px;
+    width: fit-content ;
+    height: 100%;
     background-color: #f4f4f4;
     padding: 10px;
     border-right: 1px solid #ccc;
-  }
-/* Specific style for the custom speaker triangle */
-.custom-speaker {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: fit-content; /* Adjust width to fit content */
-}
-
-.cq {
-  border-bottom: 20px solid rgb(44, 43, 43);
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  width: 15px; /* Fixed width for the triangle */
-  height: 0;
-}
-  
-.vue{
-  border-bottom: 10px solid rgb(44, 43, 43);
-  border-left: px solid transparent;
-  border-right: px solid transparent;
-  width: 19px; /* Fixed width for the triangle */
-  height: 0;
-}
-.editable-text{
-  color:white;
-}
+    justify-content: space-around;
+  } 
   #sidebar h2 {
     text-align: center;
   }
+.editable-text{
+  color:white;
+}
+ 
   #playNameInput {
     height:20px;
   }
   .equipment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-size: small;
     margin: 10px 0;
     padding: 5px;
@@ -58,6 +45,52 @@ body {
     text-align: center;
     cursor: grab;
   }
+  /* Specific style for the custom speaker triangle */
+.custom-speaker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content; /* Adjust width to fit content */
+}
+.cq {
+  border-bottom: 20px solid rgb(44, 43, 43);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  width: 15px; /* Fixed width for the triangle */
+  height: 0;
+}
+.vue{
+  border-bottom: 10px solid rgb(44, 43, 43);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 19px; /* Fixed width for the triangle */
+  height: 0;
+}
+.vueXL{
+  border-bottom: 15px solid rgb(44, 43, 43);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 22px; /* Fixed width for the triangle */
+  height: 0;
+}
+.mygg{
+    border: #ccc;
+    border-width: thin;
+    border-style: dashed;
+    grid-column: 1 / 4; /* Example placement for SH */
+    grid-row: 1 / 3;     /* Example placement for SH */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+}
+.equipment-container{
+  align-items: center;
+  justify-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns with equal width */
+  gap: 10px; /* Adds space between the items */
+}
   .element{
     width: fit-content;
   }
@@ -70,15 +103,28 @@ body {
     text-align: center;
     user-select: none;
     gap:5px;}
+
+  .stageContainer{
+    flex: 1; /* Take remaining space */
+    display: flex; /* Use flexbox to center stage */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    background-color: lightgray; /* Background color for the stage area */
+    height: 100vh;
+    width:100%;
+  }  
   /* Stage (Canvas) */
   #stage {
-    position: relative;
-    flex-grow: 1;
-    background-color: #575454;
+    resize: both;
+    position: absolute;
+    left: px;
+    background-color: #555353;
     border: 2px solid #333;
     aspect-ratio: 1 / 1;
-    max-width: 100%;
-    max-height:90vh;
+    height:90vh;
+    /* max-width: 100%; */
+    
+    overflow: hidden;
     
   }
 
@@ -95,15 +141,14 @@ body {
     border: none; /* Remove border */
     cursor: pointer; /* Pointer on hover */
     text-align: center; /* Center text */
-    width: fit-content; /* Full width of its container */
+    width: 100%; /* Full width of its container */
 }
 .slissa{
     display: grid;
     grid-template-columns: repeat(20, 1fr); /* 10 equal columns */
     grid-template-rows: repeat(20, 1fr); /* 10 equal rows */
     width: 100%; /* Set the size of the square */
-    height: 100%; /* Make it a square */
-    
+    height: 100%; /* Make it a square */ 
 }
 .sv{
     flex-direction: column;
@@ -133,26 +178,29 @@ body {
 .op{
     color: #ccc;
 }
-.mygg{
-    
-    border: #ccc;
-    border-width: thin;
-    border-style: dashed;
-    grid-column: 1 / 4; /* Example placement for SH */
-    grid-row: 1 / 3;     /* Example placement for SH */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ccc;
-}
-.hoytaler{
-    display:flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
 
 @media print {
   #stage {
       background-color: white; /* Set white background for the stage in PDF */
   }
+}
+
+.line {
+  position: absolute;
+  border-bottom: 2px solid; /* Set the border to represent the line */
+}
+.pen-icon {
+  position: absolute;
+  display: none; /* Hidden by default */
+  width: 20px;
+  height: 20px;
+  background: url('pen-icon.png') no-repeat center; /* Use an image of a pen icon */
+  background-size: contain;
+  pointer-events: none; /* Prevent interference with mouse events */
+}
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none; 
 }
