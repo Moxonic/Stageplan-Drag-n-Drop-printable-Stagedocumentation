@@ -150,3 +150,9 @@ body {
     flex-wrap: wrap;
     gap: 5px;
 }
+
+@media print {
+  #stage {
+      background-color: white; /* Set white background for the stage in PDF */
+  }
+}
