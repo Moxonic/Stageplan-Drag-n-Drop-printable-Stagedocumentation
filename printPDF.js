@@ -2,8 +2,27 @@ document.getElementById("export").addEventListener("click", () => {
   // Get the play name from the input field
   const headerTitle = document.getElementById("playNameInput").value || "Untitled Play"; // Default to "Untitled Play" if empty
 
-  // Capture the current stage as a canvas
-  html2canvas(document.getElementById('stage'), {
+  // Create a container to hold all elements to be captured
+  const container = document.createElement('div');
+  container.style.position = 'relative';
+  container.style.width = '100%';
+  container.style.height = '100%';
+
+  // Clone the stage, drawingLayer, and dropZone elements
+  const stageClone = document.getElementById('stage').cloneNode(true);
+  const drawingLayerClone = document.getElementById('drawingLayer').cloneNode(true);
+  const dropZoneClone = document.getElementById('dropZone').cloneNode(true);
+
+  // Append the cloned elements to the container
+  container.appendChild(stageClone);
+  container.appendChild(drawingLayerClone);
+  container.appendChild(dropZoneClone);
+
+  // Append the container to the body temporarily
+  document.body.appendChild(container);
+
+  // Capture the container as a canvas
+  html2canvas(container, {
       useCORS: true,
       scrollX: 0,
       scrollY: 0,
@@ -37,36 +56,21 @@ document.getElementById("export").addEventListener("click", () => {
           const logoWidth = 40;
           const logoHeight = 20;
 
-          // Add logo in the upper right corner with margin
-          pdf.addImage(logoImage, 'PNG', 210 - margin - logoWidth, margin, logoWidth, logoHeight);
+          // Add the logo to the PDF
+          pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
 
-          // Add title in the left upper corner with margin
-          pdf.setFontSize(18);
-          pdf.text(headerTitle, margin, margin + 10);
+          // Add the header title to the PDF
+          pdf.setFontSize(24);
+          pdf.text(headerTitle, margin + logoWidth + 10, margin + logoHeight / 2);
 
-          // Add the captured stage layout image with margins
-          pdf.addImage(imgData, 'PNG', margin, headerHeight + margin, imgWidth, imgHeight);
-
-          // Save the PDF with the play name as the filename
-          pdf.save(`${headerTitle}-stageplan.pdf`);
-
-      };
-
-      logoImage.onerror = (err) => {
-          console.error("Error loading logo: ", err);
-
-          // Proceed without the logo if it fails to load
-          pdf.setFontSize(18);
-          pdf.text(headerTitle, margin, margin + 10);
-
-          // Add the captured stage layout image with margins
-          pdf.addImage(imgData, 'PNG', margin, headerHeight + margin, imgWidth, imgHeight);
+          // Add the captured image to the PDF
+          pdf.addImage(imgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
 
           // Save the PDF
-          pdf.save("stage-layout.pdf");
-      };
+          pdf.save('scene.pdf');
 
-  }).catch(err => {
-      console.error("Error generating PDF: ", err);
+          // Remove the container from the body
+          document.body.removeChild(container);
+      };
   });
 });

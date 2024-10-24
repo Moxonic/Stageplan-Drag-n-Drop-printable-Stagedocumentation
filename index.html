@@ -4,63 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sceneplaner</title>
-    <link rel="stylesheet" href="./style.css"> 
+    <link rel="stylesheet" href="./style.css">
+    
 </head>
 <body>
     <div id="main">
- <!-- Sidebar for predefined items -->
-    <div id="sidebar">
-        <input type="text" id="playNameInput" placeholder="Skriv forstillingstitelen her" />
-        <div class="equipment-container">
-            
+        <!-- Sidebar for predefined items -->
+        <div id="sidebar">
+            <input type="text" id="playNameInput" placeholder="Skriv forstillingstitelen her" />
+            <div class="equipment-container">
+                <!-- Existing equipment divs -->
                 <div class="equipment" draggable="true" data-type="custom-speaker-cq">
-                    <div class="cq"></div><div>CQ</div>
+                    <div class="cq"></div>
                 </div>
-                
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="vue"></div><div>Vue 8a</div>
+                    <div class="vue"></div>
                 </div>
-
+                <div class="equipment vuePicContainer" draggable="true" data-type="vue8Pic">
+                        <img class='vue8Pic' src="./pics/vue8.png" alt="speakerImage">
+                </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vueXL">
-                    <div class="vueXL"></div><div>Vue XL</div>
+                    <div class="vueXL"></div>
                 </div>
-            
                 <div class="equipment" draggable="true" data-type="speaker">🔊 Genelec</div>
                 <div class="equipment" draggable="true" data-type="microphone">🎤 HH</div>
                 <div class="equipment" draggable="true" data-type="tv">📺 TV</div>
                 <div class="equipment" draggable="true" data-type="speaker">🔊 GitAmp</div>
-            
-        </div>
-      
-                    <!-- Export Button -->
-        <button id="export">Export as PDF</button>
-<!--         <h2>Draw Cables on Stage</h2>
-<label for="colorPicker">Select Cable Color:</label>
-<input type="color" id="colorPicker" value="#000000">
-   -->  </div>
+            </div>
 
-    <!-- Stage area where equipment will be placed -->
-    <div class="stageContainer">
-        <div id="stage">
-            <div class="slissa">
-                <div class="mygg">Mygg</div>
-                <div class="sv">
-                    <div class="s1v op">S1V</div>
-                    <div class="s2v op">S2V</div>
-                    <div class="s3v op">S3V</div>
+            <!-- Line drawing color toggles -->
+            <div class="container">
+                <!-- Drawing tool toggles -->
+                <button id="toggleDrawing">Enable Drawing</button>
+                <button id="toggleCurves">Draw Curves</button>
+                <div class="blue">
+                    <input type="radio" name="color" id="blue" value="blue"> 
                 </div>
-                <div class="sh">
-                    <div class="s1h op">S1H</div>
-                    <div class="s2h op">S2H</div>
-                    <div class="s3h op">S3H</div>
+                <div class="green">
+                    <input type="radio" name="color" id="green" value="green"> 
+                </div>
+                <div class="black">
+                    <input type="radio" name="color" id="black" value="black" checked> 
                 </div>
             </div>
-            <!-- SVG for drawing curved cables -->
-            <svg id="cables" width="100%" height="100%" style="position:absolute; top:0; left:0;"></svg>
-        </div>
-        <div id="penIcon" style="position: absolute; width: 20px; height: 20px; background: yellow; display: none; pointer-events: none;"></div>
+                    <!-- Text description input -->
+        <div class="container">
+            <input type="text" id="textField" placeholder="Enter text" />
+            <div class="textSizeContainer">
+                <label for="textSize">Size:</label>
+                <input type="number" id="textSize" value="16" min="8" max="72" />
+            </div>
+            <button id="addText">Add Text</button>
+        </div>    
 
-    </div>
+        <!-- Export Button -->
+        <button id="export">Export as PDF</button>
+
+        </div>
+
+
+        <!-- Stage area where equipment will be placed -->
+        <div class="stageContainer">
+            <div id="stage">
+                <!-- SVG for drawing lines -->
+                <svg id="drawingLayer" width="100%" height="100%" style="position:absolute; top:0; left:0;"></svg>
+                <div id="dropZone" class="drop-zone"></div>
+            </div>
+        </div>
+
     </div>
 
     <script src="dragnDrop.js"></script>
@@ -69,6 +80,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="printPDF.js"></script>
-    
+    <script src="rectangles.js"></script>
 </body>
 </html>

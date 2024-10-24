@@ -1,106 +1,87 @@
 let currentRotation = 0;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const stage = document.getElementById('stage');
-    const equipments = document.querySelectorAll('.equipment');
+document.addEventListener('DOMContentLoaded', (event) => {
+    const dropZone = document.getElementById('dropZone');
+    const draggableItems = document.querySelectorAll('.equipment[draggable="true"]');
 
-    equipments.forEach(equipment => {
-        equipment.addEventListener('dragstart', dragStart);
+    draggableItems.forEach(item => {
+        item.addEventListener('dragstart', dragStart);
     });
 
-    stage.addEventListener('dragover', dragOver);
-    stage.addEventListener('drop', dropElement);
-});
+    dropZone.addEventListener('dragover', dragOver);
+    dropZone.addEventListener('drop', drop);
 
-function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.dataset.type);
-}
-
-function dragOver(e) {
-    e.preventDefault(); // Allow dropping
-}
-
-function dropElement(e) {
-  e.preventDefault();
-  
-  const type = e.dataTransfer.getData('text/plain'); // Get the type of element being dragged
-  const element = createDroppedElement(type); // Create a new element based on the type
-
-  // Position the dropped element
-  const offsetX = e.offsetX;
-  const offsetY = e.offsetY;
-  element.style.left = `${offsetX}px`;
-  element.style.top = `${offsetY}px`;
-
-  // Append to stage
-  const stage = document.getElementById('stage');
-  stage.appendChild(element);
-}
-
-function createDroppedElement(type) {
-  const container = document.createElement('div');
-  container.classList.add('dropped');
-  container.style.position = 'absolute';
-  container.style.width = 'fit-content';
-  container.style.height = 'auto';
-
-  const element = document.createElement('div');
-
-  // Adjusted to differentiate between CQ and Vue based on the data-type
-  if (type === 'custom-speaker-cq') {
-      element.classList.add('cq'); // Assign CQ class
-  } else if (type === 'custom-speaker-vue') {
-      element.classList.add('vue'); // Assign Vue class
-  } else if (type === 'custom-speaker-vueXL') {
-    element.classList.add('vueXL'); // Assign Vue class
-  } else {
-      element.classList.add('element');
-      element.textContent = getIcon(type);
-  }
-
-  // Right-click rotation
-  element.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      currentRotation += 45;
-      element.style.transform = `rotate(${currentRotation}deg)`;
-  });
-
-  // Drag and drop functionality
-  element.setAttribute('draggable', 'true');
-  element.addEventListener('dragstart', dragStart);
-  element.addEventListener('dragend', dragEnd);
-
-  // Double-click to add editable text
-  element.addEventListener('dblclick', () => {
-      if (!container.querySelector('.editable-text')) {
-          const text = document.createElement('div');
-          text.classList.add('editable-text');
-          text.contentEditable = 'true';
-          text.textContent = 'Type here';
-          container.appendChild(text);
-      }
-  });
-
-  container.appendChild(element); // Append the new element to the container
-  return container;
-}
-
-
-function dragEnd(e) {
-    const stage = document.getElementById('stage');
-    const offsetX = e.clientX - stage.getBoundingClientRect().left;
-    const offsetY = e.clientY - stage.getBoundingClientRect().top;
-
-    e.target.parentElement.style.left = `${offsetX}px`;
-    e.target.parentElement.style.top = `${offsetY}px`;
-}
-
-// Utility function to return icon based on type
-function getIcon(type) {
-    switch (type) {
-        case 'speaker': return '🔊';
-        case 'microphone': return '🎤';
-        case 'tv': return '📺';
-        default: return '';
+    function dragStart(e) {
+        if (e.target.classList.contains('existing')) {
+            e.dataTransfer.setData('text/plain', e.target.id);
+        } else {
+            const clone = e.target.cloneNode(true);
+            clone.classList.add('draggable', 'rotatable', 'existing');
+            clone.id = `draggable-${Date.now()}`;
+            document.body.appendChild(clone);
+            e.dataTransfer.setData('text/plain', clone.id);
+        }
     }
-}
+
+    function dragOver(e) {
+        e.preventDefault();
+    }
+
+    function drop(e) {
+        e.preventDefault();
+        const data = e.dataTransfer.getData('text/plain');
+        let draggableElement;
+
+        if (document.getElementById(data)) {
+            draggableElement = document.getElementById(data);
+            draggableElement.style.display = 'block';
+        } else {
+            const newElement = document.createElement('div');
+            newElement.innerHTML = data;
+            draggableElement = newElement.firstChild;
+
+            // Ensure the container and its contents are correctly referenced
+            if (draggableElement.classList.contains('vuePicContainer')) {
+                const imgElement = draggableElement.querySelector('img');
+                imgElement.src = imgElement.src; // Ensure the src is correctly set
+            }
+
+            draggableElement.classList.add('draggable', 'rotatable', 'existing');
+            draggableElement.id = `draggable-${Date.now()}`; // Assign a unique ID
+            dropZone.appendChild(draggableElement);
+
+            makeElementDraggable(draggableElement);
+            makeElementRotatable(draggableElement);
+        }
+
+        draggableElement.style.position = 'absolute';
+        const offsetX = e.clientX - dropZone.getBoundingClientRect().left;
+        const offsetY = e.clientY - dropZone.getBoundingClientRect().top;
+        draggableElement.style.left = `${offsetX}px`;
+        draggableElement.style.top = `${offsetY}px`;
+        draggableElement.classList.remove('dragging');
+    }
+
+    function makeElementDraggable(element) {
+        element.addEventListener('dragstart', (e) => {
+            e.target.classList.add('dragging');
+            dragStart(e);
+        });
+        element.addEventListener('dragend', dragEnd);
+    }
+
+    function dragEnd(e) {
+        e.preventDefault();
+        e.target.style.display = 'block';
+        e.target.classList.remove('dragging');
+    }
+
+    function makeElementRotatable(element) {
+        let rotation = 0;
+        element.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Prevent the context menu from appearing
+            rotation = (rotation + 45) % 360;
+            element.style.transform = `rotate(${rotation}deg)`;
+        });
+    }
+});

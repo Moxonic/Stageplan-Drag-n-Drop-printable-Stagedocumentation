@@ -26,10 +26,7 @@ html, body {
   #sidebar h2 {
     text-align: center;
   }
-.editable-text{
-  color:white;
-}
- 
+
   #playNameInput {
     height:20px;
   }
@@ -40,10 +37,11 @@ html, body {
     font-size: small;
     margin: 10px 0;
     padding: 5px;
-    width:fit-content;
     background-color: #dddddd00;
     text-align: center;
     cursor: grab;
+    border-style: groove;
+    border-radius: 10%;
   }
   /* Specific style for the custom speaker triangle */
 .custom-speaker {
@@ -65,6 +63,27 @@ html, body {
   border-right: 2px solid transparent;
   width: 19px; /* Fixed width for the triangle */
   height: 0;
+}
+
+.vuePicContainer {
+  width: 15px; /* Set the desired width */
+  height: auto; /* Set the desired height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  
+}
+.vue8Pic{
+  height: 25px; /* Maintain aspect ratio */
+  user-select: none; /* Prevent text selection */
+  filter: invert(1);
+  outline: 1px;
+  outline-color: black;
+  outline-style: solid;
+  border-radius: 10%;
+  user-select: none;
 }
 .vueXL{
   border-bottom: 15px solid rgb(44, 43, 43);
@@ -91,6 +110,65 @@ html, body {
   grid-template-columns: repeat(2, 1fr); /* Two columns with equal width */
   gap: 10px; /* Adds space between the items */
 }
+/* /////DRAWING//////// */
+.colorPicker{
+  display: flex;
+  justify-content: space-evenly;
+  margin:5px;
+}
+#red{
+  accent-color:red;
+};
+#blue{
+  accent-color: blue;
+}
+#green{
+  accent-color: green;
+}
+#black{
+  accent-color: black;
+}
+.red{
+  background-color:red;
+  border-radius: 100%;
+  width:fit-content;
+  position: relative;
+}
+.blue{
+  background-color: blue;
+  border-radius: 100%;
+  width:fit-content;
+  position: relative;
+}
+.green{
+  background-color: green;
+  border-radius: 100%;
+  width:fit-content;
+  position: relative;
+}
+.black{
+  background-color: black;
+  border-radius: 100%;
+  width:fit-content;
+  position: relative;
+}
+.container{
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+
+}
+.textSizeContainer{
+  display: flex;
+  justify-content: space-evenly;
+}
+#textSize{
+  width: min-content;
+}
+
+
+
+
   .element{
     width: fit-content;
   }
@@ -98,11 +176,12 @@ html, body {
     display: flex;
     flex-direction: column; /* Stack icon and text vertically */
     align-items: center; /* Center the icon and text */
-    position: absolute;
+    position: relative;
     width: fit-content;
     text-align: center;
     user-select: none;
-    gap:5px;}
+    gap:5px;
+  }
 
   .stageContainer{
     flex: 1; /* Take remaining space */
@@ -116,22 +195,25 @@ html, body {
   /* Stage (Canvas) */
   #stage {
     resize: both;
-    position: absolute;
-    left: px;
+    position: relative;
     background-color: #555353;
     border: 2px solid #333;
     aspect-ratio: 1 / 1;
-    height:90vh;
-    /* max-width: 100%; */
-    
+    height: 90vh;
     overflow: hidden;
-    
   }
-
+.editable-text{
+  position: absolute;
+  top:25px;
+  color:white;
+}
   .draggable {
     position: absolute;
     cursor: move;
     user-select: none;
+  }
+  .rotatable {
+    transform-origin: center;
   }
   #export {
     margin-top: 10px; /* Add some space above */
@@ -143,6 +225,14 @@ html, body {
     text-align: center; /* Center text */
     width: 100%; /* Full width of its container */
 }
+
+
+.rectangle {
+  position: absolute;
+  border: 2px solid blue; /* You can change this color in JavaScript */
+  background-color: rgba(0, 0, 255, 0.2); /* Semi-transparent fill */
+}
+
 .slissa{
     display: grid;
     grid-template-columns: repeat(20, 1fr); /* 10 equal columns */
@@ -189,18 +279,18 @@ html, body {
   position: absolute;
   border-bottom: 2px solid; /* Set the border to represent the line */
 }
-.pen-icon {
-  position: absolute;
-  display: none; /* Hidden by default */
-  width: 20px;
-  height: 20px;
-  background: url('pen-icon.png') no-repeat center; /* Use an image of a pen icon */
-  background-size: contain;
-  pointer-events: none; /* Prevent interference with mouse events */
-}
+
 canvas {
   position: absolute;
   top: 0;
   left: 0;
   pointer-events: none; 
 }
+
+/* Styles for the drop zone */
+.drop-zone {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
