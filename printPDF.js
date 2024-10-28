@@ -8,14 +8,12 @@ document.getElementById("export").addEventListener("click", () => {
   container.style.width = '100%';
   container.style.height = '100%';
 
-  // Clone the stage, drawingLayer, and dropZone elements
+  // Clone the stage, and dropZone elements
   const stageClone = document.getElementById('stage').cloneNode(true);
-  const drawingLayerClone = document.getElementById('drawingLayer').cloneNode(true);
   const dropZoneClone = document.getElementById('dropZone').cloneNode(true);
 
   // Append the cloned elements to the container
   container.appendChild(stageClone);
-  container.appendChild(drawingLayerClone);
   container.appendChild(dropZoneClone);
 
   // Append the container to the body temporarily

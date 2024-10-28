@@ -40,7 +40,6 @@ html, body {
     background-color: #dddddd00;
     text-align: center;
     cursor: grab;
-    border-style: groove;
     border-radius: 10%;
   }
   /* Specific style for the custom speaker triangle */
@@ -110,48 +109,7 @@ html, body {
   grid-template-columns: repeat(2, 1fr); /* Two columns with equal width */
   gap: 10px; /* Adds space between the items */
 }
-/* /////DRAWING//////// */
-.colorPicker{
-  display: flex;
-  justify-content: space-evenly;
-  margin:5px;
-}
-#red{
-  accent-color:red;
-};
-#blue{
-  accent-color: blue;
-}
-#green{
-  accent-color: green;
-}
-#black{
-  accent-color: black;
-}
-.red{
-  background-color:red;
-  border-radius: 100%;
-  width:fit-content;
-  position: relative;
-}
-.blue{
-  background-color: blue;
-  border-radius: 100%;
-  width:fit-content;
-  position: relative;
-}
-.green{
-  background-color: green;
-  border-radius: 100%;
-  width:fit-content;
-  position: relative;
-}
-.black{
-  background-color: black;
-  border-radius: 100%;
-  width:fit-content;
-  position: relative;
-}
+
 .container{
   display: flex;
   flex-direction: column;
@@ -191,6 +149,7 @@ html, body {
     background-color: lightgray; /* Background color for the stage area */
     height: 100vh;
     width:100%;
+    z-index: -1;
   }  
   /* Stage (Canvas) */
   #stage {
@@ -201,6 +160,11 @@ html, body {
     aspect-ratio: 1 / 1;
     height: 90vh;
     overflow: hidden;
+  }
+  #dropZone {
+    width: 100%;
+    height: 100%;
+    position: relative;
   }
 .editable-text{
   position: absolute;
@@ -224,13 +188,6 @@ html, body {
     cursor: pointer; /* Pointer on hover */
     text-align: center; /* Center text */
     width: 100%; /* Full width of its container */
-}
-
-
-.rectangle {
-  position: absolute;
-  border: 2px solid blue; /* You can change this color in JavaScript */
-  background-color: rgba(0, 0, 255, 0.2); /* Semi-transparent fill */
 }
 
 .slissa{
@@ -286,11 +243,3 @@ canvas {
   left: 0;
   pointer-events: none; 
 }
-
-/* Styles for the drop zone */
-.drop-zone {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sceneplaner</title>
     <link rel="stylesheet" href="./style.css">
-    
 </head>
 <body>
     <div id="main">
@@ -21,7 +20,7 @@
                     <div class="vue"></div>
                 </div>
                 <div class="equipment vuePicContainer" draggable="true" data-type="vue8Pic">
-                        <img class='vue8Pic' src="./pics/vue8.png" alt="speakerImage">
+                    <img class='vue8Pic' src="./pics/vue8.png" alt="speakerImage">
                 </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vueXL">
                     <div class="vueXL"></div>
@@ -32,54 +31,22 @@
                 <div class="equipment" draggable="true" data-type="speaker">🔊 GitAmp</div>
             </div>
 
-            <!-- Line drawing color toggles -->
-            <div class="container">
-                <!-- Drawing tool toggles -->
-                <button id="toggleDrawing">Enable Drawing</button>
-                <button id="toggleCurves">Draw Curves</button>
-                <div class="blue">
-                    <input type="radio" name="color" id="blue" value="blue"> 
-                </div>
-                <div class="green">
-                    <input type="radio" name="color" id="green" value="green"> 
-                </div>
-                <div class="black">
-                    <input type="radio" name="color" id="black" value="black" checked> 
-                </div>
-            </div>
-                    <!-- Text description input -->
-        <div class="container">
-            <input type="text" id="textField" placeholder="Enter text" />
-            <div class="textSizeContainer">
-                <label for="textSize">Size:</label>
-                <input type="number" id="textSize" value="16" min="8" max="72" />
-            </div>
-            <button id="addText">Add Text</button>
-        </div>    
-
-        <!-- Export Button -->
-        <button id="export">Export as PDF</button>
-
+            <!-- Export Button -->
+            <button id="export">Export as PDF</button>
         </div>
-
 
         <!-- Stage area where equipment will be placed -->
         <div class="stageContainer">
             <div id="stage">
-                <!-- SVG for drawing lines -->
-                <svg id="drawingLayer" width="100%" height="100%" style="position:absolute; top:0; left:0;"></svg>
                 <div id="dropZone" class="drop-zone"></div>
             </div>
         </div>
-
     </div>
 
-    <script src="dragnDrop.js"></script>
-    <script src="drawing.js"></script>
     <script src="rotate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="dragnDrop.js"></script>
     <script src="printPDF.js"></script>
-    <script src="rectangles.js"></script>
 </body>
 </html>
