@@ -42,6 +42,10 @@ html, body {
     cursor: grab;
     border-radius: 10%;
   }
+  .equipment-text{
+    width: fit-content;
+    margin: 20px auto 0;
+  }
   /* Specific style for the custom speaker triangle */
 .custom-speaker {
   display: flex;
@@ -116,16 +120,6 @@ html, body {
   padding: 8px;
 
 }
-.textSizeContainer{
-  display: flex;
-  justify-content: space-evenly;
-}
-#textSize{
-  width: min-content;
-}
-
-
-
 
   .element{
     width: fit-content;
@@ -149,13 +143,13 @@ html, body {
     background-color: lightgray; /* Background color for the stage area */
     height: 100vh;
     width:100%;
-    z-index: -1;
+    
   }  
   /* Stage (Canvas) */
   #stage {
     resize: both;
     position: relative;
-    background-color: #555353;
+    background-color: #ffffff;
     border: 2px solid #333;
     aspect-ratio: 1 / 1;
     height: 90vh;
@@ -166,11 +160,7 @@ html, body {
     height: 100%;
     position: relative;
   }
-.editable-text{
-  position: absolute;
-  top:25px;
-  color:white;
-}
+
   .draggable {
     position: absolute;
     cursor: move;
