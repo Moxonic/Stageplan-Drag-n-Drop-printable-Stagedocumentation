@@ -42,7 +42,7 @@ document.getElementById("export").addEventListener("click", () => {
         const pageWidth = pdf.internal.pageSize.getWidth();
         const margin = 10;
         const headerHeight = 50;
-        const imgWidth = (2.5*pageWidth - 2 * margin) * 0.9; // 90% of the page width minus margins
+        const imgWidth = (2.1*pageWidth - 2 * margin) * 0.9; // 90% of the page width minus margins
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
   
         // Create a new Image object for the logo
@@ -51,21 +51,23 @@ document.getElementById("export").addEventListener("click", () => {
         logoImage.src = logoUrl;
   
         logoImage.onload = () => {
-            const logoWidth = 40;
-            const logoHeight = 20;
-  
+            const logoWidth = 30;
+            const logoHeight = 15;
+            // Add the header title to the PDF
+            pdf.setFontSize(24);
+            const titleWidth = pdf.getTextWidth(headerTitle);
+            const titleX = (pageWidth - titleWidth) / 2;
+            pdf.text(headerTitle, titleX, margin + logoHeight / 2);
+            
             // Add the logo to the PDF
             pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
   
-            // Add the header title to the PDF
-            pdf.setFontSize(24);
-            pdf.text(headerTitle, margin + logoWidth + 10, margin + logoHeight / 2);
-  
             // Add the captured image to the PDF
             pdf.addImage(imgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
-  
-            // Save the PDF
-            pdf.save('scene.pdf');
+// Save the PDF with the name of the play
+const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+pdf.save(fileName);
+            
   
             // Remove the container from the body
             document.body.removeChild(container);
