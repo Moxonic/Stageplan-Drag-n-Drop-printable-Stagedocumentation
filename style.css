@@ -42,10 +42,6 @@ html, body {
     cursor: grab;
     border-radius: 10%;
   }
-  .equipment-text{
-    width: fit-content;
-    margin: 20px auto 0;
-  }
   /* Specific style for the custom speaker triangle */
 .custom-speaker {
   display: flex;
@@ -78,16 +74,7 @@ html, body {
   overflow: hidden;
   
 }
-.vue8Pic{
-  height: 25px; /* Maintain aspect ratio */
-  user-select: none; /* Prevent text selection */
-  filter: invert(1);
-  outline: 1px;
-  outline-color: black;
-  outline-style: solid;
-  border-radius: 10%;
-  user-select: none;
-}
+
 .vueXL{
   border-bottom: 15px solid rgb(44, 43, 43);
   border-left: 2px solid transparent;
@@ -157,12 +144,45 @@ html, body {
     overflow: hidden;
     background: url('./pics/HSC.png') no-repeat center top;
     background-size: 100%;
-    background-position: 0 0;
-    background-color: whitesmoke; /* Black background with 50% transparency */
-    background-blend-mode: multiply; /* Blend the background image with the black color */
-    filter: grayscale(100%); /* Make the background image black and white */
-      background-size: 100%;
-      background-position: 0 0 0 0;
+   
+    background-size: 100%;
+    background-position: 0 0 0 0;
+    filter: brightness(1.4); /* Lighten the background image */
+  }
+    .instructions {
+      font-size: 14px; /* Set a readable font size */
+      font-style: italic; /* Italicize the text */
+      color: #333; /* Dark gray color for readability */
+      background-color: #f9f9f9; /* Light background color */
+      border: 1px solid #ccc; /* Light gray border */
+      padding: 10px; /* Add some padding */
+      margin: 10px 0; /* Add some margin */
+      border-radius: 5px; /* Slightly rounded corners */
+      line-height: 1.5; /* Increase line height for readability */
+  }
+
+  @media (max-width: 768px) {
+    #main {
+      flex-direction: column-reverse; /* Stack elements vertically on small screens */
+    
+    }
+
+    #sidebar {
+      width: auto; /* Full width for sidebar */
+      height: auto; /* Adjust height to fit content */
+      border-right: none; /* Remove right border */
+      border-bottom: 1px solid #ccc; /* Add bottom border */
+    }
+
+    .stageContainer {
+      height: auto; /* Adjust height to fit content */
+      width: 100%; /* Full width for stage container */
+    }
+
+    #stage {
+      width: 100%; /* Full width for stage */
+      height: auto; /* Adjust height to maintain aspect ratio */
+    }
   }
   #dropZone {
     width: 100%;
@@ -231,10 +251,6 @@ html, body {
   }
 }
 
-.line {
-  position: absolute;
-  border-bottom: 2px solid; /* Set the border to represent the line */
-}
 
 canvas {
   position: absolute;

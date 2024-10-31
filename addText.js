@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         // Add styles for better visibility and interaction
-        textDiv.style.border = '1px solid black';
+        textDiv.style.backgroundColor = 'white';
         textDiv.style.cursor = 'move';
         // Make the text draggable
         let isDragging = false;
