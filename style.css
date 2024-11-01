@@ -146,7 +146,23 @@ html, body {
     width:100%;
     
   }  
-  
+  .header {
+    font-family: 'Arial Black', Gadget, sans-serif;
+    font-weight: bold; /* Use bold font weight */
+    width: 100%;
+    height: 60px; /* Slightly taller for prominence */
+    font-size: 30px; /* Larger font size for visibility */
+    background-color: #4c79af; /* Dark background color */
+    color: #fff; /* White text color */
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    padding: 0 20px; /* Add some padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  #rigDokuLink{
+    margin:30px;
+  }
   /* Stage (Canvas) */
   #stage {
     resize: both;
