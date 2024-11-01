@@ -77,6 +77,30 @@ html, body {
   width: 10px; /* Fixed width for the triangle */
   height: 0;
 }
+.genelecS{
+  border-bottom: 6px solid rgb(101, 100, 100);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 6px; /* Fixed width for the triangle */
+  height: 0;
+  border-radius: 5px;
+}
+.genelecM{
+  border-bottom: 8px solid rgb(101, 100, 100);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 8px; /* Fixed width for the triangle */
+  height: 0;
+  border-radius: 5px;
+}
+.genelecL{
+  border-bottom: 10px solid rgb(101, 100, 100);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 10px; /* Fixed width for the triangle */
+  height: 0;
+  border-radius: 5px;
+}
 
 .vuePicContainer {
   width: 15px; /* Set the desired width */
