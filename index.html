@@ -10,32 +10,45 @@
     <div id="main">
         <!-- Sidebar for predefined items -->
         <div id="sidebar">
-            <input type="text" id="playNameInput" placeholder="Skriv forstillingstitelen her" />
-            <div class="instructions">- Drag and drop equipment<br>
-            - Rightclick turns items<br>
-            - Doubleclick adds text</div>
+            <input type="text" id="playNameInput" placeholder="Forstillingstitelen" />
+            <div class="instructions">Dra og slepp utstyr<br>
+                Høgreklikk roterer element<br>
+                Dobbeltklikk legg til tekst</div>
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
                 <div class="equipment" draggable="true" data-type="custom-speaker-cq">
-                    <div class="cq"></div>
+                    <div class="cq equipmentName">CQ</div>
+                   
                 </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="vue"></div>
+                    <div class="vue equipmentName">VUE</div>
                 </div>
-                <div class="equipment" draggable="true" data-type="speaker">🔊</div>
+                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                    <div class="vueOpp equipmentName">VUE</div>
+                </div>
+                
                 <div class="equipment" draggable="true" data-type="microphone">🎤</div>
                 <div class="equipment" draggable="true" data-type="tv">📺</div>
             </div>
+            <!-- Toggle Background Button -->
+            <label>
+                <input type="checkbox" id="toggleHSCPlan" checked>
+                Vis HSC-kart
+            </label>
+            
 
             <!-- Export Button -->
-            <button id="export">Export as PDF</button>
+            <button id="export">Eksporter PDF</button>
         </div>
 
         <!-- Stage area where equipment will be placed -->
         <div class="stageContainer">
             <div id="stage">
-                <div id="dropZone" class="drop-zone"></div>
+                
+                <div id="dropZone" class="drop-zone">
+                    <canvas id="canvas"/>
+                </div>
             </div>
         </div>
     </div>
@@ -44,6 +57,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="dragnDrop.js"></script>
     <script src="addText.js"></script>
+    <script src="drawRectangles.js"></script>
+    <script src="toggleHSCplan.js"></script>
     <script src="printPDF.js"></script>
 </body>
 </html>

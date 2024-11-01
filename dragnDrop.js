@@ -59,7 +59,6 @@ function addDragListeners(element) {
 }
 
 // RIGHTCLICK ROTATION
-// RIGHTCLICK ROTATION
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     const parentElement = e.target.closest('.dropped-equipment');
