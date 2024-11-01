@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasjon</title>
+    <style>
+        h1 {
+            margin: auto;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: gray;
+        }
+        form {
+            margin: auto;
+            width: 70%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+        }
+        p {
+            margin-top: 20px;
+        }
+        button {
+            border-radius: 5px; /* Rounded corners */
+            margin: 10px auto; /* Center the button horizontally and add space above */
+            padding: 10px; /* Button styling */
+            background-color: #4CAF50; /* Button color */
+            color: white; /* Text color */
+            border: none; /* Remove border */
+            display: block; /* Ensure the button is a block element */
+            cursor: pointer; /* Pointer on hover */
+            text-align: center; /* Center text */
+        }
+        .docBody {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width:80vW;
+            margin:auto;
+        }
+        .basicInfo label {
+            display: flex;
+            align-items: center;
+        }
+        .basicInfoContainer {
+            margin:auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            flex-direction: column;
+            width:33%
+        }
+        .basicInfo {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="docBody">
+    <h1>Sceneoppsett</h1>
+    <form id="sceneForm">
+        <div class="basicInfoContainer">
+            <div class="basicInfo">
+                <label for="regissor">Produksjon:</label> 
+                <input type="text" id="regissor" name="produksjon">
+            </div>
+            <div class="basicInfo">
+                <label for="regissor">Regissør:</label>
+                <input type="text" id="regissor" name="regissor"><br><br>
+            </div>
+            <div class="basicInfo">
+                <label for="premiereDato">Premiere dato:</label>
+                <input type="date" id="premiereDato" name="premiereDato"><br><br>
+            </div>
+            <div class="basicInfo">
+                <label for="scene">Scene:</label>
+                <select id="scene" name="scene">
+                    <option value="Hovedscene">Hovedscene</option>
+                    <option value="Scene 2">Scene 2</option>
+                    <option value="Scene 3">Scene 3</option>
+                </select><br><br>
+            </div>
+        </div>
+
+        <h2>Forstillingsnavn</h2>
+        <input type="text" id="forstillingsnavn" name="forstillingsnavn" placeholder="Forstillingsnavn">
+
+        <h2>Høyttalere</h2>
+        <table id="hogtalerTable">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+                <th>Kommentarer</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="hogtalerPlassering1"></td>
+                <td><input type="text" name="hogtalerTilkobling1"></td>
+                <td><input type="text" name="hogtalerKommentarer1"></td>
+            </tr>
+        </table>
+        <p>Legg gjerne inn bilder her:</p>
+
+        <h2>Kablede Mikrofoner</h2>
+        <table id="mikrofonTable">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+                <th>Kommentarer</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="mikrofonPlassering1"></td>
+                <td><input type="text" name="mikrofonTilkobling1"></td>
+                <td><input type="text" name="mikrofonKommentarer1"></td>
+            </tr>
+        </table>
+        <p>Legg gjerne inn bilder her:</p>
+
+        <h2>ME-1</h2>
+        <table id="me1Table">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+                <th>Kommentarer</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="me1Plassering1"></td>
+                <td><input type="text" name="me1Tilkobling1"></td>
+                <td><input type="text" name="me1Kommentarer1"></td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+        <p>Legg gjerne inn bilder her:</p>
+
+        <h2>Stagebox</h2>
+        <table id="stagebox">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+                <th>Kommentarer</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="stageboxPlassering1"></td>
+                <td><input type="text" name="stageboxTilkobling1"></td>
+                <td><input type="text" name="stageboxKommentarer1"></td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+        <p>Legg gjerne inn bilder her:</p>
+
+        <h2>Andre Forbindelser</h2>
+        <table id="andreForbindelserTable">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+                <th>Kommentarer</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="andreForbindelserPlassering1"></td>
+                <td><input type="text" name="andreForbindelserTilkobling1"></td>
+                <td><input type="text" name="andreForbindelserKommentarer1"></td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+        <p>Legg gjerne inn bilder her:</p>
+
+        <h2>Strøm</h2>
+        <table id="strom">
+            <tr>
+                <th>Plassering</th>
+                <th>Tilkobling</th>
+            </tr>
+            <tr>
+                <td><input type="text" name="stromPlassering1"></td>
+                <td><input type="text" name="stromTilkobling1"></td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+
+        <button type="button" onclick="generatePDF()">Eksporter PDF</button>
+    </form>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text("Sceneoppsett", 10, 10);
+            doc.text("Forstillingsnavn: " + document.getElementById('forstillingsnavn').value, 10, 20);
+            doc.text("Regissør: " + document.getElementById('regissor').value, 10, 30);
+            doc.text("Premiere dato: " + document.getElementById('premiereDato').value, 10, 40);
+            doc.text("Scene: " + document.getElementById('scene').value, 10, 50);
+
+            // Add more text and tables as needed
+            const forstillingsnavn = document.getElementById('forstillingsnavn').value;
+            doc.save(`Rigg-${forstillingsnavn}.pdf`);
+        }
+
+        function addRowIfNeeded(tableId) {
+            const table = document.getElementById(tableId);
+            const lastRow = table.rows[table.rows.length - 1];
+            const inputs = lastRow.querySelectorAll('input[type="text"]');
+            let allFilled = true;
+
+            inputs.forEach(input => {
+                if (input.value.trim() === '') {
+                    allFilled = false;
+                }
+            });
+
+            if (allFilled) {
+                const newRow = table.insertRow();
+                inputs.forEach(input => {
+                    const newCell = newRow.insertCell();
+                    const newInput = document.createElement('input');
+                    newInput.type = 'text';
+                    newInput.name = input.name.replace(/\d+$/, '') + (table.rows.length - 1);
+                    newCell.appendChild(newInput);
+                });
+                addEventListenersToInputs(newRow.querySelectorAll('input[type="text"]'));
+            }
+        }
+
+        function addEventListenersToInputs(inputs) {
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    addRowIfNeeded(input.closest('table').id);
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); // Prevent form submission
+                        addRowIfNeeded(input.closest('table').id);
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addEventListenersToInputs(document.querySelectorAll('input[type="text"]'));
+        });
+    </script>
+</body>
+</html>

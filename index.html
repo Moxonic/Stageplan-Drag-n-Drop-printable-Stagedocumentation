@@ -10,26 +10,35 @@
     <div id="main">
         <!-- Sidebar for predefined items -->
         <div id="sidebar">
-            <input type="text" id="playNameInput" placeholder="Forstillingstitelen" />
-            <div class="instructions">Dra og slepp utstyr<br>
-                Høgreklikk roterer element<br>
-                Dobbeltklikk legg til tekst</div>
+            <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her" />
+            <div class="instructions">- Dra og slepp utstyr<br>
+                - Høgreklikk roterer element<br>
+                - Dobbeltklikk legg til tekst</div>
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
                 <div class="equipment" draggable="true" data-type="custom-speaker-cq">
                     <div class="cq gear equipmentName">CQ</div>
-                   
+                    <div class="gearText">CQ</div>
                 </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                     <div class="vue gear equipmentName">VUE</div>
+                    <div class="gearText">Vue 8a</div>
                 </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                     <div class="vueOpp gear equipmentName">VUE</div>
+                    <div class="gearText">Vue8a </div>
                 </div>
                 
-                <div class="equipment gear" draggable="true" data-type="microphone">🎤</div>
-                <div class="equipment gear" draggable="true" data-type="tv">📺</div>
+                <div class="equipment gear" draggable="true" data-type="microphone">
+                    🎤
+                    <div class="gearText">Vue8a </div>
+                </div>
+                <div class="equipment gear" draggable="true" data-type="tv">
+                    📺
+                    <div class="gearText">Vue8a </div>
+                </div>
+                
             </div>
             <!-- Toggle Background Button -->
             <label>

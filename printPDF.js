@@ -28,7 +28,7 @@ document.getElementById("export").addEventListener("click", () => {
         logging: true, // Enable logging for debugging
         backgroundColor: 'white' // Ensure the background is transparent
     }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/png'); //set high quality
         
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
