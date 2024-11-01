@@ -7,11 +7,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     dropZone.addEventListener('dblclick', (event) => {
+//dontcreate Text if double clicked on equipmwnt
+        const clickedElement = event.target;
+        if (clickedElement.classList.contains('gear')) {
+            return;
+        }
+       
+
         const textDiv = document.createElement('div');
         textDiv.contentEditable = true;
         textDiv.style.position = 'absolute';
         textDiv.classList.add('textAdded');
-
+        //Delete Text on double click
+        const existingTextDiv = document.elementFromPoint(event.clientX, event.clientY);
+        if (existingTextDiv && existingTextDiv.classList.contains('textAdded')) {
+            dropZone.removeChild(existingTextDiv);
+            return;
+        }
         // Calculate position relative to dropZone
         const dropZoneRect = dropZone.getBoundingClientRect();
         textDiv.style.left = `${event.clientX - dropZoneRect.left}px`;
@@ -65,5 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         dropZone.appendChild(textDiv);
         textDiv.focus();
+        
     });
 });

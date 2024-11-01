@@ -69,3 +69,11 @@ document.addEventListener('contextmenu', (e) => {
         parentElement.setAttribute('data-rotation', currentRotation);
     }
 });
+
+// DELETE ITEM ON DOUBLE CLICK
+dropZone.addEventListener('dblclick', (e) => {
+    const element = e.target.closest('.dropped-equipment');
+    if (element) {
+        dropZone.removeChild(element);
+    }
+});
