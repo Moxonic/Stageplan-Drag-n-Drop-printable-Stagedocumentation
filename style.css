@@ -146,6 +146,7 @@ html, body {
     width:100%;
     
   }  
+  
   /* Stage (Canvas) */
   #stage {
     resize: both;

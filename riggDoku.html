@@ -73,6 +73,12 @@
         .basicInfo {
             display: flex;
         }
+        .linkButtonContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
     </style>
 </head>
 <body>
@@ -195,8 +201,10 @@
             </tr>
             <!-- Add more rows as needed -->
         </table>
-
-        <button type="button" onclick="generatePDF()">Eksporter PDF</button>
+        <div class="linkButtonContainer">
+            <button type="button" onclick="generatePDF()">Eksporter PDF</button>
+            <a href="index.html" id="rigDokuLink">Sceneplaner</a>
+        </div>
     </form>
     </div>
     
