@@ -63,7 +63,7 @@
             align-items: center;
         }
         .basicInfoContainer {
-            margin:auto;
+            
             display: flex;
             justify-content: space-between;
             gap: 5px;
@@ -124,7 +124,7 @@
                 <td><input type="text" name="hogtalerKommentarer1"></td>
             </tr>
         </table>
-        <p>Legg gjerne inn bilder her:</p>
+        <input type="file" accept="image/*" capture="camera">
 
         <h2>Kablede Mikrofoner</h2>
         <table id="mikrofonTable">
@@ -139,8 +139,10 @@
                 <td><input type="text" name="mikrofonKommentarer1"></td>
             </tr>
         </table>
-        <p>Legg gjerne inn bilder her:</p>
-
+        <h2>Legg til bilder</h2>
+        <button type="button" onclick="document.querySelector('input[type=file]').click()">
+            📷
+        </button>
         <h2>ME-1</h2>
         <table id="me1Table">
             <tr>
