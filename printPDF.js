@@ -14,7 +14,7 @@ document.getElementById("export").addEventListener("click", () => {
   
     // Append the cloned elements to the container
     container.appendChild(stageClone);
-    container.appendChild(dropZoneClone);
+   /*  container.appendChild(dropZoneClone); *///NOT NECESSARY!?
   
     // Append the container to the body temporarily
     document.body.appendChild(container);
@@ -60,8 +60,8 @@ document.getElementById("export").addEventListener("click", () => {
             pdf.text(headerTitle, titleX, margin + logoHeight / 2);
             
             // Add the logo to the PDF
-            pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
-  
+           /*  pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
+   */
             // Add the captured image to the PDF
             pdf.addImage(imgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
 // Save the PDF with the name of the play

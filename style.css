@@ -59,8 +59,8 @@ html, body {
   width: 15px; /* Fixed width for the triangle */
   height: 0;
 }
-.equipmentName{
-  font-size: 5px;
+.cqName{
+  font-size: 8px;
   color: rgb(196, 196, 196);
 }
 .vue{
@@ -69,6 +69,14 @@ html, body {
   border-right: 2px solid transparent;
   width: 19px; /* Fixed width for the triangle */
   height: 0;
+}
+.vueName{
+  font-size: 8px;
+  color: rgb(196, 196, 196);
+}
+.vuehName{
+  font-size: 5px;
+  color: rgb(196, 196, 196);
 }
 .vueOpp{
   border-bottom: 10px solid rgb(44, 43, 43);

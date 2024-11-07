@@ -15,9 +15,16 @@
             margin: 20px;
             background-color: gray;
         }
+        .docBody {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width:80vW;
+            margin:auto;
+        }
         form {
-            margin: auto;
-            width: 70%;
+            
+            width: 90%;
         }
         table {
             width: 100%;
@@ -35,12 +42,31 @@
         input[type="text"] {
             width: 100%;
             box-sizing: border-box;
+            border-width: 3px;
+            border-radius: 8px;
             padding: 5px;
+            border:solid 2px #341efb;
         }
         p {
             margin-top: 20px;
         }
-        button {
+        .cameraButton{
+            display: flex;
+            font-size: xx-large;
+            border-radius: 100%;
+            width:50px;
+            height:50px;
+            align-items: center;
+            justify-content: center;
+            justify-self: center;
+            padding-bottom: 15px;
+            bottom: px;
+            border-color: #4CAF50;
+            border: 2px solid #4CAF50;
+
+        }
+        
+        .pdfButton {
             border-radius: 5px; /* Rounded corners */
             margin: 10px auto; /* Center the button horizontally and add space above */
             padding: 10px; /* Button styling */
@@ -51,16 +77,11 @@
             cursor: pointer; /* Pointer on hover */
             text-align: center; /* Center text */
         }
-        .docBody {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            width:80vW;
-            margin:auto;
-        }
+        
         .basicInfo label {
             display: flex;
             align-items: center;
+            
         }
         .basicInfoContainer {
             
@@ -70,15 +91,46 @@
             flex-direction: column;
             width:33%
         }
+
         .basicInfo {
             display: flex;
         }
         .linkButtonContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        @media (max-width: 900px) {
+            h1{
+                left:0; 
+                right:0; 
+                width: 100vw;
+            }
+               
+            body {
+                margin: 0;
+            }
+            #sceneForm {
+                padding: 20px;
+                margin: auto;
+            }
+            .docBody{
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                border-radius: 0%;
+            }
+            .basicInfoContainer {
+                width: 100%;
+                align-items: center;
+            }
+            .basicInfo {
+                display: flex;
+                width:100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -88,8 +140,10 @@
         <div class="basicInfoContainer">
             <div class="basicInfo">
                 <label for="regissor">Produksjon:</label> 
-                <input type="text" id="regissor" name="produksjon">
+                <input type="text" id="produksjon" name="produksjon">
             </div>
+        
+
             <div class="basicInfo">
                 <label for="regissor">Regissør:</label>
                 <input type="text" id="regissor" name="regissor"><br><br>
@@ -107,10 +161,10 @@
                 </select><br><br>
             </div>
         </div>
-
+        
         <h2>Forstillingsnavn</h2>
         <input type="text" id="forstillingsnavn" name="forstillingsnavn" placeholder="Forstillingsnavn">
-
+        
         <h2>Høyttalere</h2>
         <table id="hogtalerTable">
             <tr>
@@ -124,8 +178,10 @@
                 <td><input type="text" name="hogtalerKommentarer1"></td>
             </tr>
         </table>
-        <input type="file" accept="image/*" capture="camera">
-
+        <button class='cameraButton' type="button" onclick="document.querySelector('input[type=file]').click()">
+            📷
+        </button>
+        <hr>
         <h2>Kablede Mikrofoner</h2>
         <table id="mikrofonTable">
             <tr>
@@ -139,10 +195,10 @@
                 <td><input type="text" name="mikrofonKommentarer1"></td>
             </tr>
         </table>
-        <h2>Legg til bilder</h2>
-        <button type="button" onclick="document.querySelector('input[type=file]').click()">
+        <button class='cameraButton' type="button" onclick="document.querySelector('input[type=file]').click()">
             📷
         </button>
+        <hr>
         <h2>ME-1</h2>
         <table id="me1Table">
             <tr>
@@ -157,8 +213,10 @@
             </tr>
             <!-- Add more rows as needed -->
         </table>
-        <p>Legg gjerne inn bilder her:</p>
-
+        <button class='cameraButton' type="button" onclick="document.querySelector('input[type=file]').click()">
+            📷
+        </button>
+        <hr>
         <h2>Stagebox</h2>
         <table id="stagebox">
             <tr>
@@ -173,8 +231,10 @@
             </tr>
             <!-- Add more rows as needed -->
         </table>
-        <p>Legg gjerne inn bilder her:</p>
-
+        <button class='cameraButton' type="button" onclick="document.querySelector('input[type=file]').click()">
+            📷
+        </button>
+        <hr>
         <h2>Andre Forbindelser</h2>
         <table id="andreForbindelserTable">
             <tr>
@@ -189,8 +249,10 @@
             </tr>
             <!-- Add more rows as needed -->
         </table>
-        <p>Legg gjerne inn bilder her:</p>
-
+        <button class='cameraButton' type="button" onclick="document.querySelector('input[type=file]').click()">
+            📷
+        </button>
+        <hr>
         <h2>Strøm</h2>
         <table id="strom">
             <tr>
@@ -204,7 +266,7 @@
             <!-- Add more rows as needed -->
         </table>
         <div class="linkButtonContainer">
-            <button type="button" onclick="generatePDF()">Eksporter PDF</button>
+            <button class='pdfButton' class='pdfButton' type="button" onclick="generatePDF()">Eksporter PDF</button>
             <a href="index.html" id="rigDokuLink">Link till Sceneplaner</a>
         </div>
     </form>
