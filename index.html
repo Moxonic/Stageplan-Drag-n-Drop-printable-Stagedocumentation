@@ -12,13 +12,20 @@
         <div id="sidebar">
             <div class="header">
                 SCENEPLANER LYD 
+                <button id="infoButton">?</button>
             </div>
-            <div class="instructions">
-                - Dra og slepp utstyr<br>
-                - Dobbeltklikk legg til tekst<br>
-                - Høgreklikk roterer element<br>
-                - Klikk på "+" eller "-" for å endre størrelse<br>
-                - Slette med dobbeltklikk
+            <div id="infoOverlay" class="overlay">
+                <div class="overlay-content">
+                    <span class="close-button"></span>
+                    <div class="instructions">
+                        - Dra og slepp utstyr<br>
+                        - Dobbeltklikk legg til tekst<br>
+                        - Høgreklikk roterer element<br>
+                        - Klikk på "+" eller "-" for å endre størrelse i browser<br>
+                        - Slette med dobbeltklikk
+                        - Bruk google chrome for best resultat
+                    </div>
+                </div>
             </div>
             <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her" />
 
@@ -38,25 +45,29 @@
                 </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                     <div class="genelecS gear equipmentName"></div>
-                    <div class="gearText">GenelecS </div>
-                </div>
+<!--                     <div class="gearText">GenelecS </div>
+ -->                </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                     <div class="genelecM gear equipmentName"></div>
-                    <div class="gearText">GenelecM </div>
-                </div>
+<!--                     <div class="gearText">GenelecM </div>
+ -->                </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                     <div class="genelecL gear equipmentName"></div>
-                    <div class="gearText">GenelecL </div>
-                </div>
+<!--                     <div class="gearText">GenelecL </div>
+ -->                </div>
                 
                 <div class="equipment gear" draggable="true" data-type="microphone">
                     🎤
-                    <div class="gearText">HH</div>
-                </div>
+<!--                     <div class="gearText">HH</div>
+ -->                </div>
                 <div class="equipment gear" draggable="true" data-type="tv">
                     📺
-                    <div class="gearText">TV </div>
-                </div>
+<!--                     <div class="gearText">TV </div>
+ -->                </div>
+                <div class="equipment gear" draggable="true" data-type="tv">
+                    🦟
+<!--                     <div class="gearText">TV </div>
+-->             </div>
                 
             </div>
             <!-- Toggle Background Button -->
@@ -91,5 +102,6 @@
     <script src="toggleHSCplan.js"></script>
     <script src="printPDF.js"></script>
     <script src="zoom.js"></script>
+    <script src="infoOverlay.js"></script>
 </body>
 </html>

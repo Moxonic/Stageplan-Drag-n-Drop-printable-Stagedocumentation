@@ -31,6 +31,7 @@ html, body {
   #playNameInput {
     height:20px;
   }
+
   .equipment {
     display: flex;
     flex-direction: column;
@@ -61,7 +62,7 @@ html, body {
 }
 .cqName{
   font-size: 8px;
-  color: rgb(196, 196, 196);
+  color: rgb(222, 221, 221);
 }
 .vue{
   border-bottom: 10px solid rgb(44, 43, 43);
@@ -72,11 +73,12 @@ html, body {
 }
 .vueName{
   font-size: 8px;
-  color: rgb(196, 196, 196);
+  color: rgb(222, 221, 221);
 }
 .vuehName{
   font-size: 5px;
-  color: rgb(196, 196, 196);
+  font-weight: bold;
+  color: rgb(222, 221, 221);
 }
 .vueOpp{
   border-bottom: 10px solid rgb(44, 43, 43);
@@ -176,12 +178,11 @@ html, body {
     background-color: lightgray; /* Background color for the stage area */
     height: 100vh;
     width:100%;
-    
   }  
   .header {
+    position:relative;
     font-family: 'Arial Black', Gadget, sans-serif;
     font-weight: bold; /* Use bold font weight */
-    width: 100%;
     height: 60px; /* Slightly taller for prominence */
     font-size: 30px; /* Larger font size for visibility */
     background-color: #4c79af; /* Dark background color */
@@ -213,16 +214,50 @@ html, body {
     filter: brightness(1.4); /* Lighten the background image */
   }
     .instructions {
+      display: flex; /* Hide the instructions by default */
+      align-self: center;
+      justify-self: center;
+      text-align: left;
       font-size: 14px; /* Set a readable font size */
       font-style: italic; /* Italicize the text */
       color: #626262; /* Dark gray color for readability */
       background-color: #f9f9f9; /* Light background color */
       border: 1px solid #ccc; /* Light gray border */
-      padding: 10px; /* Add some padding */
+      padding: 30px; /* Add some padding */
       margin: 10px 0; /* Add some margin */
       border-radius: 5px; /* Slightly rounded corners */
       line-height: 1.5; /* Increase line height for readability */
   }
+  #infoOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding-top: 50px;
+    z-index: 1000;
+}
+#infoButton {
+  height:20px;
+  width:20px;
+  position:absolute;
+  right:5px;
+  top:5px;
+  background-color: #4c79af;
+  color:white;
+  border-color: #f9f9f9;
+  border:solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10;
+  border-radius: 100px;
+  font-size: 15px;
+}
 
   @media (max-width: 768px) {
     #main {
@@ -231,7 +266,9 @@ html, body {
     }
 
     #sidebar {
+      position: relative; /* Remove fixed position */
       width: auto; /* Full width for sidebar */
+      padding:0px;
       height: auto; /* Adjust height to fit content */
       border-right: none; /* Remove right border */
       border-bottom: 1px solid #ccc; /* Add bottom border */
@@ -264,13 +301,13 @@ html, body {
   #export {
     border-radius: 5px; /* Rounded corners */
     margin-top: 10px; /* Add some space above */
-    padding: 10px; /* Button styling */
+    padding: 6px 30px; /* Button styling */
     background-color: #4CAF50; /* Button color */
     color: white; /* Text color */
     border: none; /* Remove border */
     cursor: pointer; /* Pointer on hover */
     text-align: center; /* Center text */
-    width: 100%; /* Full width of its container */
+    
 }
 
 .slissa{

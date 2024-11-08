@@ -51,6 +51,8 @@ function addDragListeners(element) {
 
     element.addEventListener('drop', (e) => {
         e.preventDefault();
+        /* draggedElement.style.border = '5px solid red';
+        draggedElement.style.borderRadius = '50%'; */
         const dropZoneRect = dropZone.getBoundingClientRect();
         draggedElement.style.left = `${e.clientX - dropZoneRect.left - offsetX}px`;
         draggedElement.style.top = `${e.clientY - dropZoneRect.top - offsetY}px`;
