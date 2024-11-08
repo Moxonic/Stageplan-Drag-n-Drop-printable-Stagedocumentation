@@ -10,9 +10,10 @@
     <div id="main">
         <!-- Sidebar for predefined items -->
         <div id="sidebar">
+            <button id="infoButton">?</button>
             <div class="header">
                 SCENEPLANER LYD 
-                <button id="infoButton">?</button>
+                
             </div>
             <div id="infoOverlay" class="overlay">
                 <div class="overlay-content">
@@ -31,46 +32,53 @@
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
+                <div class="vuene">
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="vueL gear vueName">VUE</div>
+                        <div class="gearText"></div>
+                    </div>
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="vue gear vueName">VUE</div>
+                        <div class="gearText"></div>
+                    </div>
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="vueOpp gear vuehName">VUE</div>
+                        <div class="gearText"></div>
+                    </div>
+                </div>
+                <div class="genelecs">
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="genelecS gear equipmentName"></div>
+                    </div>
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="genelecM gear equipmentName"></div>
+                    </div>
+                    <div class="equipment" draggable="true" data-type="custom-speaker-vue">
+                        <div class="genelecL gear equipmentName"></div>
+                    </div>
+                </div>
                 <div class="equipment" draggable="true" data-type="custom-speaker-cq">
                     <div class="cq gear cqName">CQ</div>
                     <!-- <div class="gearText">CQ</div> -->
                 </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="vue gear vueName">VUE</div>
-                    <div class="gearText"></div>
-                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="vueOpp gear vuehName">VUE</div>
-                    <div class="gearText"></div>
-                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="genelecS gear equipmentName"></div>
-<!--                     <div class="gearText">GenelecS </div>
- -->                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="genelecM gear equipmentName"></div>
-<!--                     <div class="gearText">GenelecM </div>
- -->                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-vue">
-                    <div class="genelecL gear equipmentName"></div>
-<!--                     <div class="gearText">GenelecL </div>
- -->                </div>
+                
                 
                 <div class="equipment gear" draggable="true" data-type="microphone">
                     🎤
-<!--                     <div class="gearText">HH</div>
- -->                </div>
-                <div class="equipment gear" draggable="true" data-type="tv">
-                    📺
-<!--                     <div class="gearText">TV </div>
- -->                </div>
+                </div>
+                <div class="equipment gear" draggable="true" data-type="custom-speaker-cq">
+                    <div class="tv">
+                        <div class="tele"></div>
+                        <div class="screen"></div>
+                        <div class="tvVue gear vueName"></div>
+                        <div class="frontSide"></div>
+                        <div class="tvText">VUE<br>TV</div> 
+                    </div>
+                </div>
                 <div class="equipment gear" draggable="true" data-type="tv">
                     🦟
-<!--                     <div class="gearText">TV </div>
--->             </div>
-                
+                </div>            
             </div>
-            <!-- Toggle Background Button -->
             <label>
                 <input type="checkbox" id="toggleHSCPlan" checked>
                 Vis HSC-kart

@@ -28,6 +28,14 @@ dropZone.addEventListener('drop', (e) => {
         draggedElement.style.left = `${e.clientX - dropZoneRect.left - offsetX}px`;
         draggedElement.style.top = `${e.clientY - dropZoneRect.top - offsetY}px`;
         draggedElement.style.display = 'block'; // Ensure the element is visible
+        draggedElement.style.height= '30px';
+        draggedElement.style.display = 'flex';
+        draggedElement.style.alignItems = 'center';
+        draggedElement.style.justifyContent = 'center';
+        draggedElement.style.width= '30px';
+        draggedElement.style.border = '2px solid red';
+        draggedElement.style.textAlign = 'center';
+        draggedElement.style.borderRadius = '50%';
         dropZone.appendChild(draggedElement); // Append the clone to the drop zone
         addDragListeners(draggedElement); // Add drag listeners to the new element
         draggedElement = null;
@@ -51,8 +59,6 @@ function addDragListeners(element) {
 
     element.addEventListener('drop', (e) => {
         e.preventDefault();
-        /* draggedElement.style.border = '5px solid red';
-        draggedElement.style.borderRadius = '50%'; */
         const dropZoneRect = dropZone.getBoundingClientRect();
         draggedElement.style.left = `${e.clientX - dropZoneRect.left - offsetX}px`;
         draggedElement.style.top = `${e.clientY - dropZoneRect.top - offsetY}px`;
