@@ -226,6 +226,18 @@ html, body {
     align-items: center;
     color: #ccc;
 }
+.jblBoom{
+  width: 15px;
+  height: 8px;
+  background-color: rgb(44, 43, 43);
+  border-radius:28%;
+  font-size: 6px;
+  color: rgb(222, 221, 221);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin:10px;
+}
 .equipment-container{
 
   align-items: center;

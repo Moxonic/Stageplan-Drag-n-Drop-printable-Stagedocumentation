@@ -26,7 +26,8 @@ document.getElementById("export").addEventListener("click", () => {
         scrollY: 0,
         allowTaint: true, // Allow cross-origin images
         logging: true, // Enable logging for debugging
-        backgroundColor: 'white' // Ensure the background is transparent
+        backgroundColor: 'white', // Ensure the background is transparent
+        scale: 2 // Increase the scale of the captured
     }).then(canvas => {
         const imgData = canvas.toDataURL('image/png'); //set high quality
         
@@ -49,7 +50,6 @@ document.getElementById("export").addEventListener("click", () => {
         const logoUrl = "DNTlogo.png"; // Replace with your actual logo URL
         const logoImage = new Image();
         logoImage.src = logoUrl;
-  
         logoImage.onload = () => {
             const logoWidth = 30;
             const logoHeight = 15;
@@ -60,15 +60,16 @@ document.getElementById("export").addEventListener("click", () => {
             pdf.text(headerTitle, titleX, margin + logoHeight / 2);
             
             // Add the logo to the PDF
-           /*  pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
+            /*  pdf.addImage(logoImage, 'PNG', margin, margin, logoWidth, logoHeight);
    */
             // Add the captured image to the PDF
             pdf.addImage(imgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
-// Save the PDF with the name of the play
-const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`;
+// Save the PDF with the name of the play and the current date
+const currentDate = new Date();
+const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY
+const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-sceneplan${formattedDate}.pdf`;
 pdf.save(fileName);
             
-  
             // Remove the container from the body
             document.body.removeChild(container);
         };
