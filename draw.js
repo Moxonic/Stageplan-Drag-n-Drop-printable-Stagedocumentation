@@ -4,6 +4,12 @@ let startY = 0;
 let penEnabled = false;
 let lineWidth = 1;
 let strokeStyle = '#000000';
+let holdTimer = null;
+let holdDuration = 2000; // Duration in milliseconds to detect a long hold
+let isStraightLine = false;
+let currentLine = [];
+let lines = []; // Array to store all lines
+let history = []; // Array to store the history of canvas states
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
@@ -34,9 +40,20 @@ colorButtons.forEach(button => {
 canvas.addEventListener('mousedown', (e) => {
     if (penEnabled) {
         isDrawing = true;
+        isStraightLine = false;
         const rect = canvas.getBoundingClientRect();
         startX = (e.clientX - rect.left) * (canvas.width / rect.width);
         startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        currentLine = [{ x: startX, y: startY }]; // Start a new line
+
+        // Save the current state to history
+        saveState();
+
+        // Start the hold timer
+        holdTimer = setTimeout(() => {
+            isStraightLine = true;
+            redrawCanvas();
+        }, holdDuration);
     }
 });
 
@@ -45,23 +62,102 @@ canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        context.lineWidth = lineWidth;
-        context.strokeStyle = strokeStyle;
-        context.lineCap = 'round';
-        context.beginPath();
-        context.moveTo(startX, startY);
-        context.lineTo(x, y);
-        context.stroke();
-        startX = x;
-        startY = y;
+        if (!isStraightLine) {
+            currentLine.push({ x, y });
+            context.lineWidth = lineWidth;
+            context.strokeStyle = strokeStyle;
+            context.lineCap = 'round';
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(x, y);
+            context.stroke();
+            startX = x;
+            startY = y;
+        } else {
+            // Show the straight line preview
+            redrawCanvas();
+            context.lineWidth = lineWidth;
+            context.strokeStyle = strokeStyle;
+            context.lineCap = 'round';
+            context.beginPath();
+            context.moveTo(currentLine[0].x, currentLine[0].y);
+            context.lineTo(x, y);
+            context.stroke();
+        }
     }
 });
 
-canvas.addEventListener('mouseup', () => {
-    isDrawing = false;
+canvas.addEventListener('mouseup', (e) => {
+    if (isDrawing) {
+        isDrawing = false;
+        clearTimeout(holdTimer); // Clear the hold timer
+        if (isStraightLine) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
+        }
+        lines.push(currentLine); // Add the current line to the lines array
+        redrawCanvas();
+    }
 });
 
 canvas.addEventListener('mouseleave', () => {
     isDrawing = false;
+    clearTimeout(holdTimer); // Clear the hold timer
     canvas.style.cursor = 'default';
+});
+
+function saveState() {
+    history.push(canvas.toDataURL());
+}
+
+function undo() {
+    if (history.length > 0) {
+        const previousState = history.pop();
+        const img = new Image();
+        img.src = previousState;
+        img.onload = () => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0);
+        };
+    }
+}
+
+function redrawCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    context.lineWidth = lineWidth;
+    context.strokeStyle = strokeStyle;
+    context.lineCap = 'round';
+
+    // Redraw all lines
+    lines.forEach(line => {
+        context.beginPath();
+        context.moveTo(line[0].x, line[0].y);
+        for (let i = 1; i < line.length; i++) {
+            context.lineTo(line[i].x, line[i].y);
+        }
+        context.stroke();
+    });
+
+    // Redraw the current line
+    if (currentLine.length > 0) {
+        context.beginPath();
+        context.moveTo(currentLine[0].x, currentLine[0].y);
+        if (isStraightLine) {
+            context.lineTo(currentLine[currentLine.length - 1].x, currentLine[currentLine.length - 1].y);
+        } else {
+            for (let i = 1; i < currentLine.length; i++) {
+                context.lineTo(currentLine[i].x, currentLine[i].y);
+            }
+        }
+        context.stroke();
+    }
+}
+
+// Add event listener for undo (Ctrl + Z)
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'z') {
+        undo();
+    }
 });
