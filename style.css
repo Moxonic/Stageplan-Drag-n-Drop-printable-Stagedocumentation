@@ -13,6 +13,7 @@ html, body {
 
 /* Sidebar */
 #sidebar {
+    position:relative;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -238,6 +239,7 @@ html, body {
   justify-content: center;
   margin:10px;
 }
+
 .equipment-container{
 
   align-items: center;
@@ -255,6 +257,30 @@ html, body {
   flex-direction: column;
   padding: 8px;
 
+}
+#penButton{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 30px;
+  width: 30px;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 50%;
+  border:solid 1px #ccc;
+  background-color: #4c79af;
+  color: white;
+  margin: 5px;
+  cursor: pointer;
+}
+#rigDokuLink{
+  position:absolute;
+  bottom:0;
+  right:0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  padding: 5px;
+  border-radius: 50%;
 }
 
   .element{
@@ -374,7 +400,6 @@ html, body {
       padding:0px;
       height: auto; /* Adjust height to fit content */
       border-right: none; /* Remove right border */
-      border-bottom: 1px solid #ccc; /* Add bottom border */
     }
 
     .stageContainer {
@@ -457,7 +482,7 @@ html, body {
 
 
 canvas {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
