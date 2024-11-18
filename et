@@ -1,0 +1,131 @@
+[33mcommit ed6b54c2ad2caa854566ecba535c425be465991c[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Nov 14 15:18:52 2024 +0100
+
+    lines straightening
+
+[33mcommit 66e62177793e2df31487c2bf182612d2d25b8338[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Nov 14 14:01:01 2024 +0100
+
+    fixed free-hand-drawing, but doesn´t print yet
+
+[33mcommit 8378b8f9f129cbce9185bb909f398f591555518e[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Tue Nov 12 15:38:17 2024 +0100
+
+    added date & sceneplan to pdf title
+
+[33mcommit 164fc440dde955c74405a11c3abc1e0d32eb29f2[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 8 22:12:08 2024 +0100
+
+    speaker design, general css, red circle highlights on stage
+
+[33mcommit dea7d0ba7bb6297fc29f261f3d137e27b8f34ea2[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 8 16:59:31 2024 +0100
+
+    naming equipment
+
+[33mcommit 229a65b8853537c21fda05097b6c968443ce8df8[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Nov 7 21:42:43 2024 +0100
+
+    fixed double printing in pdf
+
+[33mcommit 1140f77d156f1029ec271abe4ed4213ae7d77294[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Tue Nov 5 16:25:56 2024 +0100
+
+    camera button in riggDoku
+
+[33mcommit 2696855eb87db4ca955ec75275db8691dbfa9414[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 16:09:05 2024 +0100
+
+    changed some equipment titles, print of Rigg not working
+
+[33mcommit dd2eb0ac3f3c451d3dc06c522aa5896f51668ac6[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 15:26:27 2024 +0100
+
+    css
+
+[33mcommit 9cf41fd82a990359c408a9c98f2d8785cd0a1710[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 14:58:20 2024 +0100
+
+    link between Scenneplan og Rigg
+
+[33mcommit 37cf4585ef82e425992bc4465f35119a0b11ec31[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 14:25:22 2024 +0100
+
+    added zoom function
+
+[33mcommit 97ebcfdf8e4bceebd25d6401101342a6e131aa51[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 14:18:18 2024 +0100
+
+    created a Rigging documnent
+
+[33mcommit 585e743c1a89469cdb32d8c4fd8ea3200af31c6a[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 10:29:04 2024 +0100
+
+    delete items on stage with doubleclick
+
+[33mcommit 23ebdcccb8c461666abd615b8460edf1fd220d2e[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Fri Nov 1 09:59:36 2024 +0100
+
+    norskify
+
+[33mcommit 7fcac6594c9dfca6f7e63d73bae39fa8949246ff[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Oct 31 20:39:32 2024 +0100
+
+    responsive design, touch does not work...
+
+[33mcommit e789ad85ee609150a577dfcc806291979d0204f6[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Oct 31 19:50:31 2024 +0100
+
+    first basic version done
+
+[33mcommit 66994d2000d2c5099646a70980118eaeecb86ec4[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Wed Oct 30 18:15:33 2024 +0100
+
+    speaker positioning w rotation works, text also, dealing w printing issues
+
+[33mcommit a4d656a3bcaf176b56267b9bc06d0c39f62728f9[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Mon Oct 28 13:48:29 2024 +0100
+
+    position drop fixed
+
+[33mcommit cb4a3aeb36a5305ee320f650b5b918dd834dc0c2[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Thu Oct 24 22:41:42 2024 +0200
+
+    png import works, elements disappear from side, tried drawing but does not work...
+
+[33mcommit 658a288e92b68838db59759950f58918b4ff9e2b[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Mon Oct 14 16:28:03 2024 +0200
+
+    added two speakers and centered stage
+
+[33mcommit 4978799434a514d44b0e8f041760a1c993767275[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Mon Oct 14 11:24:03 2024 +0200
+
+    add namingin pdf
+
+[33mcommit 38a10de82e60ce1bd235a153baacefb37c50eb00[m
+Author: Daniel Soto Delgado <d.sotodelgado@outlook.com>
+Date:   Sat Oct 12 16:39:13 2024 +0200
+
+    first commit
