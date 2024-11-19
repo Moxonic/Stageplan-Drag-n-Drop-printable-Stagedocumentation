@@ -2,7 +2,7 @@ let isDrawing = false;
 let startX = 0;
 let startY = 0;
 let penEnabled = false;
-let lineWidth = 1;
+let lineWidth = 2;
 let strokeStyle = '#000000';
 let holdTimer = null;
 let holdDuration = 3000; // Duration in milliseconds to detect a long hold
@@ -13,7 +13,6 @@ let history = []; // Array to store the history of canvas states
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-
 const penButton = document.getElementById('penButton');
 const thicknessButtons = document.querySelectorAll('.thickness');
 const colorButtons = document.querySelectorAll('.color');
@@ -64,21 +63,10 @@ canvas.addEventListener('mousemove', (e) => {
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
         if (!isStraightLine) {
             currentLine.push({ x, y });
-            context.lineWidth = lineWidth;
-            context.strokeStyle = strokeStyle;
-            context.lineCap = 'round';
-            context.beginPath();
-            context.moveTo(startX, startY);
-            context.lineTo(x, y);
-            context.stroke();
-            startX = x;
-            startY = y;
-        } else {
-            // Show the straight line preview
             redrawCanvas();
-            context.lineWidth = lineWidth;
-            context.strokeStyle = strokeStyle;
-            context.lineCap = 'round';
+        } else {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            redrawCanvas();
             context.beginPath();
             context.moveTo(currentLine[0].x, currentLine[0].y);
             context.lineTo(x, y);
@@ -96,8 +84,10 @@ canvas.addEventListener('mouseup', (e) => {
             const x = (e.clientX - rect.left) * (canvas.width / rect.width);
             const y = (e.clientY - rect.top) * (canvas.height / rect.height);
             currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
+            isStraightLine = false;
         }
         lines.push(currentLine); // Add the current line to the lines array
+        currentLine = [];
         redrawCanvas();
     }
 });
