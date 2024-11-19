@@ -33,7 +33,7 @@ dropZone.addEventListener('drop', (e) => {
         draggedElement.style.alignItems = 'center';
         draggedElement.style.justifyContent = 'center';
         draggedElement.style.width= '30px';
-        draggedElement.style.border = '2px solid red';
+        draggedElement.style.border = '2px solid green';
         draggedElement.style.textAlign = 'center';
         draggedElement.style.borderRadius = '50%';
         dropZone.appendChild(draggedElement); // Append the clone to the drop zone

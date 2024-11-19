@@ -5,7 +5,7 @@ let penEnabled = false;
 let lineWidth = 1;
 let strokeStyle = '#000000';
 let holdTimer = null;
-let holdDuration = 2000; // Duration in milliseconds to detect a long hold
+let holdDuration = 3000; // Duration in milliseconds to detect a long hold
 let isStraightLine = false;
 let currentLine = [];
 let lines = []; // Array to store all lines
@@ -124,6 +124,13 @@ function undo() {
     }
 }
 
+function deleteLastLine() {
+    if (lines.length > 0) {
+        lines.pop(); // Remove the last line from the lines array
+        redrawCanvas(); // Redraw the canvas without the last line
+    }
+}
+
 function redrawCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
     context.lineWidth = lineWidth;
@@ -159,5 +166,12 @@ function redrawCanvas() {
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
         undo();
+    }
+});
+
+// Add event listener for delete last line (Ctrl + Y)
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'y') {
+        deleteLastLine();
     }
 });
