@@ -10,6 +10,8 @@ let isStraightLine = false;
 let currentLine = [];
 let lines = []; // Array to store all lines
 let history = []; // Array to store the history of canvas states
+let penColor = 'black';
+
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
@@ -17,10 +19,18 @@ const penButton = document.getElementById('penButton');
 const thicknessButtons = document.querySelectorAll('.thickness');
 const colorButtons = document.querySelectorAll('.color');
 
+//choose marker color
+colorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        penColor = button.id;
+        penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
+        console.log(penColor);
+    });
+});
+//visual active pen color
 penButton.addEventListener('click', () => {
     penEnabled = !penEnabled;
-    penButton.style.borderColor = penEnabled ? 'red' : 'black';
-    penButton.style.outline = penEnabled ? '2px solid red' : 'none';
+    penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
     canvas.style.cursor = penEnabled ? 'crosshair' : 'default';
 });
 
@@ -32,7 +42,7 @@ thicknessButtons.forEach(button => {
 
 colorButtons.forEach(button => {
     button.addEventListener('click', () => {
-        strokeStyle = button.dataset.color;
+        strokeStyle = penColor;
     });
 });
 
@@ -86,7 +96,7 @@ canvas.addEventListener('mouseup', (e) => {
             currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
             isStraightLine = false;
         }
-        lines.push(currentLine); // Add the current line to the lines array
+        lines.push({ points: currentLine, color: penColor, width: lineWidth });
         currentLine = [];
         redrawCanvas();
     }
@@ -123,22 +133,24 @@ function deleteLastLine() {
 
 function redrawCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-    context.lineWidth = lineWidth;
-    context.strokeStyle = strokeStyle;
     context.lineCap = 'round';
 
     // Redraw all lines
     lines.forEach(line => {
+        context.lineWidth = line.width;
+        context.strokeStyle = line.color;
         context.beginPath();
-        context.moveTo(line[0].x, line[0].y);
-        for (let i = 1; i < line.length; i++) {
-            context.lineTo(line[i].x, line[i].y);
+        context.moveTo(line.points[0].x, line.points[0].y);
+        for (let i = 1; i < line.points.length; i++) {
+            context.lineTo(line.points[i].x, line.points[i].y);
         }
         context.stroke();
     });
 
     // Redraw the current line
     if (currentLine.length > 0) {
+        context.lineWidth = lineWidth;
+        context.strokeStyle = penColor;
         context.beginPath();
         context.moveTo(currentLine[0].x, currentLine[0].y);
         if (isStraightLine) {

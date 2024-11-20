@@ -10,27 +10,26 @@
     <div id="main">
         <!-- Sidebar for predefined items -->
         <div id="sidebar">
-            <button id="infoButton">?</button>
+            <button id="infoButton">🛟</button>
             <div class="header">
                 SCENEPLANER LYD 
-                
             </div>
             <div id="infoOverlay" class="overlay">
                 <div class="overlay-content">
-                    <span class="close-button"></span>
                     <div class="instructions">
-                        - Dra og slepp utstyr<br>
-                        - Dobbeltklikk legg til tekst<br>
-                        - Høgreklikk roterer element<br>
-                        - Klikk på "+" eller "-" for å endre størrelse i browser<br>
-                        - Slette med dobbeltklikk
-                        - Velg Blyant for å tegne<br>
-                        - Hold linje inne for tre sekunder for å få rett linje<br>
+                        <div class="close-button">✖</div>
+                        - Dra og slepp utstyr<br><br>
+                        - Dobbeltklikk legg til tekst<br><br>
+                        - Høgreklikk roterer element<br><br>
+                        - Klikk på "+" eller "-" for å endre størrelse i browser<br><br>
+                        - Slette med dobbeltklikk<br><br>
+                        - Velg Blyant for å tegne<br><br>
+                        - Hold linje inne for tre sekunder for å få rett linje<br><br>
                         - Bruk google chrome for best resultat
                     </div>
                 </div>
             </div>
-            <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her" />
+            <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her..." />
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
@@ -88,7 +87,11 @@
                 </div>
             </div>
             <div class="tools">
-            <button id="penButton">✏️</button>
+                <button id="black" class="color"></button>
+                <button id="red" class="color"></button>
+                <button id="blue" class="color"></button>
+                <button id="green" class="color"></button>
+                <button id="penButton">✏️</button>
             </div>
             <label>
                 <input type="checkbox" id="toggleHSCPlan" checked>

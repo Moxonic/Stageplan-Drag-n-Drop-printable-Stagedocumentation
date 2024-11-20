@@ -31,6 +31,9 @@ html, body {
 
   #playNameInput {
     height:20px;
+    border-radius: 10px;
+    border: 1px solid #555454;
+    padding: 10px 35px;
   }
 
   .equipment {
@@ -258,21 +261,31 @@ html, body {
   padding: 8px;
 
 }
+.tools{
+  position:relative;
+  height: 50px;
+  width: 50px;
+}
 #penButton{
+  position:absolute;
   display: flex;
   align-items: center;
   justify-content: center;
+  top:5px;
+  left:5px;
   display: flex;
   height: 30px;
   width: 30px;
   flex-direction: column;
   padding: 8px;
   border-radius: 50%;
-  border:solid 1px #ccc;
-  background-color: #4c79af;
+  border:solid 1px #cccccc00;
+  background: #dadbdb;
   color: white;
   margin: 5px;
   cursor: pointer;
+  z-index: 100;
+  
 }
 #rigDokuLink{
   position:absolute;
@@ -312,13 +325,11 @@ html, body {
     font-weight: bold; /* Use bold font weight */
     height: 60px; /* Slightly taller for prominence */
     font-size: 30px; /* Larger font size for visibility */
-    background-color: #4c79af; /* Dark background color */
-    color: #fff; /* White text color */
+    color: #4c79af; /* White text color */
     display: flex; /* Use flexbox for alignment */
     align-items: center; /* Center vertically */
     justify-content: center; /* Center horizontally */
     padding: 0 20px; /* Add some padding */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   }
   #rigDokuLink{
     margin:30px;
@@ -343,6 +354,7 @@ html, body {
     box-shadow: 0px 18px 67px -10px rgba(0,0,0,0.75);
   }
     .instructions {
+      position: relative;
       display: flex; /* Hide the instructions by default */
       align-self: center;
       justify-self: center;
@@ -363,31 +375,70 @@ html, body {
     top: 0;
     left: 0;
     height: 100%;
+    width: 100%;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     text-align: center;
     padding-top: 50px;
     z-index: 1000;
+    line-height: 2; /* Increase line height for better readability */
 }
 #infoButton {
-  height:25px;
-  width:25px;
+  height:auto;
+  width:auto;
+  right: 10px;
+  top: 10px;
   position:absolute;
-  right:15px;
-  top:15px;
-  background-color: #4c79af;
-  color:white;
   border-color: #f9f9f9;
-  border:solid;
+  border:0px solid;
+  background-color: #f9f9f900;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 5px 10;
-  border-radius: 100px;
-  font-size: 25px;
-
+  font-size: 30px;
+  z-index: 1000;
 }
 
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+  color: rgb(80, 80, 80);
+  font-size: 20px;
+  font-weight: bold;
+}
+.color{
+  border:none;
+  height:50px;
+  width:50px;
+  border-radius: 50%;
+  position: absolute;
+  transition: transform 0.3s ease-in-out;
+  }
+
+  .color:hover {
+    transform: scale(1.2);
+}
+#black{
+background-color: black;
+clip-path: polygon(50% 0, 100% 0, 100% 50%, 50% 50%);
+}
+#red{
+background-color: red;
+clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%); 
+}
+#blue{
+background-color: blue;
+clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
+}
+#green{
+background-color: green;
+clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
+}
   @media (max-width: 768px) {
     #main {
       flex-direction: column-reverse; /* Stack elements vertically on small screens */
