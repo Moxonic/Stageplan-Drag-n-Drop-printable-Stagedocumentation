@@ -10,7 +10,7 @@
     <div id="main">
         <!-- Sidebar for predefined items -->
         <div id="sidebar">
-            <button id="infoButton">🛟</button>
+            <button id="infoButton">info</button>
             <div class="header">
                 SCENEPLANER LYD 
             </div>
@@ -30,6 +30,10 @@
                 </div>
             </div>
             <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her..." />
+            <label>
+                <input type="checkbox" id="toggleHSCPlan" checked>
+                Vis HSC-kart
+            </label>
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
@@ -94,10 +98,8 @@
                 <button id="green" class="color"></button>
                 <button id="penButton">✏️</button>
             </div>
-            <label>
-                <input type="checkbox" id="toggleHSCPlan" checked>
-                Vis HSC-kart
-            </label>
+            <textarea id="playComments" placeholder="husk at..." rows="6" cols="50"></textarea>
+
             <!-- Export Button -->
             <button id="export">Eksporter PDF</button>            
             <a href="riggDoku.html" id="rigDokuLink">📄</a>
