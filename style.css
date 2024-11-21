@@ -67,6 +67,14 @@ html, body {
   width: 15px; /* Fixed width for the triangle */
   height: 0;
 }
+.upm{
+  position:absolute;
+  border-bottom: 10px solid rgb(44, 43, 43);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+  width: 20px; /* Fixed width for the triangle */
+  height: 0;
+}
 .cqName{
   font-size: 8px;
   color: rgb(222, 221, 221);
@@ -320,7 +328,8 @@ html, body {
     width:100%;
   }  
   .header {
-    position:relative;
+    position:absolute;
+    top: 1px;
     font-family: 'Arial Black', Gadget, sans-serif;
     font-weight: bold; /* Use bold font weight */
     height: 60px; /* Slightly taller for prominence */
@@ -447,6 +456,7 @@ clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
 
     #sidebar {
       position: relative; /* Remove fixed position */
+      justify-content: space-evenly;
       width: auto; /* Full width for sidebar */
       padding:0px;
       height: auto; /* Adjust height to fit content */

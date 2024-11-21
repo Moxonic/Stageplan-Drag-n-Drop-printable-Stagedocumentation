@@ -5,13 +5,12 @@ let penEnabled = false;
 let lineWidth = 2;
 let strokeStyle = '#000000';
 let holdTimer = null;
-let holdDuration = 3000; // Duration in milliseconds to detect a long hold
+let holdDuration = 5000; // Duration in milliseconds to detect a long hold
 let isStraightLine = false;
 let currentLine = [];
 let lines = []; // Array to store all lines
 let history = []; // Array to store the history of canvas states
 let penColor = 'black';
-
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
@@ -19,15 +18,18 @@ const penButton = document.getElementById('penButton');
 const thicknessButtons = document.querySelectorAll('.thickness');
 const colorButtons = document.querySelectorAll('.color');
 
-//choose marker color
+// Choose marker color
 colorButtons.forEach(button => {
     button.addEventListener('click', () => {
-        penColor = button.id;
-        penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
-        console.log(penColor);
+        if (!isDrawing) {
+            penColor = button.id;
+            penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
+            console.log(penColor);
+        }
     });
 });
-//visual active pen color
+
+// Visual active pen color
 penButton.addEventListener('click', () => {
     penEnabled = !penEnabled;
     penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
@@ -36,13 +38,9 @@ penButton.addEventListener('click', () => {
 
 thicknessButtons.forEach(button => {
     button.addEventListener('click', () => {
-        lineWidth = parseInt(button.dataset.thickness, 10);
-    });
-});
-
-colorButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        strokeStyle = penColor;
+        if (!isDrawing) {
+            lineWidth = parseInt(button.dataset.thickness, 10);
+        }
     });
 });
 
@@ -124,6 +122,14 @@ function undo() {
     }
 }
 
+// Function to undo the last drawn line
+function undoLastLine() {
+    if (lines.length > 0) {
+        lines.pop(); // Remove the last line from the lines array
+        redrawCanvas(); // Redraw the canvas without the last line
+    }
+}
+
 function deleteLastLine() {
     if (lines.length > 0) {
         lines.pop(); // Remove the last line from the lines array
@@ -131,6 +137,7 @@ function deleteLastLine() {
     }
 }
 
+// Function to redraw the canvas
 function redrawCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
     context.lineCap = 'round';
@@ -147,7 +154,7 @@ function redrawCanvas() {
         context.stroke();
     });
 
-    // Redraw the current line
+    // Redraw the current line if it exists
     if (currentLine.length > 0) {
         context.lineWidth = lineWidth;
         context.strokeStyle = penColor;
@@ -167,7 +174,7 @@ function redrawCanvas() {
 // Add event listener for undo (Ctrl + Z)
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') {
-        undo();
+        undoLastLine();
     }
 });
 

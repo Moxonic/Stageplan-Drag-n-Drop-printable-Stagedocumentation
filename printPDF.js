@@ -62,14 +62,19 @@ document.getElementById("export").addEventListener("click", async () => {
     const titleX = (pageWidth - titleWidth) / 2;
     pdf.text(headerTitle, titleX, margin + headerHeight / 2);
 
+    // Add the current date to the upper right corner
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${currentDate.getFullYear()}`;
+    pdf.setFontSize(12);
+    pdf.text(formattedDate, pageWidth - margin - pdf.getTextWidth(formattedDate), margin + 5); // Position the date absolutely
+
     // Add the container image to the PDF
     const imgWidth = pageWidth*1.9 - 2 * margin;
     const imgHeight = (containerCanvas.height * imgWidth) / containerCanvas.width;
     pdf.addImage(containerImgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
 
     // Save the PDF with the name of the play and the current date
-    const currentDate = new Date();
-    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY
-    const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-sceneplan${formattedDate}.pdf`;
+    const formattedFileNameDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY
+    const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-sceneplan${formattedFileNameDate}.pdf`;
     pdf.save(fileName);
 });

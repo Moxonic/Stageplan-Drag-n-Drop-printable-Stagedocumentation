@@ -7,76 +7,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     dropZone.addEventListener('dblclick', (event) => {
-//dontcreate Text if double clicked on equipmwnt
+        // Don't create text if double-clicked on equipment
         const clickedElement = event.target;
         if (clickedElement.classList.contains('gear')) {
             return;
         }
-       
 
         const textDiv = document.createElement('div');
         textDiv.contentEditable = true;
         textDiv.style.position = 'absolute';
+        textDiv.style.border = '2px solid black';
+        textDiv.style.whiteSpace = 'pre-wrap'; // Ensure text wraps to the next line
+        textDiv.style.padding = '4px'; // Add some padding for better text visibility
         textDiv.classList.add('textAdded');
-        //Delete Text on double click
+
+        // Delete text on double-click
         const existingTextDiv = document.elementFromPoint(event.clientX, event.clientY);
         if (existingTextDiv && existingTextDiv.classList.contains('textAdded')) {
             dropZone.removeChild(existingTextDiv);
             return;
         }
+
         // Calculate position relative to dropZone
         const dropZoneRect = dropZone.getBoundingClientRect();
         textDiv.style.left = `${event.clientX - dropZoneRect.left}px`;
         textDiv.style.top = `${event.clientY - dropZoneRect.top}px`;
 
-        
-        textDiv.style.padding = '5px';
-        textDiv.style.backgroundColor = 'transparent'; // Correct background color
-
-        textDiv.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                textDiv.contentEditable = false;
-            }
-        });
-        // Add styles for better visibility and interaction
-        textDiv.style.backgroundColor = 'white';
-        textDiv.style.cursor = 'move';
-        // Make the text draggable
-        let isDragging = false;
-        let offsetX, offsetY;
-        textDiv.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete') {
-            dropZone.removeChild(textDiv);
-            }
-        });
-        textDiv.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offsetX = e.clientX - textDiv.getBoundingClientRect().left;
-            offsetY = e.clientY - textDiv.getBoundingClientRect().top;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                textDiv.style.left = `${e.clientX - dropZoneRect.left - offsetX}px`;
-                textDiv.style.top = `${e.clientY - dropZoneRect.top - offsetY}px`;
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Rotate the text on right-click
-        let currentRotation = 0;
-        textDiv.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            currentRotation = (currentRotation + 45) % 360;
-            textDiv.style.transform = `rotate(${currentRotation}deg)`;
-        });
-
         dropZone.appendChild(textDiv);
-        textDiv.focus();
-        
+        textDiv.focus(); // Focus on the new text div for immediate editing
+
+        // Add event listener to handle blur event
+        textDiv.addEventListener('blur', () => {
+            textDiv.contentEditable = false;
+            textDiv.style.border = '2px solid black'; // Change border to indicate non-editable state
+
+            // Make the div draggable
+            textDiv.draggable = true;
+
+            // Add event listeners for drag and drop functionality
+            textDiv.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', null); // Required for Firefox
+                const rect = textDiv.getBoundingClientRect();
+                e.dataTransfer.setDragImage(textDiv, rect.width / 2, rect.height / 2);
+                textDiv.style.opacity = '0.5'; // Make the div semi-transparent while dragging
+            });
+
+            textDiv.addEventListener('dragend', (e) => {
+                const dropZoneRect = dropZone.getBoundingClientRect();
+                const rect = textDiv.getBoundingClientRect();
+                textDiv.style.left = `${e.clientX - dropZoneRect.left - rect.width / 2}px`;
+                textDiv.style.top = `${e.clientY - dropZoneRect.top - rect.height / 2}px`;
+                textDiv.style.opacity = '1'; // Reset the opacity after dragging
+                textDiv.style.backgroundColor = 'white'; // Reset the background color after dragging
+            });
+
+            // Add event listener for rotation on right-click
+            textDiv.addEventListener('contextmenu', (e) => {
+                e.preventDefault(); // Prevent the default context menu from appearing
+                const currentRotation = textDiv.style.transform.match(/rotate\((\d+)deg\)/);
+                const currentAngle = currentRotation ? parseInt(currentRotation[1], 10) : 0;
+                const newAngle = (currentAngle + 45) % 360;
+                textDiv.style.transform = `rotate(${newAngle}deg)`;
+            });
+        });
     });
 });
