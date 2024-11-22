@@ -36,6 +36,19 @@ penButton.addEventListener('click', () => {
     canvas.style.cursor = penEnabled ? 'crosshair' : 'default';
 });
 
+// Ensure crosshair cursor when hovering over the canvas if drawing is active
+canvas.addEventListener('mouseenter', () => {
+    if (penEnabled) {
+        canvas.style.cursor = 'crosshair';
+    }
+});
+
+canvas.addEventListener('mouseleave', () => {
+    if (penEnabled) {
+        canvas.style.cursor = 'default';
+    }
+});
+
 thicknessButtons.forEach(button => {
     button.addEventListener('click', () => {
         if (!isDrawing) {
@@ -64,21 +77,45 @@ canvas.addEventListener('mousedown', (e) => {
     }
 });
 
+// Function to finish the current line
+function finishCurrentLine() {
+    if (isDrawing) {
+        isDrawing = false;
+        clearTimeout(holdTimer);
+        if (isStraightLine) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (event.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+            currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
+            isStraightLine = false;
+        }
+        lines.push({ points: currentLine, color: penColor, width: lineWidth });
+        currentLine = [];
+        redrawCanvas();
+    }
+}
+
+// Add event listener for mousemove to finish the line if hovering over dropped equipment
 canvas.addEventListener('mousemove', (e) => {
     if (isDrawing) {
         const rect = canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-        if (!isStraightLine) {
-            currentLine.push({ x, y });
-            redrawCanvas();
+        const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
+        if (elementUnderCursor && elementUnderCursor.classList.contains('gear')) {
+            finishCurrentLine();
         } else {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            redrawCanvas();
-            context.beginPath();
-            context.moveTo(currentLine[0].x, currentLine[0].y);
-            context.lineTo(x, y);
-            context.stroke();
+            if (!isStraightLine) {
+                currentLine.push({ x, y });
+                redrawCanvas();
+            } else {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                redrawCanvas();
+                context.beginPath();
+                context.moveTo(currentLine[0].x, currentLine[0].y);
+                context.lineTo(x, y);
+                context.stroke();
+            }
         }
     }
 });
