@@ -73,6 +73,13 @@ document.getElementById("export").addEventListener("click", async () => {
     const imgHeight = (containerCanvas.height * imgWidth) / containerCanvas.width;
     pdf.addImage(containerImgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
 
+    // Add the play comments to the PDF
+    const playComments = document.getElementById("playComments").value || "No comments provided.";
+    pdf.setFontSize(14);
+    const commentsX = margin;
+    const commentsY = margin + headerHeight + imgHeight + 10; // Adjust position below the image
+    pdf.text(playComments, commentsX, commentsY);
+
     // Save the PDF with the name of the play and the current date
     const formattedFileNameDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY
     const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-sceneplan${formattedFileNameDate}.pdf`;
