@@ -5,7 +5,12 @@ html, body {
   overflow: hidden; /* Ensure no scrollbar if content fits */
   font-family: Arial, Helvetica, sans-serif;
 }
-
+label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+}
 #main{
     display:flex;
     height: 100%;
@@ -23,6 +28,7 @@ html, body {
     background-color: #f4f4f4;
     padding: 10px;
     border-right: 1px solid #ccc;
+    padding-right: 63px;
     justify-content: center;
   } 
   #sidebar h2 {
@@ -34,7 +40,7 @@ html, body {
     height:20px;
     border-radius: 3px;
     border: 1px solid #555454;
-    padding: 10px 35px;
+    padding: 10px;
   }
   #playComments{
     width: auto;
@@ -53,8 +59,7 @@ html, body {
     justify-content: center;
     font-size: small;
     min-height: 2rem;
-    border: 2px none rgb(215, 124, 4);
-    margin: 10px 0;
+    margin: 0 5px;
     padding: 5px;
     text-align: center;
     cursor: grab;
@@ -261,16 +266,19 @@ html, body {
 }
 
 .equipment-container{
-
+  position:absolute;
+  display: flex;
+  border: 4px solid white;
+  border-right: none;
+  flex-direction: column;
+  right: 0px;
   align-items: center;
   justify-items: center;
-  display: flex;
   flex-wrap: wrap;
-  margin: 10px;
-  grid-template-columns: repeat(3, 1fr); /* Two columns with equal width */
+  margin: 0px;
   gap: 0px; /* Adds space between the items */
   box-shadow: inset 0px 18px 67px -10px rgba(212, 211, 211, 0.75);
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
 }
 
 .container{
@@ -334,7 +342,7 @@ html, body {
     display: flex; /* Use flexbox to center stage */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
-    background-color: lightgray; /* Background color for the stage area */
+    background-color: rgb(79, 79, 79); /* Background color for the stage area */
     height: 100vh;
     width:100%;
   }  
@@ -364,11 +372,11 @@ html, body {
     width:640px;
     height: 560px;
     overflow: hidden;
-    background: url('./pics/HSC.png') no-repeat center top;
+    background: url('./pics/HSC.png') no-repeat center top, #f0f0f0;
     background-size: 100%;
     background-size: 100%;
     background-position: 0 0 0 0;
-    filter: brightness(1.4); /* Lighten the background image */
+    /* filter: brightness(1.4); /* Lighten the background image */ 
     -webkit-box-shadow: 0px 18px 67px -10px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 18px 67px -10px rgba(0,0,0,0.75);
     box-shadow: 0px 18px 67px -10px rgba(0,0,0,0.75);
@@ -404,7 +412,10 @@ html, body {
     line-height: 2; /* Increase line height for better readability */
 }
 #infoButton {
-  background-color: #4CAF50; /* Green background */
+  background-color: green; /* Green background */
+  color: blue; /* Blue text */
+  border: 2px solid blue; /* Blue border */
+  border: solid 2px #4c79af; /* Blue border */
   border: none; /* Remove border */
   color: white; /* White text */
   text-align: center; /* Center the text */
@@ -418,7 +429,7 @@ html, body {
   transition: background-color 0.3s ease; /* Smooth transition */
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 10px;
   z-index: 1000;
 }
 
@@ -465,31 +476,7 @@ clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
 background-color: green;
 clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
 }
-  @media (max-width: 768px) {
-    #main {
-      flex-direction: column-reverse; /* Stack elements vertically on small screens */
-    
-    }
-
-    #sidebar {
-      position: relative; /* Remove fixed position */
-      justify-content: space-evenly;
-      width: auto; /* Full width for sidebar */
-      padding:0px;
-      height: auto; /* Adjust height to fit content */
-      border-right: none; /* Remove right border */
-    }
-
-    .stageContainer {
-      height: auto; /* Adjust height to fit content */
-      width: 100%; /* Full width for stage container */
-    }
-
-    #stage {
-      width: 100%; /* Full width for stage */
-      height: auto; /* Adjust height to maintain aspect ratio */
-    }
-  }
+ 
   #dropZone {
     width: 100%;
     height: 100%;

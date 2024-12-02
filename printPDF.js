@@ -74,7 +74,7 @@ document.getElementById("export").addEventListener("click", async () => {
     pdf.addImage(containerImgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
 
     // Add the play comments to the PDF
-    const playComments = document.getElementById("playComments").value || "No comments provided.";
+    const playComments = document.getElementById("playComments").value || "...";
     pdf.setFontSize(14);
     const commentsX = margin;
     const commentsY = margin + headerHeight + imgHeight + 10; // Adjust position below the image

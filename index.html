@@ -12,7 +12,7 @@
         <div id="sidebar">
             <button id="infoButton">info</button>
             <div class="header">
-                SCENEPLANER LYD 
+                SCENEPLANER 
             </div>
             <div id="infoOverlay" class="overlay">
                 <div class="overlay-content">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <input type="text" id="playNameInput" placeholder="skriv forstillingstitelen her..." />
+            <input type="text" id="playNameInput" placeholder="Forstillingstitelen..." />
             <label>
                 <input type="checkbox" id="toggleHSCPlan" checked>
                 Vis HSC-kart
@@ -37,7 +37,7 @@
 
             <div class="equipment-container">
                 <!-- Existing equipment divs -->
-                <div class="vuene">
+                
                     <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                         <div class="vueL gear vueName">VUE</div>
                         <div class="gearText"></div>
@@ -50,8 +50,6 @@
                         <div class="vueOpp gear vuehName">VUE</div>
                         <div class="gearText"></div>
                     </div>
-                </div>
-                <div class="genelecs">
                     <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                         <div class="genelecS gear equipmentName"></div>
                     </div>
@@ -61,35 +59,34 @@
                     <div class="equipment" draggable="true" data-type="custom-speaker-vue">
                         <div class="genelecL gear equipmentName"></div>
                     </div>
-                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-cq">
-                    <div class="cq gear cqName">CQ</div>
-                    <!-- <div class="gearText">CQ</div> -->
-                </div>
-                <div class="equipment" draggable="true" data-type="custom-speaker-cq">
-                    <div class="upm gear cqName">UPM</div>
-                </div>
-                <div class="equipment gear" draggable="true" data-type="microphone">
-                    🎤
-                </div>
-                <div class="equipment gear" draggable="true" data-type="custom-speaker-cq">
-                    <div class="tv">
-                        <div class="tele"></div>
-                        <div class="screen"></div>
-                        <div class="tvVue gear vueName"></div>
-                        <div class="frontSide"></div>
-                        <div class="tvText">VUE<br>TV</div> 
+                    <div class="equipment" draggable="true" data-type="custom-speaker-cq">
+                        <div class="cq gear cqName">CQ</div>
+                        <!-- <div class="gearText">CQ</div> -->
                     </div>
-                </div>
-                <div class="equipment gear" draggable="true" data-type="tv">
-                    🦟
-                </div>       
-                <div class="equipment gear" draggable="true" data-type="red-cross">
-                    <div class="jblBoom">JBL</div>
-                </div>
-                <div class="equipment gear" draggable="true" data-type="red-cross">
-                    ❌
-                </div>
+                    <div class="equipment" draggable="true" data-type="custom-speaker-cq">
+                        <div class="upm gear cqName">UPM</div>
+                    </div>
+                    <div class="equipment gear" draggable="true" data-type="microphone">
+                        🎤
+                    </div>
+                    <div class="equipment gear" draggable="true" data-type="custom-speaker-cq">
+                        <div class="tv">
+                            <div class="tele"></div>
+                            <div class="screen"></div>
+                            <div class="tvVue gear vueName"></div>
+                            <div class="frontSide"></div>
+                            <div class="tvText">VUE<br>TV</div> 
+                        </div>
+                    </div>
+                    <div class="equipment gear" draggable="true" data-type="tv">
+                        🦟
+                    </div>       
+                    <div class="equipment gear" draggable="true" data-type="red-cross">
+                        <div class="jblBoom">JBL</div>
+                    </div>
+                    <div class="equipment gear" draggable="true" data-type="red-cross">
+                        ❌
+                    </div>
             </div>
             <div class="tools">
                 <button id="black" class="color"></button>
@@ -98,7 +95,7 @@
                 <button id="green" class="color"></button>
                 <button id="penButton">✏️</button>
             </div>
-            <textarea id="playComments" placeholder="Kommentarer..." rows="6" cols="50"></textarea>
+            <textarea id="playComments" placeholder="Kommentarer..." rows="10" cols="50"></textarea>
 
             <!-- Export Button -->
             <button id="export">Eksporter PDF</button>            

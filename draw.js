@@ -102,7 +102,7 @@ canvas.addEventListener('mousemove', (e) => {
         const x = (e.clientX - rect.left) * (canvas.width / rect.width);
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
         const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
-        if (elementUnderCursor && elementUnderCursor.classList.contains('gear')) {
+        if (elementUnderCursor && (elementUnderCursor.classList.contains('dropped-equipment') || elementUnderCursor.classList.contains('gear'))) {
             finishCurrentLine();
         } else {
             if (!isStraightLine) {

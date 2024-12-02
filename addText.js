@@ -1,3 +1,4 @@
+    let currentAngle = 0;
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('dropZone');
 
@@ -59,16 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 textDiv.style.top = `${e.clientY - dropZoneRect.top - rect.height / 2}px`;
                 textDiv.style.opacity = '1'; // Reset the opacity after dragging
                 textDiv.style.backgroundColor = 'white'; // Reset the background color after dragging
+                textDiv.style.zIndex = '10'; // Reset the z-index after dragging
             });
 
             // Add event listener for rotation on right-click
             textDiv.addEventListener('contextmenu', (e) => {
                 e.preventDefault(); // Prevent the default context menu from appearing
-                const currentRotation = textDiv.style.transform.match(/rotate\((\d+)deg\)/);
-                const currentAngle = currentRotation ? parseInt(currentRotation[1], 10) : 0;
-                const newAngle = (currentAngle + 45) % 360;
-                textDiv.style.transform = `rotate(${newAngle}deg)`;
-            });
-        });
+                currentAngle = (currentAngle + 22.5) % 360;
+                textDiv.style.transform = `rotate(${currentAngle}deg)`;
+            });    });
     });
 });

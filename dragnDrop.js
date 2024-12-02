@@ -21,6 +21,8 @@ dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
 });
 
+
+
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     if (draggedElement) {
@@ -36,6 +38,7 @@ dropZone.addEventListener('drop', (e) => {
         draggedElement.style.border = '2px solid green';
         draggedElement.style.textAlign = 'center';
         draggedElement.style.borderRadius = '50%';
+        draggedElement.style.zIndex = '20';
         dropZone.appendChild(draggedElement); // Append the clone to the drop zone
         addDragListeners(draggedElement); // Add drag listeners to the new element
         draggedElement = null;
@@ -72,7 +75,7 @@ document.addEventListener('contextmenu', (e) => {
     const parentElement = e.target.closest('.dropped-equipment');
     if (parentElement) {
         let currentRotation = parseInt(parentElement.getAttribute('data-rotation') || '0', 10);
-        currentRotation = (currentRotation + 45) % 360;
+        currentRotation = (currentRotation + 22.5) % 360;
         parentElement.style.transform = `rotate(${currentRotation}deg)`;
         parentElement.setAttribute('data-rotation', currentRotation);
     }
