@@ -54,7 +54,7 @@ document.getElementById("export").addEventListener("click", async () => {
     const margin = 10;
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const headerHeight = 30; // Adjust as needed
+    const headerHeight = 20; // Reduced header height
 
     // Add the header title to the PDF
     pdf.setFontSize(24);
@@ -68,17 +68,34 @@ document.getElementById("export").addEventListener("click", async () => {
     pdf.setFontSize(12);
     pdf.text(formattedDate, pageWidth - margin - pdf.getTextWidth(formattedDate), margin + 5); // Position the date absolutely
 
+    // Add the play mixer input to the PDF
+    const playMixer = `Load Mixer: ${document.getElementById("playMixerInput").value || "..."}`;
+    pdf.setFontSize(14);
+    const mixerX = margin;
+    const mixerY = margin + headerHeight + 5; // Reduced space below the header
+    pdf.text(playMixer, mixerX, mixerY);
+
+    // Add the QLab input to the PDF
+    const playQLab = `Load QLab: ${document.getElementById("playQLabInput").value || "..."}`;
+    pdf.setFontSize(14);
+    const qLabX = margin;
+    const qLabY = mixerY + 10; // Adjust position below the mixer input
+    pdf.text(playQLab, qLabX, qLabY);
+
+    // Add the Liveprofessor input to the PDF
+    const playLiveprofessor = `Load PlugIns: ${document.getElementById("playLiveprofessorInput").value || "..."}`;
+    const liveprofessorY = qLabY + 10; // Adjust position below the QLab input
+    pdf.text(playLiveprofessor, mixerX, liveprofessorY);
+
     // Add the container image to the PDF
     const imgWidth = pageWidth*1.9 - 2 * margin;
     const imgHeight = (containerCanvas.height * imgWidth) / containerCanvas.width;
-    pdf.addImage(containerImgData, 'PNG', margin, margin + headerHeight, imgWidth, imgHeight);
+    pdf.addImage(containerImgData, 'PNG', margin, liveprofessorY + 10, imgWidth, imgHeight);
 
     // Add the play comments to the PDF
     const playComments = document.getElementById("playComments").value || "...";
-    pdf.setFontSize(14);
-    const commentsX = margin;
-    const commentsY = margin + headerHeight + imgHeight + 10; // Adjust position below the image
-    pdf.text(playComments, commentsX, commentsY);
+    const commentsY = liveprofessorY + imgHeight + 20; // Adjust position below the image
+    pdf.text(playComments, mixerX, commentsY);
 
     // Save the PDF with the name of the play and the current date
     const formattedFileNameDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY

@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 100%;
   overflow: hidden; /* Ensure no scrollbar if content fits */
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -13,7 +13,7 @@ label {
 }
 #main{
     display:flex;
-    height: 100%;
+    height: 100vh;
 }
 
 /* Sidebar */
@@ -24,34 +24,66 @@ label {
     flex-wrap: nowrap;
     align-items: center;
     width: fit-content ;
-    height: 100%;
+    height: 100vh;
     background-color: #f4f4f4;
-    padding: 10px;
+    padding: 0 30px ;
     border-right: 1px solid #ccc;
-    padding-right: 63px;
-    justify-content: center;
+   /*  padding-right: 63px; */
+    /* padding-bottom: 150px; */
+    justify-content: space-between;
   } 
   #sidebar h2 {
     text-align: center;
   }
-
-  input {
-    margin: 10px 0;
+  input{
+    padding:5px 15px; 
+  }
+  .sidebarContent{
+    display: flex;
+    flex-direction: row;
+    align-items: space-between;
+    justify-content: center;
+    gap: 20px;
+    border: 1px solid #555454;
+    padding: 20px;
+    border-radius: 5px;
+     
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.16), 0 4px 6px rgba(0,0,0,0.45);
+  
+  }
+  .contentAndExport{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .editContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .textinput {
+    margin: 0;
     height:20px;
+    width:15rem;
     border-radius: 3px;
     border: 1px solid #555454;
-    padding: 10px;
+    padding: 5px 15px;
   }
   #playComments{
-    width: auto;
+    width: 15rem;
     height: auto;
     overflow-x: auto; /* Enable horizontal scrolling */
-    padding: 10px; /* Add some padding */
+    padding: 10px 15px; /* Add some padding */
     max-width: 400px;
-    margin: 10px;
+    margin: 0px;
   }
 
   .equipment {
+    grid-row:span 1;
     position:relative;
     display: flex;
     flex-direction: column;
@@ -265,20 +297,19 @@ label {
   margin:10px;
 }
 
-.equipment-container{
-  position:absolute;
-  display: flex;
+.equipment-container {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   border: 4px solid white;
-  border-right: none;
-  flex-direction: column;
+  background-color: #ffffff;
+
   right: 0px;
   align-items: center;
   justify-items: center;
-  flex-wrap: wrap;
-  margin: 0px;
   gap: 0px; /* Adds space between the items */
   box-shadow: inset 0px 18px 67px -10px rgba(212, 211, 211, 0.75);
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 20px;
 }
 
 .container{
@@ -286,6 +317,12 @@ label {
   flex-direction: column;
   padding: 8px;
 
+}
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
 }
 .tools{
   position:relative;
@@ -312,7 +349,9 @@ label {
   margin: 5px;
   cursor: pointer;
   z-index: 100;
-  
+}
+#infoButton:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
 #rigDokuLink{
   position:absolute;
@@ -347,7 +386,7 @@ label {
     width:100%;
   }  
   .header {
-    position:absolute;
+    position:relative;
     top: 1px;
     font-family: 'Arial Black', Gadget, sans-serif;
     font-weight: bold; /* Use bold font weight */
@@ -411,7 +450,9 @@ label {
     z-index: 1000;
     line-height: 2; /* Increase line height for better readability */
 }
+
 #infoButton {
+  position: absolute;
   background-color: green; /* Green background */
   color: blue; /* Blue text */
   border: 2px solid blue; /* Blue border */
@@ -422,14 +463,13 @@ label {
   text-decoration: none; /* Remove underline */
   display: inline-block; /* Make it inline-block */
   font-size: 10px; /* Increase font size */
- height: 30px;
-  width: 30px;
+  height: 15px;
+  width: 15px;
   cursor: pointer; /* Pointer cursor on hover */
   border-radius: 50%; /* Rounded corners */
   transition: background-color 0.3s ease; /* Smooth transition */
-  position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
   z-index: 1000;
 }
 
@@ -492,10 +532,8 @@ clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
     transform-origin: center;
   }
   #export {
-    position:absolute;
-    bottom: 30px;
+    position:relative;
     border-radius: 5px; /* Rounded corners */
-    margin-top: 10px; /* Add some space above */
     padding: 6px 30px; /* Button styling */
     margin: 20px; /* Add some margin */
     background-color: #4CAF50; /* Button color */
@@ -503,7 +541,9 @@ clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
     border: none; /* Remove border */
     cursor: pointer; /* Pointer on hover */
     text-align: center; /* Center text */
-    
+}
+#export:hover {
+  background-color: #45a049; /* Darker green on hover */
 }
 
 .slissa{
