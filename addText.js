@@ -21,12 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
         textDiv.style.whiteSpace = 'pre-wrap'; // Ensure text wraps to the next line
         textDiv.style.padding = '4px'; // Add some padding for better text visibility
         textDiv.classList.add('textAdded');
+        
+        
 
         // Delete text on double-click
         const existingTextDiv = document.elementFromPoint(event.clientX, event.clientY);
-        if (existingTextDiv && existingTextDiv.classList.contains('textAdded')) {
-            dropZone.removeChild(existingTextDiv);
-            return;
+        if (existingTextDiv) {
+            let parentTextDiv = existingTextDiv;
+            while (parentTextDiv && !parentTextDiv.classList.contains('textAdded')) {
+                parentTextDiv = parentTextDiv.parentElement;
+            }
+            if (parentTextDiv && parentTextDiv.classList.contains('textAdded')) {
+                dropZone.removeChild(parentTextDiv);
+                console.log('Deleted text');
+                return;
+            }
         }
 
         // Calculate position relative to dropZone

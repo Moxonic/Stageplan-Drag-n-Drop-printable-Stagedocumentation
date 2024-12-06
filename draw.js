@@ -47,6 +47,16 @@ penButton.addEventListener('click', () => {
     droppedItems.forEach(item => {
         item.style.pointerEvents = window.penEnabled ? 'none' : 'auto';
     });
+
+    if (window.penEnabled === true) {
+        console.log('penEnabled');
+    }else{
+        console.log('penDisabled');
+    };
+    const textDiv = document.getElementById('textAdded');
+    textDiv.style.pointerEvents = window.penEnabled ? 'none' : 'auto'; 
+    
+
     if (window.penEnabled) {
         overlay.style.display = 'block'; // Show the overlay
     } else {
