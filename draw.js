@@ -12,6 +12,7 @@ let currentLine = [];
 let lines = []; // Array to store all lines
 let history = []; // Array to store the history of canvas states
 let penColor = 'black';
+let smoothness = 4; // Adjust this value to control the smoothness
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
@@ -24,8 +25,8 @@ colorButtons.forEach(button => {
     button.addEventListener('click', () => {
         if (!isDrawing) {
             penColor = button.id;
-            penButton.style.outline = window.penEnabled ? `4px solid ${penColor}` : 'transparent';
-            penButton.style.backgroundColor = 'transparent';
+            penButton.style.outline = window.penEnabled ? `2px solid ${penColor}` : 'none';
+            penButton.style.backgroundColor = penColor;
         }
     });
 });
@@ -33,7 +34,7 @@ colorButtons.forEach(button => {
 // Visual active pen color
 penButton.addEventListener('click', () => {
     window.penEnabled = !window.penEnabled;
-    penButton.style.outline = window.penEnabled ? `4px solid ${penColor}` : 'transparent';
+    penButton.style.outline = window.penEnabled ? `2px solid ${penColor}` : 'none';
     penButton.style.backgroundColor = window.penEnabled ? penColor : 'transparent';
 
     canvas.style.cursor = window.penEnabled ? 'crosshair' : 'default';
@@ -195,9 +196,17 @@ function redrawCanvas() {
         context.strokeStyle = line.color;
         context.beginPath();
         context.moveTo(line.points[0].x, line.points[0].y);
-        for (let i = 1; i < line.points.length; i++) {
-            context.lineTo(line.points[i].x, line.points[i].y);
+        for (let i = 1; i < line.points.length - smoothness; i++) {
+            const xc = (line.points[i].x + line.points[i + 1].x) / 2;
+            const yc = (line.points[i].y + line.points[i + 1].y) / 2;
+            context.quadraticCurveTo(line.points[i].x, line.points[i].y, xc, yc);
         }
+        context.quadraticCurveTo(
+            line.points[line.points.length - 2].x,
+            line.points[line.points.length - 2].y,
+            line.points[line.points.length - 1].x,
+            line.points[line.points.length - 1].y
+        );
         context.stroke();
     });
 
@@ -210,11 +219,27 @@ function redrawCanvas() {
         if (isStraightLine) {
             context.lineTo(currentLine[currentLine.length - 1].x, currentLine[currentLine.length - 1].y);
         } else {
-            for (let i = 1; i < currentLine.length; i++) {
-                context.lineTo(currentLine[i].x, currentLine[i].y);
+            for (let i = 1; i < currentLine.length - smoothness; i++) {
+                const xc = (currentLine[i].x + currentLine[i + 1].x) / 2;
+                const yc = (currentLine[i].y + currentLine[i + 1].y) / 2;
+                context.quadraticCurveTo(currentLine[i].x, currentLine[i].y, xc, yc);
             }
+            context.quadraticCurveTo(
+                currentLine[currentLine.length - 2].x,
+                currentLine[currentLine.length - 2].y,
+                currentLine[currentLine.length - 1].x,
+                currentLine[currentLine.length - 1].y
+            );
         }
         context.stroke();
+    }
+}
+
+// Function to undo the last drawn line
+function undoLastLine() {
+    if (lines.length > 0) {
+        lines.pop(); // Remove the last line from the lines array
+        redrawCanvas(); // Redraw the canvas without the last line
     }
 }
 
