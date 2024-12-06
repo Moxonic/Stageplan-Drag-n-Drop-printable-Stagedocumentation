@@ -6,6 +6,13 @@ let currentRotation = 0;
 const sidebar = document.querySelector('#sidebar');
 const dropZone = document.querySelector('#dropZone');
 
+if (window.penEnabled === true) {
+    console.log('penEnabled');
+}else{
+    console.log('penDisabled');
+};
+
+
 sidebar.addEventListener('dragstart', (e) => {
     if (e.target.classList.contains('equipment')) {
         draggedElement = e.target.cloneNode(true);

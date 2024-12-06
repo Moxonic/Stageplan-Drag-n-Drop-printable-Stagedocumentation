@@ -1,7 +1,8 @@
+window.window.penEnabled = false;
 let isDrawing = false;
 let startX = 0;
 let startY = 0;
-let penEnabled = false;
+
 let lineWidth = 2;
 let strokeStyle = '#000000';
 let holdTimer = null;
@@ -23,28 +24,37 @@ colorButtons.forEach(button => {
     button.addEventListener('click', () => {
         if (!isDrawing) {
             penColor = button.id;
-            penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
-            console.log(penColor);
+            penButton.style.outline = window.penEnabled ? `4px solid ${penColor}` : 'transparent';
+            penButton.style.backgroundColor = 'transparent';
         }
     });
 });
 
 // Visual active pen color
 penButton.addEventListener('click', () => {
-    penEnabled = !penEnabled;
-    penButton.style.outline = penEnabled ? `4px solid ${penColor}` : 'none';
-    canvas.style.cursor = penEnabled ? 'crosshair' : 'default';
+    window.penEnabled = !window.penEnabled;
+    penButton.style.outline = window.penEnabled ? `4px solid ${penColor}` : 'transparent';
+    penButton.style.backgroundColor = window.penEnabled ? penColor : 'transparent';
+
+    canvas.style.cursor = window.penEnabled ? 'crosshair' : 'default';
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementsByClassName('overlay')[0];
+    if (window.penEnabled) {
+        overlay.style.display = 'block'; // Show the overlay
+    } else {
+        overlay.style.display = 'none'; // Hide the overlay 
+    }
 });
 
 // Ensure crosshair cursor when hovering over the canvas if drawing is active
 canvas.addEventListener('mouseenter', () => {
-    if (penEnabled) {
+    if (window.penEnabled) {
         canvas.style.cursor = 'crosshair';
     }
 });
 
 canvas.addEventListener('mouseleave', () => {
-    if (penEnabled) {
+    if (window.penEnabled) {
         canvas.style.cursor = 'default';
     }
 });
@@ -58,7 +68,7 @@ thicknessButtons.forEach(button => {
 });
 
 canvas.addEventListener('mousedown', (e) => {
-    if (penEnabled) {
+    if (window.penEnabled) {
         isDrawing = true;
         isStraightLine = false;
         const rect = canvas.getBoundingClientRect();
