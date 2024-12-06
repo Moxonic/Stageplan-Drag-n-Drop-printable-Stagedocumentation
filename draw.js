@@ -33,6 +33,9 @@ colorButtons.forEach(button => {
 
 // Visual active pen color
 penButton.addEventListener('click', () => {
+    const droppedItems = document.querySelectorAll('.dropped-equipment');
+
+    // console.log("click")
     window.penEnabled = !window.penEnabled;
     penButton.style.outline = window.penEnabled ? `2px solid ${penColor}` : 'none';
     penButton.style.backgroundColor = window.penEnabled ? penColor : 'transparent';
@@ -40,6 +43,10 @@ penButton.addEventListener('click', () => {
     canvas.style.cursor = window.penEnabled ? 'crosshair' : 'default';
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementsByClassName('overlay')[0];
+    
+    droppedItems.forEach(item => {
+        item.style.pointerEvents = window.penEnabled ? 'none' : 'auto';
+    });
     if (window.penEnabled) {
         overlay.style.display = 'block'; // Show the overlay
     } else {
