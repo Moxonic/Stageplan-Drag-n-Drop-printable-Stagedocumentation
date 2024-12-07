@@ -31,7 +31,7 @@ label {
     border-right: 4px solid #ccc;
    /*  padding-right: 63px; */
     /* padding-bottom: 150px; */
-    justify-content: space-between;
+    justify-content: center;
   } 
   #sidebar h2 {
     text-align: center;
@@ -407,7 +407,7 @@ label {
     position:relative;
     top: 1px;
     font-family: 'Fira Code', monospace;
-    font-weight: bold; /* Use bold font weight */
+    font-weight: lighter; /* Use bold font weight */
     height: 60px; /* Slightly taller for prominence */
     font-size: 30px; /* Larger font size for visibility */
     color: #4c79af; /* White text color */
