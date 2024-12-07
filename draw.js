@@ -34,6 +34,7 @@ colorButtons.forEach(button => {
 // Visual active pen color
 penButton.addEventListener('click', () => {
     const droppedItems = document.querySelectorAll('.dropped-equipment');
+    const textDivs = document.querySelectorAll('.textAdded'); // Select all text divs
 
     // console.log("click")
     window.penEnabled = !window.penEnabled;
@@ -47,20 +48,16 @@ penButton.addEventListener('click', () => {
     droppedItems.forEach(item => {
         item.style.pointerEvents = window.penEnabled ? 'none' : 'auto';
     });
-
-    if (window.penEnabled === true) {
-        console.log('penEnabled');
-    }else{
-        console.log('penDisabled');
-    };
-    const textDiv = document.getElementById('textAdded');
-    textDiv.style.pointerEvents = window.penEnabled ? 'none' : 'auto'; 
     
+    textDivs.forEach(textDiv => {
+        textDiv.style.pointerEvents = window.penEnabled ? 'none' : 'auto';
+    });
 
+    
     if (window.penEnabled) {
         overlay.style.display = 'block'; // Show the overlay
     } else {
-        overlay.style.display = 'none'; // Hide the overlay 
+        overlay.style.display = 'none'; // Hide the overlay
     }
 });
 
