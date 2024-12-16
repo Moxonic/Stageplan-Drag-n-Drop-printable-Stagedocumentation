@@ -69,21 +69,21 @@ document.getElementById("export").addEventListener("click", async () => {
     pdf.text(formattedDate, pageWidth - margin - pdf.getTextWidth(formattedDate), margin + 5); // Position the date absolutely
 
     // Add the play mixer input to the PDF
-    const playMixer = `Load Mixer: ${document.getElementById("playMixerInput").value || "..."}`;
+    const playMixer = `Load Mixer: ${document.getElementById("playMixerInput").value || ""}`;
     pdf.setFontSize(14);
     const mixerX = margin;
     const mixerY = margin + headerHeight + 5; // Reduced space below the header
     pdf.text(playMixer, mixerX, mixerY);
 
     // Add the QLab input to the PDF
-    const playQLab = `Load QLab: ${document.getElementById("playQLabInput").value || "..."}`;
+    const playQLab = `Load QLab: ${document.getElementById("playQLabInput").value || ""}`;
     pdf.setFontSize(14);
     const qLabX = margin;
     const qLabY = mixerY + 10; // Adjust position below the mixer input
     pdf.text(playQLab, qLabX, qLabY);
 
     // Add the Liveprofessor input to the PDF
-    const playLiveprofessor = `Load PlugIns: ${document.getElementById("playLiveprofessorInput").value || "..."}`;
+    const playLiveprofessor = `Load PlugIns: ${document.getElementById("playLiveprofessorInput").value || ""}`;
     const liveprofessorY = qLabY + 10; // Adjust position below the QLab input
     pdf.text(playLiveprofessor, mixerX, liveprofessorY);
 
@@ -93,7 +93,7 @@ document.getElementById("export").addEventListener("click", async () => {
     pdf.addImage(containerImgData, 'PNG', margin, liveprofessorY + 10, imgWidth, imgHeight);
 
     // Add the play comments to the PDF
-    const playComments = document.getElementById("playComments").value || "...";
+    const playComments = document.getElementById("playComments").value || "";
     const commentsY = liveprofessorY + imgHeight + 20; // Adjust position below the image
     pdf.text(playComments, mixerX, commentsY);
 
