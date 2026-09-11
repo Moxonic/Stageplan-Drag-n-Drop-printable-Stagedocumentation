@@ -10,7 +10,6 @@ let holdDuration = 5000; // Duration in milliseconds to detect a long hold
 let isStraightLine = false;
 let currentLine = [];
 let lines = []; // Array to store all lines
-let history = []; // Array to store the history of canvas states
 let penColor = 'black';
 let smoothness = 4; // Adjust this value to control the smoothness
 
@@ -19,31 +18,37 @@ const context = canvas.getContext('2d');
 const penButton = document.getElementById('penButton');
 const thicknessButtons = document.querySelectorAll('.thickness');
 const colorButtons = document.querySelectorAll('.color');
+const penColourDot = document.getElementById('penColourDot');
 
-// Choose marker color
+// Choose marker color. The swatches sit in a dropdown hung off the pen, so a
+// pick marks the swatch, repaints the dot next to the pencil and shuts the menu.
+function setPenColor(button) {
+    penColor = button.dataset.color || button.id;
+    colorButtons.forEach(b => b.classList.toggle('is-on', b === button));
+    if (penColourDot) penColourDot.style.background = penColor;
+}
+
 colorButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (!isDrawing) {
-            penColor = button.id;
-            penButton.style.outline = window.penEnabled ? `2px solid ${penColor}` : 'none';
-            penButton.style.backgroundColor = penColor;
-        }
+        if (isDrawing) return;
+        setPenColor(button);
+        if (window.TopBar) window.TopBar.closeMenus();
     });
 });
 
-// Visual active pen color
+const startingColor = document.querySelector('.color.is-on') || colorButtons[0];
+if (startingColor) setPenColor(startingColor);
+
+// Pen on or off. The colour itself is picked from the dropdown beside it.
 penButton.addEventListener('click', () => {
     const droppedItems = document.querySelectorAll('.dropped-equipment');
     const textDivs = document.querySelectorAll('.textAdded'); // Select all text divs
 
     // console.log("click")
     window.penEnabled = !window.penEnabled;
-    penButton.style.outline = window.penEnabled ? `2px solid ${penColor}` : 'none';
-    penButton.style.backgroundColor = window.penEnabled ? penColor : 'transparent';
 
     canvas.style.cursor = window.penEnabled ? 'crosshair' : 'default';
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementsByClassName('overlay')[0];
+    const app = document.getElementById('app');
     
     droppedItems.forEach(item => {
         item.style.pointerEvents = window.penEnabled ? 'none' : 'auto';
@@ -54,10 +59,13 @@ penButton.addEventListener('click', () => {
     });
 
     
+    penButton.classList.toggle('is-on', window.penEnabled);
+    penButton.title = window.penEnabled ? 'Pen on — click to stop drawing' : 'Pen — draw cable runs';
     if (window.penEnabled) {
-        overlay.style.display = 'block'; // Show the overlay
+        if (window.Selection) window.Selection.clear();
+        app.classList.add('is-drawing');
     } else {
-        overlay.style.display = 'none'; // Hide the overlay
+        app.classList.remove('is-drawing');
     }
 });
 
@@ -91,9 +99,6 @@ canvas.addEventListener('mousedown', (e) => {
         startY = (e.clientY - rect.top) * (canvas.height / rect.height);
         currentLine = [{ x: startX, y: startY }]; // Start a new line
 
-        // Save the current state to history
-        saveState();
-
         // Start the hold timer
         holdTimer = setTimeout(() => {
             isStraightLine = true;
@@ -103,20 +108,25 @@ canvas.addEventListener('mousedown', (e) => {
 });
 
 // Function to finish the current line
-function finishCurrentLine() {
+function finishCurrentLine(e) {
     if (isDrawing) {
         isDrawing = false;
         clearTimeout(holdTimer);
-        if (isStraightLine) {
+        if (isStraightLine && e) {
             const rect = canvas.getBoundingClientRect();
-            const x = (event.clientX - rect.left) * (canvas.width / rect.width);
-            const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
             currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
             isStraightLine = false;
         }
-        lines.push({ points: currentLine, color: penColor, width: lineWidth });
+        // A click without movement leaves a single point, and the tail curve
+        // in redrawCanvas would then read points[-1]. Not a line; drop it.
+        if (currentLine.length > 1) {
+            lines.push({ points: currentLine, color: penColor, width: lineWidth });
+        }
         currentLine = [];
         redrawCanvas();
+        if (window.PlotHistory) window.PlotHistory.record();
     }
 }
 
@@ -128,7 +138,7 @@ canvas.addEventListener('mousemove', (e) => {
         const y = (e.clientY - rect.top) * (canvas.height / rect.height);
         const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY);
         if (elementUnderCursor && (elementUnderCursor.classList.contains('dropped-equipment') || elementUnderCursor.classList.contains('gear'))) {
-            finishCurrentLine();
+            finishCurrentLine(e);
         } else {
             if (!isStraightLine) {
                 currentLine.push({ x, y });
@@ -146,51 +156,14 @@ canvas.addEventListener('mousemove', (e) => {
 });
 
 canvas.addEventListener('mouseup', (e) => {
-    if (isDrawing) {
-        isDrawing = false;
-        clearTimeout(holdTimer); // Clear the hold timer
-        if (isStraightLine) {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-            currentLine = [{ x: currentLine[0].x, y: currentLine[0].y }, { x, y }];
-            isStraightLine = false;
-        }
-        lines.push({ points: currentLine, color: penColor, width: lineWidth });
-        currentLine = [];
-        redrawCanvas();
-    }
+    finishCurrentLine(e);
 });
 
-canvas.addEventListener('mouseleave', () => {
-    isDrawing = false;
-    clearTimeout(holdTimer); // Clear the hold timer
+// Leaving the canvas mid-stroke keeps what was drawn rather than losing it.
+canvas.addEventListener('mouseleave', (e) => {
+    finishCurrentLine(e);
     canvas.style.cursor = 'default';
 });
-
-function saveState() {
-    history.push(canvas.toDataURL());
-}
-
-function undo() {
-    if (history.length > 0) {
-        const previousState = history.pop();
-        const img = new Image();
-        img.src = previousState;
-        img.onload = () => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(img, 0, 0);
-        };
-    }
-}
-
-// Function to undo the last drawn line
-function undoLastLine() {
-    if (lines.length > 0) {
-        lines.pop(); // Remove the last line from the lines array
-        redrawCanvas(); // Redraw the canvas without the last line
-    }
-}
 
 function deleteLastLine() {
     if (lines.length > 0) {
@@ -206,6 +179,7 @@ function redrawCanvas() {
 
     // Redraw all lines
     lines.forEach(line => {
+        if (!line.points || line.points.length < 2) return;
         context.lineWidth = line.width;
         context.strokeStyle = line.color;
         context.beginPath();
@@ -225,7 +199,7 @@ function redrawCanvas() {
     });
 
     // Redraw the current line if it exists
-    if (currentLine.length > 0) {
+    if (currentLine.length > 1) {
         context.lineWidth = lineWidth;
         context.strokeStyle = penColor;
         context.beginPath();
@@ -257,16 +231,5 @@ function undoLastLine() {
     }
 }
 
-// Add event listener for undo (Ctrl + Z)
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'z') {
-        undoLastLine();
-    }
-});
-
-// Add event listener for delete last line (Ctrl + Y)
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'y') {
-        deleteLastLine();
-    }
-});
+// Ctrl+Z and Ctrl+Y are handled by history.js, which undoes lines, equipment
+// and text together. undoLastLine and deleteLastLine are kept for callers.

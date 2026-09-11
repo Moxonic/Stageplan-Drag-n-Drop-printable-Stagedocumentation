@@ -1,0 +1,473 @@
+/* ui.css — design tokens and the application shell.
+   Loaded before style.css so the older rules can still override where they
+   need to, and so every panel stylesheet can rely on these variables. */
+
+:root {
+  /* neutrals */
+  --c-bg:        #eef0f3;
+  --c-surface:   #ffffff;
+  --c-surface-2: #f6f7f9;
+  --c-sunken:    #e7eaee;
+  --c-line:      #dcdfe5;
+  --c-line-2:    #c8cdd5;
+
+  /* text */
+  --c-text:      #1d2329;
+  --c-text-2:    #5b6672;
+  --c-text-3:    #8a95a1;
+  --c-on-accent: #ffffff;
+
+  /* accent and status */
+  --c-accent:      #2f6dbd;
+  --c-accent-dark: #255a9e;
+  --c-accent-soft: #e8f0fa;
+  --c-danger:      #c0392b;
+  --c-warn:        #d08700;
+
+  /* the work surface */
+  --c-stage-bg:   #4a4f57;
+  --c-stage-dot:  #5b616a;
+  --c-stage-deck: #ffffff;
+
+  /* spacing scale */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+
+  /* radii */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-pill: 999px;
+
+  /* elevation */
+  --e-1: 0 1px 2px rgba(16, 24, 32, 0.08);
+  --e-2: 0 2px 8px rgba(16, 24, 32, 0.10);
+  --e-3: 0 8px 24px rgba(16, 24, 32, 0.16);
+  --e-4: 0 18px 48px rgba(16, 24, 32, 0.28);
+
+  /* type */
+  --f-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --t-xs: 11px;
+  --t-sm: 12px;
+  --t-md: 13px;
+  --t-lg: 15px;
+  --t-xl: 18px;
+
+  --topbar-h: 52px;
+  --rail-w: 236px;
+}
+
+/* ---------------- shell ---------------- */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--f-ui);
+  font-size: var(--t-md);
+  color: var(--c-text);
+  background: var(--c-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ---------------- top bar ---------------- */
+
+.topbar {
+  position: relative;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: none;
+  height: var(--topbar-h);
+  padding: 0 var(--s-3);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
+  box-shadow: var(--e-1);
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-right: var(--s-3);
+  font-size: var(--t-lg);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+  white-space: nowrap;
+}
+
+.wordmark b {
+  font-weight: 650;
+  color: var(--c-accent);
+}
+
+.topbarSpacer { flex: 1; }
+
+.topbarGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.topbarDivider {
+  width: 1px;
+  height: 22px;
+  margin: 0 var(--s-2);
+  background: var(--c-line);
+}
+
+/* ---------------- buttons ---------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 var(--s-3);
+  font-family: inherit;
+  font-size: var(--t-md);
+  font-weight: 500;
+  color: var(--c-text);
+  white-space: nowrap;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.btn:hover { background: var(--c-surface-2); border-color: #b3b9c3; }
+.btn:active { background: var(--c-sunken); }
+
+.btn:focus-visible,
+.iconBtn:focus-visible,
+.menuBtn:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 1px;
+}
+
+.btn:disabled,
+.iconBtn:disabled {
+  color: var(--c-text-3);
+  background: var(--c-surface-2);
+  border-color: var(--c-line);
+  cursor: default;
+}
+
+.btn--primary {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.btn--primary:hover { background: var(--c-accent-dark); border-color: var(--c-accent-dark); }
+.btn--primary:disabled { background: #a9c0de; border-color: #a9c0de; color: #fff; }
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn--ghost:hover { background: var(--c-surface-2); border-color: transparent; }
+
+.btn--danger { color: var(--c-danger); }
+.btn--danger:hover { background: #fdf0ee; border-color: #edc3bd; }
+
+/* square icon button */
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--c-text-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.iconBtn:hover { background: var(--c-surface-2); color: var(--c-text); }
+.iconBtn.is-on { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-accent); }
+
+/* a top-bar button that opens a menu */
+.menuBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  font-weight: 500;
+  color: var(--c-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.menuBtn:hover { background: var(--c-surface-2); }
+.menuBtn[aria-expanded="true"] { background: var(--c-accent-soft); color: var(--c-accent-dark); }
+.menuBtn::after { content: '⌄'; font-size: 11px; line-height: 1; opacity: 0.65; transform: translateY(-2px); }
+
+/* pen, with its colour dropdown joined onto the right */
+.splitBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+#penColourBtn {
+  width: auto;
+  gap: 3px;
+  padding: 0 5px;
+}
+
+#penColourBtn[aria-expanded="true"] {
+  background: var(--c-accent-soft);
+  color: var(--c-accent-dark);
+}
+
+#penColourBtn::after {
+  content: '⌄';
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.65;
+  transform: translateY(-2px);
+}
+
+/* shows which colour the next line will be drawn in */
+#penColourDot {
+  width: 12px;
+  height: 12px;
+  background: #1d2329;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------------- top-bar popovers ---------------- */
+
+.popover {
+  position: absolute;
+  top: calc(var(--topbar-h) - 6px);
+  z-index: 320;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  width: 280px;
+  padding: var(--s-4);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-3);
+}
+
+.popover--compact { width: 210px; }
+
+.popover[hidden] { display: none !important; }
+
+.popoverTitle {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field > label {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--c-text-2);
+}
+
+.fieldReq {
+  margin-left: 4px;
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+
+/* why the export was refused, shown under the field that is still empty */
+.fieldError {
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--c-danger);
+}
+
+.fieldError[hidden] { display: none !important; }
+
+/* ---------------- form controls ---------------- */
+
+.input,
+.popover input[type="text"],
+.popover textarea,
+.popover select {
+  width: 100%;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.popover textarea {
+  height: auto;
+  min-height: 92px;
+  padding: 8px 10px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.input:focus,
+.popover input.is-invalid {
+  border-color: var(--c-danger);
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.14);
+}
+
+.popover input:focus,
+.popover textarea:focus,
+.popover select:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px rgba(47, 109, 189, 0.16);
+}
+
+.input::placeholder,
+.popover textarea::placeholder { color: var(--c-text-3); }
+
+/* numbers read better aligned */
+input[type="number"] { font-variant-numeric: tabular-nums; }
+
+/* ---------------- workspace ---------------- */
+
+.workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.rail {
+  position: relative;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  width: var(--rail-w);
+  min-height: 0;
+  padding: var(--s-3);
+  background: var(--c-surface);
+  border-right: 1px solid var(--c-line);
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.rail::-webkit-scrollbar { width: 10px; }
+.rail::-webkit-scrollbar-thumb { background: #d3d7dd; border: 3px solid var(--c-surface); border-radius: var(--r-pill); }
+.rail::-webkit-scrollbar-thumb:hover { background: #bcc2ca; }
+
+.railTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+/* ---------------- status strip under the stage ---------------- */
+
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: none;
+  height: 30px;
+  padding: 0 var(--s-4);
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-line);
+}
+
+.statusbar b {
+  font-weight: 600;
+  color: var(--c-text-2);
+}
+
+.statusHint { margin-left: auto; }
+
+kbd {
+  display: inline-block;
+  min-width: 8px;
+  padding: 1px 5px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--c-text-2);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line-2);
+  border-bottom-width: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ---------------- drawing tools popover ---------------- */
+
+.swatchRow {
+  display: flex;
+  gap: var(--s-2);
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.swatch.is-on {
+  border-color: var(--c-accent);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 0 0 2px var(--c-accent-soft);
+}
+
+#black { background: #1d2329; }
+#red   { background: #d3382c; }
+#blue  { background: #2f6dbd; }
+#green { background: #2e9e5b; }

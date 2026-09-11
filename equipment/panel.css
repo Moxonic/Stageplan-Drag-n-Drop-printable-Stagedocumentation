@@ -1,0 +1,432 @@
+/* panel.css — the equipment rail: palette chooser, search, the palette
+   itself, custom items and the scale controls. Tokens come from ui.css. */
+
+#eqPanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  width: 100%;
+}
+
+/* display:flex below would otherwise beat the hidden attribute. */
+.eqMenu[hidden],
+.eqCustomForm[hidden],
+.eqResults[hidden] { display: none !important; }
+
+/* ---- palette chooser ---- */
+
+.eqBar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.eqPaletteSelect {
+  flex: 1;
+  min-width: 0;
+  height: 30px;
+  padding: 0 6px;
+  font-family: inherit;
+  font-size: var(--t-sm);
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+}
+
+.eqIconBtn {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--c-text-2);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.eqIconBtn:hover { background: var(--c-surface-2); color: var(--c-text); }
+
+.eqIconBtn.isOn {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.eqMenu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  min-width: 168px;
+  padding: var(--s-1);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-3);
+}
+
+.eqMenuItem {
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  text-align: left;
+  color: var(--c-text);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.eqMenuItem:hover { background: var(--c-accent-soft); color: var(--c-accent-dark); }
+
+/* ---- search ---- */
+
+.eqSearchWrap {
+  display: flex;
+  gap: var(--s-1);
+}
+
+.eqSearch {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+}
+
+.eqSearch::placeholder { color: var(--c-text-3); }
+
+.eqSearch:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px rgba(47, 109, 189, 0.16);
+}
+
+/* Wider than the rail: search results need room for a full model name. */
+.eqResults {
+  position: fixed;
+  z-index: 400;
+  width: 320px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-3);
+}
+
+.eqGroupHead {
+  position: sticky;
+  top: 0;
+  padding: 6px 12px;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  background: var(--c-surface-2);
+  border-bottom: 1px solid var(--c-line);
+}
+
+.eqResult {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 6px 10px;
+  cursor: grab;
+  border-bottom: 1px solid var(--c-surface-2);
+}
+
+.eqResult:last-child { border-bottom: none; }
+.eqResult:hover { background: var(--c-accent-soft); }
+
+.eqResultPic {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+.eqResultText { flex: 1; min-width: 0; }
+
+.eqResultName {
+  font-size: var(--t-md);
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eqResultMeta {
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eqAdd {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--c-accent);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.eqAdd:hover { color: var(--c-on-accent); background: var(--c-accent); border-color: var(--c-accent); }
+
+.eqEmpty {
+  padding: var(--s-3);
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--c-text-3);
+}
+
+/* ---- the palette ---- */
+
+.eqPalette {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-1);
+  min-height: 64px;
+  padding: var(--s-2);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+}
+
+/* The palette is a grid, so a message in it has to span every column. */
+.eqPalette .eqEmpty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--s-3) var(--s-2);
+}
+
+.eqTile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  width: 100%;
+  min-height: 56px;
+  padding: 5px 2px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  cursor: grab;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.eqTile:hover {
+  border-color: var(--c-accent);
+  box-shadow: var(--e-1);
+}
+
+.eqTile .eqThumb { display: block; flex: none; }
+
+.eqTileCap {
+  max-width: 100%;
+  font-size: 9px;
+  line-height: 1.1;
+  color: var(--c-text-2);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eqPalette.isEditing .eqTile {
+  border-style: dashed;
+  border-color: var(--c-line-2);
+}
+
+.eqTile.isDragging { opacity: 0.4; }
+
+.eqTileRemove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 9px;
+  line-height: 1;
+  color: #fff;
+  background: var(--c-danger);
+  border: 1.5px solid var(--c-surface);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+}
+
+/* ---- custom item ---- */
+
+.eqBtn {
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.eqBtn:hover { background: var(--c-surface-2); }
+
+.eqBtnPrimary {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.eqBtnPrimary:hover { background: var(--c-accent-dark); }
+
+.eqCustomForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+}
+
+.eqFormRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.eqField {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: var(--t-sm);
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+}
+
+.eqField:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px rgba(47, 109, 189, 0.16);
+}
+
+.eqNum { max-width: 64px; }
+
+.eqUnit {
+  flex: none;
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+}
+
+/* ---- scale ---- */
+
+.eqScale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--c-line);
+}
+
+.eqScaleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: auto;
+}
+
+.eqScaleLabel {
+  flex: none;
+  width: 84px;
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--c-text-2);
+}
+
+.eqRange {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--c-accent);
+}
+
+.eqCheckRow {
+  font-size: var(--t-xs);
+  color: var(--c-text-2);
+  cursor: pointer;
+}
+
+.eqCheckRow input { margin: 0; accent-color: var(--c-accent); }
+
+.eqScaleNote {
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--c-text-3);
+}
+
+.eqScaleRow.isMuted .eqScaleLabel,
+.eqScaleRow.isMuted .eqUnit { color: var(--c-text-3); }
+
+/* ---- items placed on the stage ---- */
+
+.eqOnStage {
+  position: absolute;
+  transform-origin: center center;
+}
+
+.eqIcon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.eqLabel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 2px;
+  padding: 0 3px;
+  font-size: 8px;
+  line-height: 1.25;
+  color: var(--c-text);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  pointer-events: none;
+  user-select: none;
+}

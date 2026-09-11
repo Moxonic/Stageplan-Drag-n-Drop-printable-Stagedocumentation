@@ -1,82 +1,123 @@
-    let currentAngle = 0;
-document.addEventListener('DOMContentLoaded', () => {
-    const dropZone = document.getElementById('dropZone');
+/* addText.js — free text on the plot. Double-click empty stage to add a
+   label; double-click it again to remove it.
 
-    if (!dropZone) {
-        console.error('Dropzone element not found');
-        return;
+   Text boxes are also the way to draw a plain rectangle on the plot, so they
+   are built by one factory that history.js can call to put a box back. */
+window.StageText = (function () {
+    'use strict';
+
+    const dropZone = () => document.getElementById('dropZone');
+
+    function record() {
+        if (window.PlotHistory) window.PlotHistory.record();
     }
 
-    dropZone.addEventListener('dblclick', (event) => {
-        // Don't create text if double-clicked on equipment
-        const clickedElement = event.target;
-        if (clickedElement.classList.contains('gear')) {
+    /* Build a text box with every behaviour already attached. The caller
+       positions it — history restores fractions, a double-click uses pixels. */
+    function create(opts) {
+        opts = opts || {};
+        const div = document.createElement('div');
+        div.className = 'textAdded';
+        div.style.position = 'absolute';
+        div.style.border = '1.5px solid #1d2329';
+        div.style.borderRadius = '2px';
+        div.style.whiteSpace = 'pre-wrap';
+        div.style.padding = '4px 6px';
+        div.style.zIndex = '10';
+        div.dataset.rotation = String(opts.rotation || 0);
+        div.dataset.uid = opts.uid || (window.StageScale ? window.StageScale.newUid() : String(Math.random()));
+
+        if (opts.text) div.textContent = opts.text;
+        if (opts.rotation) div.style.transform = 'rotate(' + opts.rotation + 'deg)';
+
+        div.draggable = !opts.editing;
+        if (opts.editing) div.contentEditable = 'true';
+
+        bind(div);
+        return div;
+    }
+
+    function bind(div) {
+        div.addEventListener('blur', () => {
+            div.contentEditable = 'false';
+            div.draggable = true;
+            record();
+        });
+
+        div.addEventListener('dragstart', (e) => {
+            e.stopPropagation();
+            const rect = div.getBoundingClientRect();
+            try {
+                e.dataTransfer.setData('text/plain', '');     // Firefox needs a payload
+                e.dataTransfer.setDragImage(div, rect.width / 2, rect.height / 2);
+            } catch (err) { /* older browsers */ }
+            div.dataset.grabX = e.clientX - rect.left;
+            div.dataset.grabY = e.clientY - rect.top;
+            div.style.opacity = '0.5';
+        });
+
+        div.addEventListener('dragend', (e) => {
+            const dz = dropZone();
+            const dzRect = dz.getBoundingClientRect();
+            const gx = parseFloat(div.dataset.grabX || '0');
+            const gy = parseFloat(div.dataset.grabY || '0');
+            div.style.left = (e.clientX - dzRect.left - gx) + 'px';
+            div.style.top = (e.clientY - dzRect.top - gy) + 'px';
+            div.style.opacity = '1';
+            if (window.StageScale) window.StageScale.rememberPosition(div);
+            if (window.Selection) window.Selection.sync();
+            record();
+        });
+
+        // Each box keeps its own angle, rather than sharing one counter.
+        div.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const deg = ((parseFloat(div.dataset.rotation || '0') + 22.5) % 360);
+            div.dataset.rotation = String(deg);
+            div.style.transform = 'rotate(' + deg + 'deg)';
+            if (window.Selection) window.Selection.sync();
+            record();
+        });
+    }
+
+    function init() {
+        const dz = dropZone();
+        if (!dz) {
+            console.error('Dropzone element not found');
             return;
         }
 
-        const textDiv = document.createElement('div');
-        textDiv.contentEditable = true;
-        textDiv.style.position = 'absolute';
-        textDiv.style.border = '2px solid black';
-        textDiv.style.whiteSpace = 'pre-wrap'; // Ensure text wraps to the next line
-        textDiv.style.padding = '4px'; // Add some padding for better text visibility
-        textDiv.classList.add('textAdded');
-        
-        
+        dz.addEventListener('dblclick', (event) => {
+            if (window.penEnabled) return;
 
-        // Delete text on double-click
-        const existingTextDiv = document.elementFromPoint(event.clientX, event.clientY);
-        if (existingTextDiv) {
-            let parentTextDiv = existingTextDiv;
-            while (parentTextDiv && !parentTextDiv.classList.contains('textAdded')) {
-                parentTextDiv = parentTextDiv.parentElement;
-            }
-            if (parentTextDiv && parentTextDiv.classList.contains('textAdded')) {
-                dropZone.removeChild(parentTextDiv);
-                console.log('Deleted text');
+            // equipment has its own double-click meaning, handled elsewhere
+            if (event.target.closest('.gear, .dropped-equipment, .selLayer')) return;
+
+            // a second double-click on a text box removes it
+            const existing = event.target.closest('.textAdded');
+            if (existing) {
+                if (window.Selection) window.Selection.clear();
+                existing.remove();
+                record();
                 return;
             }
-        }
 
-        // Calculate position relative to dropZone
-        const dropZoneRect = dropZone.getBoundingClientRect();
-        textDiv.style.left = `${event.clientX - dropZoneRect.left}px`;
-        textDiv.style.top = `${event.clientY - dropZoneRect.top}px`;
+            const rect = dz.getBoundingClientRect();
+            const div = create({ editing: true });
+            div.style.left = (event.clientX - rect.left) + 'px';
+            div.style.top = (event.clientY - rect.top) + 'px';
+            dz.appendChild(div);
+            if (window.StageScale) window.StageScale.rememberPosition(div);
+            div.focus();
+        });
+    }
 
-        dropZone.appendChild(textDiv);
-        textDiv.focus(); // Focus on the new text div for immediate editing
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 
-        // Add event listener to handle blur event
-        textDiv.addEventListener('blur', () => {
-            textDiv.contentEditable = false;
-            textDiv.style.border = '2px solid black'; // Change border to indicate non-editable state
-
-            // Make the div draggable
-            textDiv.draggable = true;
-
-            // Add event listeners for drag and drop functionality
-            textDiv.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', null); // Required for Firefox
-                const rect = textDiv.getBoundingClientRect();
-                e.dataTransfer.setDragImage(textDiv, rect.width / 2, rect.height / 2);
-                textDiv.style.opacity = '0.5'; // Make the div semi-transparent while dragging
-            });
-
-            textDiv.addEventListener('dragend', (e) => {
-                const dropZoneRect = dropZone.getBoundingClientRect();
-                const rect = textDiv.getBoundingClientRect();
-                textDiv.style.left = `${e.clientX - dropZoneRect.left - rect.width / 2}px`;
-                textDiv.style.top = `${e.clientY - dropZoneRect.top - rect.height / 2}px`;
-                textDiv.style.opacity = '1'; // Reset the opacity after dragging
-                textDiv.style.backgroundColor = 'white'; // Reset the background color after dragging
-                textDiv.style.zIndex = '10'; // Reset the z-index after dragging
-            });
-
-            // Add event listener for rotation on right-click
-            textDiv.addEventListener('contextmenu', (e) => {
-                e.preventDefault(); // Prevent the default context menu from appearing
-                currentAngle = (currentAngle + 22.5) % 360;
-                textDiv.style.transform = `rotate(${currentAngle}deg)`;
-            });    });
-    });
-});
+    return { create };
+})();

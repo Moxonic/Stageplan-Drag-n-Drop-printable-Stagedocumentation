@@ -1,0 +1,161 @@
+/* stageDialog.css — the "New stage" dialog.
+   The measurement form lives here now; style.css still carries the sidebar
+   block (.stageSetup, .setupTitle) and the grid rules the form reuses
+   (.dimGrid, .dimHead, .dimLabel). */
+
+.stageModal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-5);
+  background: rgba(20, 26, 32, 0.55);
+}
+
+/* display:flex above would otherwise beat the hidden attribute. */
+.stageModal[hidden] { display: none !important; }
+
+.stageModalBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  width: 344px;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--s-5);
+  background: var(--c-surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-4);
+}
+
+.stageModalClose {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--c-text-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.stageModalClose:hover { color: var(--c-text); background: var(--c-surface-2); }
+
+.stageModalTitle {
+  font-size: var(--t-xl);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+}
+
+.stageModalLead {
+  margin: 0;
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--c-text-2);
+}
+
+.stageStep {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stageStep[hidden] { display: none !important; }
+
+.stageModalActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.stageBtn {
+  flex: 1;
+  min-width: 74px;
+  height: 34px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  font-weight: 500;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.stageBtn:hover { background: var(--c-surface-2); border-color: #b3b9c3; }
+
+.stageBtn:disabled {
+  color: var(--c-text-3);
+  background: var(--c-surface-2);
+  cursor: default;
+}
+
+.stageBtnPrimary {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.stageBtnPrimary:hover { background: var(--c-accent-dark); border-color: var(--c-accent-dark); }
+.stageBtnPrimary:disabled { background: #a9c0de; border-color: #a9c0de; color: #fff; }
+
+/* The choice step reads better as one action per line. */
+#stageStepChoice .stageModalActions { flex-direction: column; }
+
+.stageModalLink {
+  align-self: flex-start;
+  padding: 0;
+  font-size: var(--t-sm);
+  color: var(--c-accent);
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.stageModalHint {
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--c-text-3);
+}
+
+.stageModalHint[hidden] { display: none !important; }
+
+#stageDialog #savedStages {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+}
+
+#stageDialog #stageNameInput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---- the stage summary line, shown in the Stage menu ---- */
+
+.stageSummary {
+  padding: 8px 10px;
+  font-size: var(--t-sm);
+  color: var(--c-text-2);
+  text-align: center;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  word-break: break-word;
+}

@@ -1,8 +1,11 @@
-document.getElementById('toggleHSCPlan').addEventListener('change', function() {
-    const stage = document.getElementById('stage');
+/* "House plan" switches between the built-in house drawing and the stage
+   defined in the "New stage" dialog. Unticking it with no stage defined yet
+   opens that dialog rather than leaving an empty stage behind. */
+document.getElementById('toggleHSCPlan').addEventListener('change', function () {
+    if (!window.StageBuilder) return;
     if (this.checked) {
-        stage.style.backgroundImage = '';
+        window.StageBuilder.useHouseStage();
     } else {
-        stage.style.backgroundImage = 'url("path/to/your/background.jpg")';
+        window.StageBuilder.applyFromForm();
     }
 });

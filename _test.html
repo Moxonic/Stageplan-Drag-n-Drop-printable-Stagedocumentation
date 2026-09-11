@@ -251,5 +251,62 @@
 <script src="draw.js"></script>
 <!-- after draw.js: reuses its canvas state when the stage is resized -->
 <script src="stageBuilder.js"></script>
+<script>
+(function () {
+    const log = { calls: [], saved: null, errors: [] };
+    window.addEventListener('error', (e) => log.errors.push('error: ' + (e.message || e.error)));
+    window.addEventListener('unhandledrejection', (e) => log.errors.push('reject: ' + (e.reason && (e.reason.stack || e.reason.message || e.reason))));
+    function tap() {
+        if (!window.jspdf) { log.errors.push('jspdf missing'); return; }
+        if (typeof html2canvas !== 'function') log.errors.push('html2canvas missing');
+        const P = window.jspdf.jsPDF.prototype;
+        const realText = P.text, realAdd = P.addImage, realSave = P.save;
+        P.text = function (t, x, y) { log.calls.push({ op: 'text', t: String(t).slice(0, 50), x: +x.toFixed(1), y: +y.toFixed(1) }); return realText.apply(this, arguments); };
+        P.addImage = function (d, f, x, y, w, h) {
+            log.calls.push({ op: 'image', x: +x.toFixed(1), y: +y.toFixed(1), w: +w.toFixed(1), h: +h.toFixed(1),
+                             bottom: +(y + h).toFixed(1), pageW: +this.internal.pageSize.getWidth().toFixed(1), pageH: +this.internal.pageSize.getHeight().toFixed(1) });
+            return realAdd.apply(this, arguments);
+        };
+        P.save = function (name) { log.saved = name; };
+    }
+    function out(label) {
+        const pre = document.createElement('pre');
+        pre.id = 'TAP_' + label;
+        pre.textContent = JSON.stringify(log, null, 1);
+        document.body.appendChild(pre);
+    }
+    window.addEventListener('load', () => {
+        tap();
+        setTimeout(async () => {
+            document.getElementById('export').click();
+            await new Promise(r => setTimeout(r, 400));
+            const gate = {
+                saved: log.saved, calls: log.calls.length,
+                menuOpen: !document.getElementById('showMenu').hidden,
+                errorShown: !document.getElementById('playNameError').hidden,
+                invalid: document.getElementById('playNameInput').classList.contains('is-invalid')
+            };
+            document.getElementById('playNameInput').value = '   ';
+            document.getElementById('export').click();
+            await new Promise(r => setTimeout(r, 300));
+            gate.afterSpaces = log.saved;
+            const pre0 = document.createElement('pre');
+            pre0.id = 'TAP_gate'; pre0.textContent = JSON.stringify(gate);
+            document.body.appendChild(pre0);
+
+            const name = document.getElementById('playNameInput');
+            name.value = 'Hamlet Dress';
+            name.dispatchEvent(new Event('input'));
+            document.getElementById('playQLabInput').value = 'hamlet_v4.qlab';
+            document.getElementById('playComments').value = 'Wireless racks stay stage left. '.repeat(12);
+            try {
+                document.getElementById('export').click();
+            } catch (err) { log.errors.push('throw: ' + err.message); }
+            await new Promise(r => setTimeout(r, 5000));
+            out('run');
+        }, 300);
+    });
+})();
+</script>
 </body>
 </html>

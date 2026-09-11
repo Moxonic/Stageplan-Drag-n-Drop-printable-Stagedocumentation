@@ -1,104 +1,171 @@
-document.getElementById("export").addEventListener("click", async () => {
-    // Get the play name from the input field
-    const headerTitle = document.getElementById("playNameInput").value || "Untitled Play"; // Default to "Untitled Play" if empty
+/* printPDF.js — the "Export PDF" button.
 
-    // Create a container to hold all elements to be captured
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-    container.style.width = '100%';
-    container.style.height = '100%';
+   One page: the show title, the loads that were filled in, the plan itself and
+   any comments. The plan is scaled to whatever room is left over, so a tall
+   stage or a page full of loads shrinks the drawing instead of running off the
+   sheet. */
+(() => {
+    'use strict';
 
-    // Clone the stage element
-    const stageClone = document.getElementById('stage').cloneNode(true);
+    const byId = (id) => document.getElementById(id);
 
-    // Capture the current state of the canvas as an image
-    const canvas = document.getElementById('canvas');
-    const canvasImage = new Image();
-    canvasImage.src = canvas.toDataURL('image/png');
+    const MARGIN = 10;        // mm, all four sides
+    const TITLE_SIZE = 24;
+    const BODY_SIZE = 14;
+    const LINE = 7;           // mm between body lines
 
-    // Ensure the canvas image is correctly positioned and scaled within the stage
-    canvasImage.style.position = 'absolute';
-    canvasImage.style.top = '0';
-    canvasImage.style.left = '0';
-    canvasImage.style.width = '100%';
-    canvasImage.style.height = '100%';
+    // Printed above the plan, but only when someone filled them in. An empty
+    // "Load QLab:" tells the crew nothing and costs the drawing space.
+    const LOADS = [
+        ['Load Mixer', 'playMixerInput'],
+        ['Load QLab', 'playQLabInput'],
+        ['Load PlugIns', 'playLiveprofessorInput']
+    ];
 
-    // Append the canvas image to the cloned stage element
-    stageClone.appendChild(canvasImage);
+    /* ---------------- the title is required ---------------- */
 
-    // Append the cloned stage element to the container
-    container.appendChild(stageClone);
+    // A plan that reaches the desk without a show name is not much use, so the
+    // title gates the export rather than defaulting to "Untitled".
+    function showTitle(event) {
+        const input = byId('playNameInput');
+        const error = byId('playNameError');
+        const title = (input.value || '').trim();
 
-    // Append the container to the body temporarily
-    document.body.appendChild(container);
+        if (title) {
+            input.classList.remove('is-invalid');
+            if (error) error.hidden = true;
+            return title;
+        }
 
-    // Capture the container as a canvas
-    const containerCanvas = await html2canvas(container, {
-        useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
-        allowTaint: true, // Allow cross-origin images
-    });
+        // the click would otherwise reach the document handler that shuts
+        // every menu, including the one being opened here
+        if (event) event.stopPropagation();
+        if (window.TopBar && window.TopBar.openMenu) window.TopBar.openMenu('showMenu');
+        input.classList.add('is-invalid');
+        if (error) error.hidden = false;
+        input.focus();
+        return null;
+    }
 
-    // Remove the temporary container from the body
-    document.body.removeChild(container);
+    function wireTitleField() {
+        const input = byId('playNameInput');
+        const error = byId('playNameError');
+        if (!input) return;
+        input.addEventListener('input', () => {
+            input.classList.remove('is-invalid');
+            if (error) error.hidden = true;
+        });
+    }
 
-    // Convert the container canvas to an image
-    const containerImgData = containerCanvas.toDataURL('image/png');
+    /* ---------------- capturing the stage ---------------- */
 
-    // Create a new PDF document
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
+    // The stage as it stands: the plan geometry, the equipment on it and the
+    // drawn lines, flattened into one image.
+    async function captureStage() {
+        if (window.Selection) window.Selection.clear();
 
-    // Define margins and dimensions
-    const margin = 10;
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const headerHeight = 20; // Reduced header height
+        const stageEl = byId('stage');
+        stageEl.classList.add('is-exporting');
+        const stageClone = stageEl.cloneNode(true);
+        stageEl.classList.remove('is-exporting');
+        stageClone.querySelectorAll('.selLayer').forEach((n) => n.remove());
 
-    // Add the header title to the PDF
-    pdf.setFontSize(24);
-    const titleWidth = pdf.getTextWidth(headerTitle);
-    const titleX = (pageWidth - titleWidth) / 2;
-    pdf.text(headerTitle, titleX, margin + headerHeight / 2);
+        // The canvas does not survive cloning, so its pixels go in as an image.
+        const canvas = byId('canvas');
+        const canvasImage = new Image();
+        canvasImage.src = canvas.toDataURL('image/png');
+        canvasImage.style.position = 'absolute';
+        canvasImage.style.top = '0';
+        canvasImage.style.left = '0';
+        canvasImage.style.width = '100%';
+        canvasImage.style.height = '100%';
+        // html2canvas reads it straight away; an undecoded image lands blank.
+        if (canvasImage.decode) await canvasImage.decode().catch(() => {});
+        stageClone.appendChild(canvasImage);
 
-    // Add the current date to the upper right corner
-    const currentDate = new Date();
-    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${currentDate.getFullYear()}`;
-    pdf.setFontSize(12);
-    pdf.text(formattedDate, pageWidth - margin - pdf.getTextWidth(formattedDate), margin + 5); // Position the date absolutely
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.appendChild(stageClone);
+        document.body.appendChild(container);
 
-    // Add the play mixer input to the PDF
-    const playMixer = `Load Mixer: ${document.getElementById("playMixerInput").value || ""}`;
-    pdf.setFontSize(14);
-    const mixerX = margin;
-    const mixerY = margin + headerHeight + 5; // Reduced space below the header
-    pdf.text(playMixer, mixerX, mixerY);
+        try {
+            return await html2canvas(container, {
+                useCORS: true,
+                scrollX: 0,
+                scrollY: 0,
+                allowTaint: true
+            });
+        } finally {
+            document.body.removeChild(container);
+        }
+    }
 
-    // Add the QLab input to the PDF
-    const playQLab = `Load QLab: ${document.getElementById("playQLabInput").value || ""}`;
-    pdf.setFontSize(14);
-    const qLabX = margin;
-    const qLabY = mixerY + 10; // Adjust position below the mixer input
-    pdf.text(playQLab, qLabX, qLabY);
+    /* ---------------- the page ---------------- */
 
-    // Add the Liveprofessor input to the PDF
-    const playLiveprofessor = `Load PlugIns: ${document.getElementById("playLiveprofessorInput").value || ""}`;
-    const liveprofessorY = qLabY + 10; // Adjust position below the QLab input
-    pdf.text(playLiveprofessor, mixerX, liveprofessorY);
+    async function exportPDF(event) {
+        const headerTitle = showTitle(event);
+        if (!headerTitle) return;
 
-    // Add the container image to the PDF
-    const imgWidth = pageWidth*1.9 - 2 * margin;
-    const imgHeight = (containerCanvas.height * imgWidth) / containerCanvas.width;
-    pdf.addImage(containerImgData, 'PNG', margin, liveprofessorY + 10, imgWidth, imgHeight);
+        const stageCanvas = await captureStage();
 
-    // Add the play comments to the PDF
-    const playComments = document.getElementById("playComments").value || "";
-    const commentsY = liveprofessorY + imgHeight + 20; // Adjust position below the image
-    pdf.text(playComments, mixerX, commentsY);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const textWidth = pageWidth - 2 * MARGIN;
 
-    // Save the PDF with the name of the play and the current date
-    const formattedFileNameDate = `${String(currentDate.getDate()).padStart(2, '0')}${String(currentDate.getMonth() + 1).padStart(2, '0')}${String(currentDate.getFullYear()).slice(-2)}`; // Format date as DDMMYY
-    const fileName = `${headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}-sceneplan${formattedFileNameDate}.pdf`;
-    pdf.save(fileName);
-});
+        // title, centred
+        pdf.setFontSize(TITLE_SIZE);
+        pdf.text(headerTitle, (pageWidth - pdf.getTextWidth(headerTitle)) / 2, MARGIN + 10);
+
+        // date, upper right
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        pdf.setFontSize(12);
+        const dateText = `${dd}/${mm}/${now.getFullYear()}`;
+        pdf.text(dateText, pageWidth - MARGIN - pdf.getTextWidth(dateText), MARGIN + 5);
+
+        // the loads that were filled in
+        pdf.setFontSize(BODY_SIZE);
+        let y = MARGIN + 20;
+        LOADS.forEach(([label, inputId]) => {
+            const value = (byId(inputId).value || '').trim();
+            if (!value) return;
+            y += LINE;
+            pdf.text(`${label}: ${value}`, MARGIN, y);
+        });
+
+        // comments are measured now so the plan knows what room is left
+        const comments = (byId('playComments').value || '').trim();
+        const commentLines = comments ? pdf.splitTextToSize(comments, textWidth) : [];
+        const commentsHeight = commentLines.length ? commentLines.length * LINE + LINE : 0;
+
+        // the plan, scaled down to fit what is left and centred on the page
+        const top = y + LINE;
+        const availWidth = textWidth;
+        const availHeight = pageHeight - MARGIN - commentsHeight - top;
+        const ratio = stageCanvas.height / stageCanvas.width;
+        let imgWidth = availWidth;
+        let imgHeight = imgWidth * ratio;
+        if (imgHeight > availHeight) {
+            imgHeight = availHeight;
+            imgWidth = imgHeight / ratio;
+        }
+        pdf.addImage(
+            stageCanvas.toDataURL('image/png'), 'PNG',
+            MARGIN + (availWidth - imgWidth) / 2, top, imgWidth, imgHeight
+        );
+
+        if (commentLines.length) pdf.text(commentLines, MARGIN, top + imgHeight + LINE);
+
+        const stamp = `${dd}${mm}${String(now.getFullYear()).slice(-2)}`;
+        const slug = headerTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        pdf.save(`${slug}-stageplan${stamp}.pdf`);
+    }
+
+    byId('export').addEventListener('click', exportPDF);
+    wireTitleField();
+})();
