@@ -1,0 +1,270 @@
+/* account.css — the sign-in window, the account panel, the shows in the
+   account and the team. Tokens from ui.css; fields and buttons are the ones
+   the rest of the app already uses. */
+
+/* ---------------- the gate ---------------- */
+
+.authGate {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-5);
+  overflow-y: auto;
+  background: var(--c-bg);
+  font-family: var(--f-ui);
+}
+
+.authGate[hidden] { display: none !important; }
+
+.authBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  width: 360px;
+  max-width: 100%;
+  padding: var(--s-6) var(--s-5);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-3);
+}
+
+.authBox .wordmark {
+  font-size: 22px;
+  text-align: center;
+}
+
+.authLead {
+  margin: 0;
+  font-size: var(--t-md);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--c-text-2);
+}
+
+.authStep,
+.authStep form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.authStep[hidden] { display: none !important; }
+
+.authBox .btn { justify-content: center; width: 100%; height: 38px; }
+
+.authGoogle { gap: 10px; font-weight: 600; }
+.authGoogle svg { flex: none; width: 18px; height: 18px; }
+
+.authOr {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.authOr::before,
+.authOr::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--c-line);
+}
+
+.authRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.authLink {
+  padding: 2px 4px;
+  font: inherit;
+  font-size: var(--t-sm);
+  color: var(--c-accent);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.authLink:hover { text-decoration: underline; }
+.authLink:disabled { color: var(--c-text-3); cursor: default; text-decoration: none; }
+
+.authCode {
+  font-size: 20px !important;
+  letter-spacing: 0.3em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.authBox .fieldError { text-align: center; }
+
+.authPrivacy {
+  margin: 0;
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--c-text-3);
+}
+
+/* ---------------- the top-bar panel ---------------- */
+
+#accountBtn {
+  width: auto;
+  gap: 6px;
+  padding: 0 var(--s-2);
+  font-family: inherit;
+  font-size: var(--t-sm);
+  max-width: 200px;
+}
+
+#accountBtnLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#accountBtn::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--c-line-2);
+}
+
+#accountBtn.is-signed-in::before { background: var(--c-ok); }
+
+.accountWho {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.accountWho b {
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--c-text);
+  overflow-wrap: anywhere;
+}
+
+.accountWho span {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--c-text-2);
+}
+
+.accountSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--c-line);
+}
+
+.accountSection[hidden] { display: none !important; }
+
+/* ---------------- the show in the account ---------------- */
+
+.cloudBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--c-line);
+}
+
+.cloudStatus {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--c-text-2);
+}
+
+.cloudStatus:empty { display: none; }
+.cloudStatus[data-tone="ok"]::before { content: '● '; color: var(--c-ok); }
+.cloudStatus[data-tone="warn"]::before { content: '● '; color: var(--c-warn); }
+.cloudStatus[data-tone="busy"] { color: var(--c-text-3); }
+
+.cloudList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 50vh;
+  overflow-y: auto;
+  font-size: var(--t-sm);
+  color: var(--c-text-2);
+  background: var(--c-line);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.cloudRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 8px 10px;
+  background: var(--c-surface);
+}
+
+.cloudRow.is-current { background: var(--c-accent-soft); }
+
+.cloudRowText {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cloudRowText b {
+  overflow: hidden;
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--c-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cloudRowText span { color: var(--c-text-3); }
+
+.cloudEmpty {
+  padding: var(--s-3);
+  line-height: 1.5;
+  background: var(--c-surface);
+}
+
+/* ---------------- the team ---------------- */
+
+.teamAdd {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+}
+
+.teamAdd[hidden] { display: none !important; }
+.teamAdd .input { flex: 1; min-width: 0; }
+
+#teamDialog .fieldError { margin-top: var(--s-2); }
+#teamDialog .shiftActions { margin-top: var(--s-4); }
+
+.eqMenuNote {
+  padding: 4px 10px 6px;
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+}
+
+@media (max-width: 760px) {
+  #accountBtnLabel { display: none; }
+  #accountBtn { width: 40px; padding: 0; justify-content: center; }
+  .authGate { padding: var(--s-4); align-items: flex-start; }
+  .authBox { padding: var(--s-5) var(--s-4); }
+  .cloudRow { flex-wrap: wrap; }
+  .cloudRowText { flex-basis: 100%; }
+}

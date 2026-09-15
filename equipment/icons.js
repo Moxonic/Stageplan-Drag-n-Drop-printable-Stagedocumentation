@@ -3,8 +3,9 @@
  *
  * Every symbol is generated as an SVG string and handed to the page as a
  * data-URI inside an <img>. That keeps html2canvas (used by the PDF export)
- * happy: it rasterises <img> reliably, while inline <svg> support in the old
- * 0.5.0-beta4 build is patchy.
+ * happy: it rasterises <img> reliably, while its inline <svg> support has always
+ * been the patchy part. Being vector, a symbol is redrawn rather than blown up
+ * when the export photographs the stage at print resolution.
  *
  * Two kinds of symbol:
  *   real   — drawn in plan view (seen from above), viewBox matches the real
@@ -23,7 +24,11 @@ window.EquipmentIcons = (function () {
     light: '#dcdcde',
     metal: '#9a9aa0',
     warm:  '#8a7566',
-    ink:   '#1d1d1f'
+    ink:   '#1d1d1f',
+    /* Lamps are amber wherever they appear, so a lighting plot reads apart
+       from the audio standing on the same stage. */
+    lamp:  '#eab74f',
+    lit:   '#3f6fd8'
   };
 
   function r(n) { return Math.round(n * 100) / 100; }
@@ -57,6 +62,36 @@ window.EquipmentIcons = (function () {
       ' L' + r(c.vw - s / 2) + ',' + r(c.vh - s / 2) + ' H' + r(s / 2) + ' Z" fill="' +
       C.body + '" stroke="' + C.edge + '" stroke-width="' + r(s) +
       '" stroke-linejoin="round"/>';
+  }
+
+  /* A flight of stairs in plan: the treads across the width, and a light
+     arrow up the way you climb it, which is how a plan drawing marks a
+     stair. The symbol is told how many treads to draw rather than guessing
+     from its shape, since a wide flight is no deeper than a narrow one. */
+  function stairsIcon(steps) {
+    return {
+      aspect: 1 / (steps * 0.3),
+      draw: function (c) {
+        var s = c.sw, cx = c.vw / 2;
+        var out = '<rect x="' + r(s / 2) + '" y="' + r(s / 2) + '" width="' + r(c.vw - s) +
+          '" height="' + r(c.vh - s) + '" fill="#ffffff" stroke="' + C.ink +
+          '" stroke-width="' + r(s * 1.4) + '"/>';
+
+        for (var i = 1; i < steps; i++) {
+          var y = c.vh * (i / steps);
+          out += '<line x1="' + r(s) + '" y1="' + r(y) + '" x2="' + r(c.vw - s) + '" y2="' + r(y) +
+            '" stroke="' + C.mid + '" stroke-width="' + r(s) + '"/>';
+        }
+
+        // Thin shaft, broad head: an arrow, not another tread line.
+        var head = Math.min(c.vh * 0.3, c.vw * 0.2);
+        return out +
+          '<line x1="' + r(cx) + '" y1="' + r(c.vh - s * 2) + '" x2="' + r(cx) + '" y2="' + r(head) +
+          '" stroke="' + C.mid + '" stroke-width="' + r(s * 0.7) + '"/>' +
+          '<path d="M' + r(cx) + ',' + r(s * 1.5) + ' L' + r(cx - head * 0.45) + ',' + r(head) +
+          ' H' + r(cx + head * 0.45) + ' Z" fill="' + C.ink + '"/>';
+      }
+    };
   }
 
   /* ---------- catalogue of symbols ---------- */
@@ -391,49 +426,6 @@ window.EquipmentIcons = (function () {
       }
     },
 
-    'drumkit': {
-      aspect: 1.2,
-      draw: function (c) {
-        var w = c.vw, h = c.vh, s = c.sw;
-        function ring(cx, cy, rr, fill) {
-          return '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr) + '" fill="' + fill +
-            '" stroke="' + C.ink + '" stroke-width="' + r(s) + '"/>';
-        }
-        return ring(w * 0.5, h * 0.72, w * 0.19, C.light) +          // kick
-          ring(w * 0.31, h * 0.52, w * 0.11, '#ffffff') +            // snare
-          ring(w * 0.47, h * 0.36, w * 0.1, C.light) +               // rack tom
-          ring(w * 0.63, h * 0.38, w * 0.1, C.light) +               // rack tom
-          ring(w * 0.79, h * 0.62, w * 0.13, C.light) +              // floor tom
-          ring(w * 0.2, h * 0.3, w * 0.09, C.metal) +                // hi-hat
-          ring(w * 0.8, h * 0.24, w * 0.11, C.metal) +               // ride
-          ring(w * 0.36, h * 0.16, w * 0.1, C.metal);                // crash
-      }
-    },
-
-    'piano-grand': {
-      aspect: 0.72,
-      draw: function (c) {
-        var w = c.vw, h = c.vh, s = c.sw;
-        return '<path d="M' + r(w * 0.05) + ',' + r(h * 0.14) + ' H' + r(w * 0.95) +
-          ' C' + r(w * 1.02) + ',' + r(h * 0.55) + ' ' + r(w * 0.78) + ',' + r(h * 0.99) + ' ' +
-          r(w * 0.42) + ',' + r(h * 0.96) + ' C' + r(w * 0.18) + ',' + r(h * 0.93) + ' ' +
-          r(w * 0.05) + ',' + r(h * 0.6) + ' ' + r(w * 0.05) + ',' + r(h * 0.14) + ' Z" fill="' +
-          C.body + '" stroke="' + C.ink + '" stroke-width="' + r(s) + '"/>' +
-          '<rect x="' + r(w * 0.05) + '" y="' + r(h * 0.02) + '" width="' + r(w * 0.9) +
-          '" height="' + r(h * 0.12) + '" fill="' + C.light + '" stroke="' + C.ink +
-          '" stroke-width="' + r(s) + '"/>';
-      }
-    },
-
-    'piano-upright': {
-      aspect: 2.6,
-      draw: function (c) {
-        return box(c, { fill: C.body, rad: c.sw }) +
-          '<rect x="' + r(c.vw * 0.06) + '" y="' + r(c.vh * 0.58) + '" width="' + r(c.vw * 0.88) +
-          '" height="' + r(c.vh * 0.32) + '" fill="' + C.light + '"/>';
-      }
-    },
-
     'amp-cab': {
       aspect: 1.6,
       draw: function (c) {
@@ -444,23 +436,6 @@ window.EquipmentIcons = (function () {
           '<circle cx="' + r(c.vw * 0.7) + '" cy="' + r(c.vh * 0.5) + '" r="' + r(d) +
           '" fill="none" stroke="' + C.mid + '" stroke-width="' + r(c.sw) + '"/>' +
           frontBar(c, { h: 0.1, op: 0.6 });
-      }
-    },
-
-    'keyboard': {
-      aspect: 4,
-      draw: function (c) {
-        var keys = '', n = 12;
-        for (var i = 1; i < n; i++) {
-          keys += '<line x1="' + r(c.vw * i / n) + '" y1="' + r(c.vh * 0.3) + '" x2="' +
-            r(c.vw * i / n) + '" y2="' + r(c.vh * 0.95) + '" stroke="' + C.ink +
-            '" stroke-width="' + r(c.sw * 0.7) + '" opacity="0.6"/>';
-        }
-        return '<rect x="' + r(c.sw / 2) + '" y="' + r(c.sw / 2) + '" width="' + r(c.vw - c.sw) +
-          '" height="' + r(c.vh - c.sw) + '" fill="#ffffff" stroke="' + C.ink + '" stroke-width="' +
-          r(c.sw) + '"/>' +
-          '<rect x="' + r(c.sw / 2) + '" y="' + r(c.sw / 2) + '" width="' + r(c.vw - c.sw) +
-          '" height="' + r(c.vh * 0.3) + '" fill="' + C.body + '"/>' + keys;
       }
     },
 
@@ -489,28 +464,6 @@ window.EquipmentIcons = (function () {
       }
     },
 
-    'music-stand': {
-      aspect: 1.6,
-      draw: function (c) {
-        return '<path d="M' + r(c.sw) + ',' + r(c.vh * 0.75) + ' L' + r(c.vw * 0.14) + ',' + r(c.sw) +
-          ' H' + r(c.vw - c.sw) + ' L' + r(c.vw * 0.88) + ',' + r(c.vh * 0.75) + ' Z" fill="' +
-          C.light + '" stroke="' + C.ink + '" stroke-width="' + r(c.sw) + '"/>' +
-          '<circle cx="' + r(c.vw * 0.5) + '" cy="' + r(c.vh * 0.84) + '" r="' + r(c.vh * 0.14) +
-          '" fill="' + C.body + '"/>';
-      }
-    },
-
-    'chair': {
-      aspect: 1,
-      draw: function (c) {
-        return '<rect x="' + r(c.sw) + '" y="' + r(c.vh * 0.22) + '" width="' + r(c.vw - c.sw * 2) +
-          '" height="' + r(c.vh * 0.74) + '" rx="' + r(c.vw * 0.1) + '" fill="' + C.light +
-          '" stroke="' + C.ink + '" stroke-width="' + r(c.sw) + '"/>' +
-          '<rect x="' + r(c.sw) + '" y="' + r(c.sw) + '" width="' + r(c.vw - c.sw * 2) +
-          '" height="' + r(c.vh * 0.2) + '" rx="' + r(c.vw * 0.06) + '" fill="' + C.body + '"/>';
-      }
-    },
-
     'table': {
       aspect: 2,
       draw: function (c) {
@@ -520,14 +473,203 @@ window.EquipmentIcons = (function () {
       }
     },
 
-    'person': {
+    /* ===== stairs, drapes and walls, plan view ===== */
+
+    'stairs-1': stairsIcon(1),
+    'stairs-2': stairsIcon(2),
+    'stairs-3': stairsIcon(3),
+    'stairs-4': stairsIcon(4),
+    'stairs-5': stairsIcon(5),
+    'stairs-6': stairsIcon(6),
+    'stairs-8': stairsIcon(8),
+
+    /* A drape in plan is a gathered line: the track straight behind it, the
+       fabric waved along it. One gather every half metre or so, which the
+       shape gives away without being told the width. */
+    'curtain': {
+      aspect: 12,
+      draw: function (c) {
+        var s = c.sw, mid = c.vh * 0.55;
+        var amp = Math.max(c.vh * 0.4, s);
+        var waves = Math.max(4, Math.min(40, Math.round(c.vw / (c.vh * 1.5))));
+        var step = c.vw / waves;
+        var d = 'M0,' + r(mid);
+
+        for (var i = 0; i < waves; i++) {
+          var x = step * i, bulge = (i % 2) ? amp : -amp;
+          d += ' Q' + r(x + step * 0.5) + ',' + r(mid + bulge) + ' ' + r(x + step) + ',' + r(mid);
+        }
+
+        return '<line x1="0" y1="' + r(s) + '" x2="' + r(c.vw) + '" y2="' + r(s) +
+          '" stroke="' + C.metal + '" stroke-width="' + r(s) + '"/>' +
+          '<path d="' + d + '" fill="none" stroke="' + C.ink + '" stroke-width="' + r(s * 1.6) +
+          '" stroke-linecap="round"/>';
+      }
+    },
+
+    /* Panels joined edge to edge, seen from above, with the joins drawn on
+       and the face it throws light from along the front. */
+    'led-wall': {
+      aspect: 16,
+      draw: function (c) {
+        var s = c.sw;
+        var n = Math.max(2, Math.min(24, Math.round(c.vw / (c.vh * 1.1))));
+        var out = '<rect x="' + r(s / 2) + '" y="' + r(s / 2) + '" width="' + r(c.vw - s) +
+          '" height="' + r(c.vh - s) + '" fill="' + C.body + '" stroke="' + C.edge +
+          '" stroke-width="' + r(s) + '"/>';
+
+        for (var i = 1; i < n; i++) {
+          var x = c.vw * (i / n);
+          out += '<line x1="' + r(x) + '" y1="' + r(s) + '" x2="' + r(x) + '" y2="' + r(c.vh - s) +
+            '" stroke="' + C.mid + '" stroke-width="' + r(s * 0.8) + '"/>';
+        }
+
+        return out + frontBar(c, { h: 0.34, fill: C.lit, op: 0.9 });
+      }
+    },
+
+    /* ===== lighting, plan view ===== */
+
+    /* A can from above: the lens in its yoke, with the tail at the back. */
+    'light-par': {
+      aspect: 0.85,
+      draw: function (c) {
+        var s = c.sw, cx = c.vw / 2, cy = c.vh * 0.54;
+        var rr = Math.min(c.vw, c.vh) * 0.34;
+
+        function yoke(x) {
+          return '<line x1="' + r(x) + '" y1="' + r(cy - rr) + '" x2="' + r(x) + '" y2="' +
+            r(cy + rr) + '" stroke="' + C.metal + '" stroke-width="' + r(s * 1.6) + '"/>';
+        }
+
+        // The tail runs under the can, so it joins rather than floats.
+        return '<rect x="' + r(cx - rr * 0.26) + '" y="' + r(s) + '" width="' + r(rr * 0.52) +
+          '" height="' + r(cy - s) + '" fill="' + C.mid + '"/>' +
+          yoke(cx - rr - s * 2) + yoke(cx + rr + s * 2) +
+          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr) + '" fill="' + C.body +
+          '" stroke="' + C.edge + '" stroke-width="' + r(s) + '"/>' +
+          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr * 0.6) + '" fill="' + C.lamp + '"/>';
+      }
+    },
+
+    /* Square body, round lens, and the barn doors folded flat at the front. */
+    'light-fresnel': {
+      aspect: 0.85,
+      draw: function (c) {
+        var s = c.sw, cx = c.vw / 2, cy = c.vh * 0.5;
+        var half = Math.min(c.vw, c.vh) * 0.32;
+
+        function yoke(x) {
+          return '<line x1="' + r(x) + '" y1="' + r(cy - half) + '" x2="' + r(x) + '" y2="' +
+            r(cy + half) + '" stroke="' + C.metal + '" stroke-width="' + r(s * 1.6) + '"/>';
+        }
+
+        return yoke(cx - half - s * 2) + yoke(cx + half + s * 2) +
+          '<rect x="' + r(cx - half) + '" y="' + r(cy - half) + '" width="' + r(half * 2) +
+          '" height="' + r(half * 2) + '" rx="' + r(s) + '" fill="' + C.body + '" stroke="' + C.edge +
+          '" stroke-width="' + r(s) + '"/>' +
+          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(half * 0.68) + '" fill="' + C.lamp + '"/>' +
+          '<rect x="' + r(cx - half) + '" y="' + r(cy + half) + '" width="' + r(half * 2) +
+          '" height="' + r(c.vh * 0.12) + '" rx="' + r(s) + '" fill="' + C.mid + '"/>';
+      }
+    },
+
+    /* The long ones: lamp housing at the back, barrel and lens at the front,
+       shutter handles across the middle. */
+    'light-profile': {
+      aspect: 0.45,
+      draw: function (c) {
+        var s = c.sw, cx = c.vw / 2;
+        var bodyW = c.vw * 0.66, barrelW = c.vw * 0.44;
+
+        // Shutter handles: stubs either side of the body, not a line across it.
+        var stub = (c.vw - bodyW) / 2 - s / 2, stubY = c.vh * 0.42;
+        return '<rect x="' + r(s / 2) + '" y="' + r(stubY) + '" width="' + r(stub) +
+          '" height="' + r(c.vh * 0.045) + '" fill="' + C.metal + '"/>' +
+          '<rect x="' + r(c.vw - s / 2 - stub) + '" y="' + r(stubY) + '" width="' + r(stub) +
+          '" height="' + r(c.vh * 0.045) + '" fill="' + C.metal + '"/>' +
+          '<rect x="' + r(cx - bodyW / 2) + '" y="' + r(c.vh * 0.05) + '" width="' + r(bodyW) +
+          '" height="' + r(c.vh * 0.4) + '" rx="' + r(s) + '" fill="' + C.body + '" stroke="' + C.edge +
+          '" stroke-width="' + r(s) + '"/>' +
+          '<rect x="' + r(cx - barrelW / 2) + '" y="' + r(c.vh * 0.42) + '" width="' + r(barrelW) +
+          '" height="' + r(c.vh * 0.48) + '" fill="' + C.body + '" stroke="' + C.edge +
+          '" stroke-width="' + r(s) + '"/>' +
+          '<rect x="' + r(cx - barrelW / 2 + s) + '" y="' + r(c.vh * 0.84) + '" width="' +
+          r(barrelW - s * 2) + '" height="' + r(c.vh * 0.1) + '" fill="' + C.lamp + '"/>';
+      }
+    },
+
+    /* A moving head from above: the base, the yoke across it, the head in the
+       middle of the yoke. */
+    'light-moving': {
       aspect: 1,
       draw: function (c) {
-        var cx = c.vw / 2, cy = c.vh / 2, rr = Math.min(cx, cy) - c.sw;
-        return '<path d="M' + r(cx - rr) + ',' + r(cy + rr * 0.55) + ' a' + r(rr) + ',' + r(rr) +
-          ' 0 0 1 ' + r(rr * 2) + ',0 Z" fill="' + C.mid + '"/>' +
-          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr * 0.52) + '" fill="' + C.warm +
-          '" stroke="' + C.ink + '" stroke-width="' + r(c.sw) + '"/>';
+        var s = c.sw, cx = c.vw / 2, cy = c.vh / 2;
+        var rr = Math.min(cx, cy) - s * 1.5;
+
+        return '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr) + '" fill="' + C.light +
+          '" stroke="' + C.ink + '" stroke-width="' + r(s) + '"/>' +
+          '<rect x="' + r(cx - rr) + '" y="' + r(cy - rr * 0.24) + '" width="' + r(rr * 2) +
+          '" height="' + r(rr * 0.48) + '" rx="' + r(rr * 0.24) + '" fill="' + C.mid + '"/>' +
+          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr * 0.54) + '" fill="' + C.body +
+          '" stroke="' + C.edge + '" stroke-width="' + r(s) + '"/>' +
+          '<circle cx="' + r(cx) + '" cy="' + r(cy) + '" r="' + r(rr * 0.28) + '" fill="' + C.lamp + '"/>';
+      }
+    },
+
+    /* A batten of cells in a row, as long as the bar is. */
+    'light-bar': {
+      aspect: 8,
+      draw: function (c) {
+        var s = c.sw;
+        var n = Math.max(3, Math.min(20, Math.round(c.vw / (c.vh * 1.1))));
+        var cell = c.vw / n, rr = Math.min(cell * 0.3, c.vh * 0.3);
+        var out = '<rect x="' + r(s / 2) + '" y="' + r(s / 2) + '" width="' + r(c.vw - s) +
+          '" height="' + r(c.vh - s) + '" rx="' + r(s) + '" fill="' + C.body + '" stroke="' + C.edge +
+          '" stroke-width="' + r(s) + '"/>';
+
+        for (var i = 0; i < n; i++) {
+          out += '<circle cx="' + r(cell * (i + 0.5)) + '" cy="' + r(c.vh * 0.5) + '" r="' + r(rr) +
+            '" fill="' + C.lamp + '"/>';
+        }
+        return out;
+      }
+    },
+
+    /* Compartments side by side, throwing forward: cyc floods and groundrows. */
+    'light-flood': {
+      aspect: 3,
+      draw: function (c) {
+        var s = c.sw;
+        var n = Math.max(2, Math.min(10, Math.round(c.vw / (c.vh * 0.75))));
+        var cell = (c.vw - s * 2) / n;
+        var out = box(c, { rad: s });
+
+        for (var i = 0; i < n; i++) {
+          out += '<rect x="' + r(s + cell * i + cell * 0.14) + '" y="' + r(c.vh * 0.5) +
+            '" width="' + r(cell * 0.72) + '" height="' + r(c.vh * 0.38) + '" fill="' + C.lamp + '"/>';
+        }
+        return out;
+      }
+    },
+
+    /* Lamps in two rows, which is what a blinder is. The columns come off the
+       shape, and the lamps are sized to leave the two rows apart. */
+    'light-blinder': {
+      aspect: 1,
+      draw: function (c) {
+        var s = c.sw;
+        var cols = Math.max(2, Math.min(8, Math.round(c.vw / (c.vh * 0.5))));
+        var cell = (c.vw - s * 2) / cols;
+        var rr = Math.min(cell * 0.4, c.vh * 0.19);
+        var out = box(c, { rad: s });
+
+        for (var i = 0; i < cols; i++) {
+          var cx = s + cell * (i + 0.5);
+          out += '<circle cx="' + r(cx) + '" cy="' + r(c.vh * 0.3) + '" r="' + r(rr) + '" fill="' + C.lamp + '"/>' +
+            '<circle cx="' + r(cx) + '" cy="' + r(c.vh * 0.72) + '" r="' + r(rr) + '" fill="' + C.lamp + '"/>';
+        }
+        return out;
       }
     },
 
@@ -637,6 +779,8 @@ window.EquipmentIcons = (function () {
     toDataUri: toDataUri,
     aspectOf: aspectOf,
     has: function (n) { return !!ICONS[n]; },
+    // musicians.js adds the players and their instruments this way
+    define: function (n, def) { ICONS[n] = def; },
     names: function () { return Object.keys(ICONS); },
     esc: esc,
     colors: C

@@ -1,5 +1,5 @@
 let draggedElement = null;
-let dragKind = null;        // 'new' from the sidebar, 'move' for something already placed
+let dragKind = null;        // 'new' from the sidebar, 'legacy' for a plain tile
 let offsetX = 0;
 let offsetY = 0;
 
@@ -13,7 +13,7 @@ sidebar.addEventListener('dragstart', (e) => {
     const source = e.target.closest ? e.target.closest('[data-eid]') : null;
 
     if (source && window.StageScale && window.EquipmentCatalog) {
-        // While the palette is in edit mode a drag means "reorder", not "place".
+        // While storage is in edit mode a drag means "reorder", not "place".
         if (window.EquipmentPanel && window.EquipmentPanel.isEditing()) {
             draggedElement = null;
             dragKind = null;
@@ -21,6 +21,8 @@ sidebar.addEventListener('dragstart', (e) => {
         }
         const item = window.EquipmentCatalog.get(source.dataset.eid);
         if (!item) return;
+        // Firefox drops a drag that carries nothing at all.
+        try { e.dataTransfer.setData('text/plain', item.id); } catch (err) { /* older browsers */ }
 
         draggedElement = window.StageScale.createStageElement(item);
         dragKind = 'new';
@@ -81,31 +83,85 @@ dropZone.addEventListener('drop', (e) => {
     if (window.PlotHistory) window.PlotHistory.record();
 });
 
-// Function to add drag listeners to elements on the dropzone
+/* Moving something already on the stage is done with plain mouse events, not
+   with HTML5 drag and drop. Drag and drop never moves the element, only a ghost
+   of it, and it only delivers the new position through a drop event, which the
+   browser withholds unless the release lands on something the page marked as a
+   drop target. Release anywhere else and the item stays where it was while the
+   cursor is left in drag mode. Following the pointer ourselves always ends, and
+   shows the item where it will land instead of a ghost.
+
+   Coming in by finger goes through touch.js, which does the same thing from
+   touch events. */
+
+const MOVE_SLOP = 3;      // px of travel before a press counts as a move
+let move = null;
+
+function startMove(element, e) {
+    move = {
+        node: element,
+        fromX: e.clientX,
+        fromY: e.clientY,
+        left: parseFloat(element.style.left) || 0,
+        top: parseFloat(element.style.top) || 0,
+        moved: false
+    };
+    document.addEventListener('mousemove', onMoveMouse);
+    document.addEventListener('mouseup', endMove);
+}
+
+function onMoveMouse(e) {
+    if (!move) return;
+    // an undo, or a new stage, can take the item out from under the pointer
+    if (!move.node.isConnected) { endMove(); return; }
+
+    const dx = e.clientX - move.fromX;
+    const dy = e.clientY - move.fromY;
+    if (!move.moved && Math.hypot(dx, dy) < MOVE_SLOP) return;
+
+    move.moved = true;
+    move.node.style.left = Math.round(move.left + dx) + 'px';
+    move.node.style.top = Math.round(move.top + dy) + 'px';
+    if (window.Selection) window.Selection.sync();
+}
+
+function endMove() {
+    document.removeEventListener('mousemove', onMoveMouse);
+    document.removeEventListener('mouseup', endMove);
+    if (!move) return;
+
+    const done = move;
+    move = null;
+    if (!done.moved) return;          // a click, and selecting it was the job
+    if (window.StageScale) window.StageScale.rememberPosition(done.node);
+    if (window.Selection) window.Selection.sync();
+    if (window.PlotHistory) window.PlotHistory.record();
+}
+
+// Make something on the stage movable. Named for its callers, which have been
+// asking for this since the drag-and-drop days.
 function addDragListeners(element) {
-    element.setAttribute('draggable', true);
+    // The browser's own drag would start on top of the move below and leave
+    // the cursor stuck in drag mode when it ended nowhere.
+    element.setAttribute('draggable', 'false');
 
-    element.addEventListener('dragstart', (e) => {
-        e.stopPropagation();
-        draggedElement = element;
-        dragKind = 'move';
-        const rect = element.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-    });
+    element.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;                         // the right button rotates
+        if (window.penEnabled || window.eraserEnabled) return;
+        if (e.target.closest('.selLayer')) return;          // the handles run themselves
+        if (element.isContentEditable) return;              // a label being typed into
 
-    element.addEventListener('dragover', (e) => {
-        e.preventDefault();
-    });
+        // A label left in edit mode has to be let go of here: preventDefault
+        // below keeps the caret where it is, and its blur would never fire.
+        const typing = document.activeElement;
+        if (typing && typing.isContentEditable && typing !== element) typing.blur();
 
-    element.addEventListener('dragend', () => {
-        if (window.StageScale) window.StageScale.rememberPosition(element);
-        if (window.Selection) window.Selection.sync();
-        draggedElement = null;
-        dragKind = null;
-        if (window.PlotHistory) window.PlotHistory.record();
+        e.preventDefault();        // no text selection dragged along with it
+        startMove(element, e);
     });
 }
+
+window.StageMove = { makeMovable: addDragListeners };
 
 // RIGHTCLICK ROTATION
 document.addEventListener('contextmenu', (e) => {

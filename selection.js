@@ -215,7 +215,7 @@ window.Selection = (function () {
         if (!dz) return;
 
         dz.addEventListener('mousedown', (e) => {
-            if (window.penEnabled) return;
+            if (window.penEnabled || window.eraserEnabled) return;
             if (e.target.closest('.selLayer')) return;
             const node = e.target.closest('.eqOnStage, .textAdded');
             if (node) select(node);

@@ -26,11 +26,28 @@
   width: 640px;
   height: 560px;
   overflow: hidden;
-  background: var(--house-plan) no-repeat center top, var(--c-stage-deck);
-  background-size: 100%;
+  background-color: var(--c-stage-deck);
   border: 1px solid rgba(0, 0, 0, 0.35);
   border-radius: 2px;
   box-shadow: var(--e-4);
+}
+
+/* The plot is paper in either theme: it is what the PDF prints, and the
+   symbols, labels and pen colours are all drawn for a white page. So inside
+   the stage the light tokens come back. The export clones #stage, id and
+   all, so the copy it photographs is covered too. */
+:root[data-theme="dark"] #stage {
+  color-scheme: light;
+  --c-surface:     #ffffff;
+  --c-surface-2:   #f6f7f9;
+  --c-line:        #dcdfe5;
+  --c-line-2:      #c8cdd5;
+  --c-text:        #1d2329;
+  --c-text-2:      #5b6672;
+  --c-text-3:      #8a95a1;
+  --c-accent:      #2f6dbd;
+  --c-danger:      #c0392b;
+  --c-danger-soft: #fdf0ee;
 }
 
 #dropZone {
@@ -48,14 +65,16 @@ canvas {
   height: 100%;
 }
 
-/* Pen mode: the rail steps back so the stage is clearly the live surface. */
-#app.is-drawing .rail {
-  opacity: 0.45;
-  pointer-events: none;
-  filter: saturate(0.4);
-}
-
+/* Pen mode marks the stage as the live surface and changes nothing else:
+   the rail, the menus and the scene strip stay clickable, so anything outside
+   the plan keeps selecting and dragging as it normally would. */
 #app.is-drawing #stage { box-shadow: var(--e-4), 0 0 0 2px var(--c-accent); }
+
+/* Inside the plan the pen takes over, so gear and labels let the pointer
+   through and a line can be drawn straight across them. This covers whatever
+   is dropped while the pen is already on. */
+#app.is-drawing .dropped-equipment,
+#app.is-drawing .textAdded { pointer-events: none; }
 
 /* ========================= drawn plan geometry ========================= */
 
@@ -69,7 +88,7 @@ canvas {
   pointer-events: none;
 }
 
-/* id + class so it overrides the house-plan background on #stage */
+/* id + class so the drawn geometry sits on its own, without the plain deck */
 #stage.customStage {
   background: none;
   background-color: transparent;
@@ -84,6 +103,9 @@ canvas {
 }
 
 .regionFill.orchestraPit { background-color: #dde4ec; }
+
+/* off the deck and out of the light, so it reads darker than the stage */
+.regionFill.backstage { background-color: #e3e1de; }
 
 .regionOutline {
   position: absolute;
@@ -100,6 +122,11 @@ canvas {
 .regionOutline.orchestraPit {
   border-style: dashed;
   border-color: #5a6b80;
+}
+
+.regionOutline.backstage {
+  border-style: dashed;
+  border-color: #8a8178;
 }
 
 .regionLabel {
@@ -321,21 +348,6 @@ canvas {
   background: var(--c-surface-2);
 }
 
-/* a checkbox on its own row, in a popover */
-.checkRow {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-size: var(--t-sm);
-  color: var(--c-text-2);
-  cursor: pointer;
-}
-
-.checkRow input[type="checkbox"] {
-  margin: 0;
-  accent-color: var(--c-accent);
-}
-
 /* ============================== printing ============================== */
 
 @media print {
@@ -344,8 +356,18 @@ canvas {
 
 /* ========================= selection on the plot ========================= */
 
-.eqOnStage.is-selected,
-.textAdded.is-selected { cursor: move; }
+/* Press and move, so it says move, and it does not start selecting its own
+   label text on the way. A label being typed into wants the caret back. */
+.eqOnStage,
+.textAdded {
+  cursor: move;
+  user-select: none;
+}
+
+.textAdded[contenteditable="true"] {
+  cursor: text;
+  user-select: text;
+}
 
 /* Sits over the selected item. Pointer-transparent except the handles, so a
    drag that starts on the item still moves the item. */
@@ -421,7 +443,7 @@ canvas {
 }
 
 .selAction:hover { background: var(--c-surface-2); color: var(--c-text); }
-.selAction[data-act="delete"]:hover { background: #fdf0ee; color: var(--c-danger); }
+.selAction[data-act="delete"]:hover { background: var(--c-danger-soft); color: var(--c-danger); }
 
 .selReadout {
   position: absolute;

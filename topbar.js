@@ -14,7 +14,8 @@
     const MENUS = [
         ['showMenuBtn', 'showMenu'],
         ['stageMenuBtn', 'stageMenu'],
-        ['penColourBtn', 'drawMenu']
+        ['penColourBtn', 'drawMenu'],
+        ['accountBtn', 'accountMenu']
     ];
 
     function closeMenus(except) {
@@ -28,8 +29,14 @@
         });
     }
 
-    // keep the panel under its button, and on screen
+    // Keep the panel under its button and on screen. On a narrow screen the
+    // panel spans the width instead, and responsive.css places it, so the
+    // inline left is cleared rather than fought with.
     function place(btn, menu) {
+        if (window.RailDrawer && window.RailDrawer.isDrawer()) {
+            menu.style.left = '';
+            return;
+        }
         const rect = btn.getBoundingClientRect();
         menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - menu.offsetWidth - 8)) + 'px';
     }
@@ -104,10 +111,7 @@
         const count = byId('statusCount');
         if (scale && window.StageScale) {
             const ppm = window.StageScale.pxPerMeter();
-            const fromPlan = window.StageScale.scaleSource() === 'plan';
-            scale.innerHTML = fromPlan
-                ? 'Drawn stage · <b>' + (Math.round(ppm * 10) / 10) + ' px/m</b>'
-                : 'House plan · <b>' + window.StageScale.settings.stageWidthM + ' m</b> wide';
+            scale.innerHTML = 'Stage · <b>' + (Math.round(ppm * 10) / 10) + ' px/m</b>';
         }
         if (count) {
             const items = document.querySelectorAll('#dropZone .eqOnStage').length;
@@ -116,6 +120,38 @@
             if (texts) parts.push(texts + (texts === 1 ? ' label' : ' labels'));
             count.textContent = parts.join(' · ');
         }
+    }
+
+    /* ---------------- the wordmark ---------------- */
+
+    /* The author's line is set exactly as wide as the name above it. Both are
+       spaced with letter-spacing, which also trails after the last letter, so
+       widths are compared without that trailing space. Measured rather than
+       guessed, since the width of a line depends on the fonts this machine has. */
+    function fitWordmark() {
+        const name = document.querySelector('.wordmarkName');
+        const by = document.querySelector('.wordmarkBy');
+        if (!name || !by || !name.offsetWidth) return;     // hidden on phones
+
+        const trailing = (node) => parseFloat(getComputedStyle(node).letterSpacing) || 0;
+        const target = name.getBoundingClientRect().width - trailing(name);
+
+        by.style.letterSpacing = '0px';
+        by.style.marginRight = '0px';
+        const natural = by.getBoundingClientRect().width;
+        const gaps = Math.max(1, by.textContent.trim().length - 1);
+        const spacing = Math.max(0, (target - natural) / gaps);
+
+        by.style.letterSpacing = spacing + 'px';
+        by.style.marginRight = -spacing + 'px';
+    }
+
+    function wireWordmark() {
+        fitWordmark();
+        // the face may arrive after the first measurement, and a phone turned
+        // sideways can bring a hidden wordmark back
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
+        window.addEventListener('resize', fitWordmark);
     }
 
     /* ---------------- undo and redo buttons ---------------- */
@@ -139,6 +175,7 @@
         wireMenus();
         wireInfo();
         wireHistoryButtons();
+        wireWordmark();
         refreshStatus();
         if (window.StageScale) window.StageScale.onChange(refreshStatus);
         // the plot changes outside history too (dropping, deleting)

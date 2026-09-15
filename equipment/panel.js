@@ -1,9 +1,18 @@
 /*
- * panel.js — the sidebar: search the catalogue, and keep your own kit list.
+ * panel.js — the sidebar: your own kit list, and the window that edits it.
  *
- * Palettes live in localStorage, so the strip on the left is whatever you last
- * set it to. You can keep several and switch between them, add your own items
- * with real measurements, and move a palette to another machine as a JSON file.
+ * Storage lives in localStorage, so the strip on the left is whatever you last
+ * set it to. You can keep several lists and switch between them, add your own
+ * items with real measurements, and move a list to another machine as a JSON
+ * file.
+ *
+ * The rail is only the strip you drag from. Everything that changes what is in
+ * storage — searching the catalogue, browsing it, removing and reordering —
+ * happens in the window that Edit opens.
+ *
+ * What the app now calls storage it used to call a palette. The saved key and
+ * the saved property are still spelled the old way on purpose, so a kit list
+ * saved before the rename still loads.
  */
 window.EquipmentPanel = (function () {
   'use strict';
@@ -56,6 +65,57 @@ window.EquipmentPanel = (function () {
     'di-box': 'Box',
     'power': 'Power',
     'laptop': 'Laptop',
+    'orch-violin': 'Violin',
+    'orch-viola': 'Viola',
+    'orch-cello': 'Cello',
+    'orch-double-bass': 'Double bass',
+    'orch-harp': 'Harp',
+    'orch-flute': 'Flute',
+    'orch-piccolo': 'Piccolo',
+    'orch-oboe': 'Oboe',
+    'orch-cor-anglais': 'Cor anglais',
+    'orch-clarinet': 'Clarinet',
+    'orch-bass-clarinet': 'Bass clarinet',
+    'orch-bassoon': 'Bassoon',
+    'orch-contrabassoon': 'Contrabassoon',
+    'orch-saxophone': 'Saxophone',
+    'orch-horn': 'Horn',
+    'orch-trumpet': 'Trumpet',
+    'orch-trombone': 'Trombone',
+    'orch-bass-trombone': 'Bass trombone',
+    'orch-tuba': 'Tuba',
+    'orch-timpani': 'Timpani',
+    'orch-snare-drum': 'Snare drum',
+    'orch-bass-drum': 'Bass drum',
+    'orch-cymbals': 'Cymbals',
+    'orch-marimba': 'Marimba',
+    'orch-xylophone': 'Xylophone',
+    'orch-vibraphone': 'Vibraphone',
+    'orch-glockenspiel': 'Glockenspiel',
+    'orch-tubular-bells': 'Tubular bells',
+    'orch-tam-tam': 'Tam-tam',
+    'orch-celesta': 'Celesta',
+    'orch-harpsichord': 'Harpsichord',
+    'orch-podium': 'Conductor podium',
+    'mus-guitar-acoustic': 'Acoustic guitar',
+    'mus-guitar-classical': 'Classical guitar',
+    'mus-guitar-electric': 'Electric guitar',
+    'mus-bass-electric': 'Bass guitar',
+    'mus-ukulele': 'Ukulele',
+    'mus-mandolin': 'Mandolin',
+    'mus-banjo': 'Banjo',
+    'mus-fiddle': 'Fiddle',
+    'mus-accordion': 'Accordion',
+    'mus-keys': 'Keyboard player',
+    'mus-pianist': 'Pianist',
+    'mus-drummer': 'Drummer',
+    'mus-congas': 'Congas',
+    'mus-cajon': 'Cajón',
+    'mus-bongos': 'Bongos',
+    'mus-singer': 'Singer with mic stand',
+    'mus-saxophone': 'Saxophonist',
+    'mus-trumpet': 'Trumpet player',
+    'mus-dj': 'DJ',
     'generic': 'Rectangle'
   };
 
@@ -66,7 +126,7 @@ window.EquipmentPanel = (function () {
       version: 1,
       active: 'standard',
       palettes: [
-        { id: 'standard', name: 'Standard', items: Cat.defaultPalette.slice() }
+        { id: 'standard', name: 'Storage1', items: Cat.defaultStorage.slice() }
       ],
       custom: []
     };
@@ -82,9 +142,17 @@ window.EquipmentPanel = (function () {
     } catch (e) { /* fall through to defaults */ }
     if (!store) store = freshStore();
     if (!store.custom) store.custom = [];
+    // The list everyone starts with was called Standard. A kit list saved
+    // under the old name opens as Storage1, unless it has been renamed since,
+    // which is a name of someone's own choosing and is left alone.
+    var seeded = store.palettes.filter(function (x) { return x.id === 'standard'; })[0];
+    if (seeded && seeded.name === 'Standard') {
+      seeded.name = 'Storage1';
+      persist();
+    }
     // Item IDs moved when the catalogue was translated; map anything saved
     // under an old ID onto its current one, and write the result back so the
-    // stored palette stops depending on the alias table.
+    // stored list stops depending on the alias table.
     if (Cat.resolveId) {
       var moved = false;
       store.palettes.forEach(function (p) {
@@ -101,9 +169,33 @@ window.EquipmentPanel = (function () {
 
   function persist() {
     try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {}
+    var shared = teamList(store.active);
+    if (shared) {
+      shared.custom = customFor(shared);
+      window.TeamLibrary.saveListSoon(shared);
+    }
   }
 
-  function activePalette() {
+  /* A list shared with the team lives in TeamLibrary rather than in this
+     browser's store, and is chosen by the id 'team:<row id>'. */
+  function teamList(id) {
+    if (!id || String(id).indexOf('team:') !== 0 || !window.TeamLibrary) return null;
+    return window.TeamLibrary.list(String(id).slice(5));
+  }
+
+  // The custom items a list uses, from this browser and from the team, once each.
+  function customFor(list) {
+    var seen = {};
+    return store.custom.concat(list.custom || []).filter(function (c) {
+      if (!c || list.items.indexOf(c.id) === -1 || seen[c.id]) return false;
+      seen[c.id] = true;
+      return true;
+    });
+  }
+
+  function activeStorage() {
+    var shared = teamList(store.active);
+    if (shared) return shared;
     for (var i = 0; i < store.palettes.length; i++) {
       if (store.palettes[i].id === store.active) return store.palettes[i];
     }
@@ -126,67 +218,77 @@ window.EquipmentPanel = (function () {
 
   function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
-  /* ---------------- palette strip ---------------- */
+  /* ---------------- storage strip ---------------- */
 
-  function paletteTile(item, index) {
+  /* On the rail a tile is dragged onto the stage; in the edit window it is
+     dragged to reorder and carries its own remove button. */
+  function storageTile(item, index, editable) {
     var tile = el('div', 'eqTile');
     tile.draggable = true;
     tile.dataset.eid = item.id;
     tile.dataset.index = String(index);
-    tile.title = Scale.tooltip(item) + '\nDrag onto the stage';
+    tile.title = Scale.tooltip(item) +
+      (editable ? '\nDrag to reorder' : '\nTap to place it on the stage, or drag it there');
     tile.appendChild(Scale.thumb(item));
 
     var cap = el('span', 'eqTileCap', Scale.shortLabel(item));
     tile.appendChild(cap);
 
-    if (editMode) {
+    if (editable) {
       var rm = el('button', 'eqTileRemove', '✕');
-      rm.title = 'Remove from palette';
+      rm.title = 'Remove from storage';
       rm.addEventListener('click', function (ev) {
         ev.stopPropagation();
-        var p = activePalette();
+        var p = activeStorage();
         p.items.splice(index, 1);
         persist();
-        renderPalette();
+        renderStorage();
       });
       tile.appendChild(rm);
     }
     return tile;
   }
 
-  function renderPalette() {
-    var host = document.getElementById('eqPalette');
+  function fillStorage(host, editable, emptyText) {
     if (!host) return;
     clear(host);
-    host.classList.toggle('isEditing', editMode);
 
-    var p = activePalette();
+    var p = activeStorage();
     if (!p.items.length) {
-      host.appendChild(el('div', 'eqEmpty', 'Empty. Search for equipment and press + to add it.'));
+      host.appendChild(el('div', 'eqEmpty', emptyText));
       return;
     }
 
     p.items.forEach(function (id, i) {
       var item = Cat.get(id);
       if (!item) return;
-      host.appendChild(paletteTile(item, i));
+      host.appendChild(storageTile(item, i, editable));
     });
   }
 
-  /* Reordering inside the palette, active only while editing. */
-  function bindPaletteReorder() {
-    var host = document.getElementById('eqPalette');
+  /* The rail strip, and the copy in the edit window while that is open. */
+  function renderStorage() {
+    fillStorage(document.getElementById('eqStorage'), false,
+      'Empty. Press Edit to search the catalogue.');
+
+    var name = document.getElementById('eqEditStorageName');
+    if (name) name.textContent = activeStorage().name;
+    fillStorage(document.getElementById('eqStorageEdit'), true,
+      'Nothing here yet. Press + on a result to put it in storage.');
+  }
+
+  /* Reordering, on the copy of the storage inside the edit window. */
+  function bindStorageReorder() {
+    var host = document.getElementById('eqStorageEdit');
     if (!host) return;
 
     host.addEventListener('dragstart', function (e) {
       var tile = e.target.closest('.eqTile');
       if (!tile) return;
-      if (editMode) {
-        dragFrom = parseInt(tile.dataset.index, 10);
-        e.dataTransfer.effectAllowed = 'move';
-        try { e.dataTransfer.setData('text/plain', 'reorder'); } catch (err) {}
-        tile.classList.add('isDragging');
-      }
+      dragFrom = parseInt(tile.dataset.index, 10);
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', 'reorder'); } catch (err) {}
+      tile.classList.add('isDragging');
     });
 
     host.addEventListener('dragend', function (e) {
@@ -196,22 +298,22 @@ window.EquipmentPanel = (function () {
     });
 
     host.addEventListener('dragover', function (e) {
-      if (!editMode || dragFrom < 0) return;
+      if (dragFrom < 0) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
     });
 
     host.addEventListener('drop', function (e) {
-      if (!editMode || dragFrom < 0) return;
+      if (dragFrom < 0) return;
       e.preventDefault();
       var tile = e.target.closest('.eqTile');
-      var to = tile ? parseInt(tile.dataset.index, 10) : activePalette().items.length - 1;
-      var p = activePalette();
+      var to = tile ? parseInt(tile.dataset.index, 10) : activeStorage().items.length - 1;
+      var p = activeStorage();
       var moved = p.items.splice(dragFrom, 1)[0];
       p.items.splice(to, 0, moved);
       dragFrom = -1;
       persist();
-      renderPalette();
+      renderStorage();
     });
   }
 
@@ -219,9 +321,8 @@ window.EquipmentPanel = (function () {
 
   function resultRow(item) {
     var row = el('div', 'eqResult');
-    row.draggable = true;
     row.dataset.eid = item.id;
-    row.title = 'Drag straight onto the stage, or press + to add it to the palette';
+    row.title = 'Tap to place it on the stage, or press + to keep it in the rail';
 
     var pic = el('div', 'eqResultPic');
     pic.appendChild(Scale.thumb(item, 26));
@@ -234,49 +335,40 @@ window.EquipmentPanel = (function () {
     row.appendChild(txt);
 
     var addBtn = el('button', 'eqAdd', '+');
-    addBtn.title = 'Add to palette';
-    addBtn.addEventListener('click', function (ev) {
-      ev.stopPropagation();
-      addToPalette(item.id);
+    addBtn.title = 'Add to storage';
+    row.appendChild(addBtn);
+
+    /* The whole row adds, so the + reads as a label as much as a button and a
+       near miss still lands. */
+    row.addEventListener('click', function () {
+      addToStorage(item.id);
       addBtn.textContent = '✓';
       setTimeout(function () { addBtn.textContent = '+'; }, 900);
     });
-    row.appendChild(addBtn);
 
     return row;
   }
 
-  function addToPalette(id) {
-    var p = activePalette();
+  function addToStorage(id) {
+    var p = activeStorage();
     if (p.items.indexOf(id) === -1) {
       p.items.push(id);
       persist();
-      renderPalette();
+      renderStorage();
     }
   }
 
-  /* Anchored to the search box. Fixed rather than absolute so the rail's
-     own scrolling cannot clip it. */
-  function positionResults() {
-    var box = document.getElementById('eqResults');
-    var search = document.getElementById('eqSearch');
-    if (!box || !search || box.hidden) return;
-    var r = search.getBoundingClientRect();
-    box.style.left = Math.round(r.left) + 'px';
-    box.style.top = Math.round(r.bottom + 6) + 'px';
-    var overflow = box.getBoundingClientRect().bottom - (window.innerHeight - 12);
-    if (overflow > 0) box.style.top = Math.round(r.bottom + 6 - overflow) + 'px';
-  }
-
+  /* An empty box says nothing, so an emptied search falls back to the browse
+     list rather than leaving the window blank. */
   function renderResults(query) {
     var box = document.getElementById('eqResults');
     if (!box) return;
-    clear(box);
+    if (!query) { renderBrowse(); return; }
 
-    if (!query) { box.hidden = true; return; }
+    clear(box);
+    box.classList.remove('isBrowsing');
+    box.scrollTop = 0;
     var hits = Cat.search(query, 40);
-    box.hidden = false;
-    positionResults();
 
     if (!hits.length) {
       box.appendChild(el('div', 'eqEmpty', 'Nothing found. Try a brand, model or type.'));
@@ -285,77 +377,168 @@ window.EquipmentPanel = (function () {
     hits.forEach(function (it) { box.appendChild(resultRow(it)); });
   }
 
-  /* Full catalogue, grouped, for when you do not know what it is called. */
+  /* Full catalogue, for when you do not know what it is called. One dropdown
+     per category, all shut to begin with, so the whole library is five lines
+     until you open the one you want. Rows are built on first open. */
   function renderBrowse() {
     var box = document.getElementById('eqResults');
     if (!box) return;
     clear(box);
-    box.hidden = false;
-    positionResults();
+    box.classList.add('isBrowsing');
+    box.scrollTop = 0;
 
     Cat.categories().forEach(function (cat) {
-      Cat.subcategories(cat.id).forEach(function (sub) {
-        var head = el('div', 'eqGroupHead', cat.label + ' · ' + sub);
-        box.appendChild(head);
-        Cat.inCategory(cat.id, sub).forEach(function (it) {
-          box.appendChild(resultRow(it));
-        });
+      var subs = Cat.subcategories(cat.id);
+      var total = 0;
+      subs.forEach(function (sub) { total += Cat.inCategory(cat.id, sub).length; });
+      if (!total) return;
+
+      var group = el('details', 'eqCatGroup');
+      var head = el('summary', 'eqCatHead');
+      head.appendChild(el('span', 'eqCatName', cat.label));
+      head.appendChild(el('span', 'eqCatCount', String(total)));
+      group.appendChild(head);
+
+      var body = el('div', 'eqCatBody');
+      group.appendChild(body);
+
+      var filled = false;
+      group.addEventListener('toggle', function () {
+        if (group.open && !filled) {
+          filled = true;
+          subs.forEach(function (sub) {
+            var rows = Cat.inCategory(cat.id, sub);
+            if (!rows.length) return;
+            body.appendChild(el('div', 'eqSubHead', sub));
+            rows.forEach(function (it) { body.appendChild(resultRow(it)); });
+          });
+        }
       });
+
+      box.appendChild(group);
     });
   }
 
-  /* ---------------- palette management menu ---------------- */
+  /* ---------------- storage management menu ---------------- */
 
-  function renderPaletteSelect() {
-    var sel = document.getElementById('eqPaletteSelect');
-    if (!sel) return;
-    clear(sel);
-    store.palettes.forEach(function (p) {
-      var o = el('option', null, p.name);
-      o.value = p.id;
-      if (p.id === store.active) o.selected = true;
-      sel.appendChild(o);
-    });
+  function openStorageMenu(open) {
+    var menu = document.getElementById('eqStorageMenu');
+    var btn = document.getElementById('eqStorageBtn');
+    if (!menu) return;
+    menu.hidden = !open;
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
-  function newPalette(copyCurrent) {
-    var name = prompt('Palette name:', copyCurrent ? activePalette().name + ' (copy)' : 'New palette');
+  /* The menu under the floppy says which list you are working out of, above
+     the actions that same list answers to. The button carries the name in its
+     tooltip, since it has no room to show one. */
+  function renderStorageMenu() {
+    var btn = document.getElementById('eqStorageBtn');
+    if (btn) btn.title = 'Storage: ' + activeStorage().name + ' · switch, save, copy, import and export';
+
+    var picks = document.getElementById('eqStoragePicks');
+    if (!picks) return;
+    clear(picks);
+    var pick = function (id, name) {
+      var on = id === store.active;
+      var b = el('button', 'eqMenuItem eqMenuPick' + (on ? ' is-on' : ''));
+      b.type = 'button';
+      b.title = name;
+      b.appendChild(el('span', 'eqPickMark', on ? '✓' : ''));
+      b.appendChild(el('span', 'eqPickName', name));
+      b.addEventListener('click', function () {
+        openStorageMenu(false);
+        if (on) return;
+        store.active = id;
+        persist();
+        renderStorageMenu();
+        renderStorage();
+      });
+      picks.appendChild(b);
+    };
+    store.palettes.forEach(function (p) { pick(p.id, p.name); });
+
+    // the team's lists, the same on every account in it
+    var lib = window.TeamLibrary;
+    var team = lib && lib.team();
+    if (team) {
+      picks.appendChild(el('div', 'eqMenuHead', 'Team · ' + team.name));
+      var lists = lib.lists();
+      if (!lists.length) picks.appendChild(el('div', 'eqMenuNote', 'Nothing shared yet'));
+      lists.forEach(function (l) { pick('team:' + l.id, l.name); });
+    }
+  }
+
+  function newStorage(copyCurrent) {
+    var name = prompt('Storage name:', copyCurrent ? activeStorage().name + ' (copy)' : 'New storage');
     if (!name) return;
-    var p = { id: uid('pal'), name: name, items: copyCurrent ? activePalette().items.slice() : [] };
+    var p = { id: uid('pal'), name: name, items: copyCurrent ? activeStorage().items.slice() : [] };
     store.palettes.push(p);
     store.active = p.id;
     persist();
-    renderPaletteSelect();
-    renderPalette();
+    renderStorageMenu();
+    renderStorage();
   }
 
-  function renamePalette() {
-    var p = activePalette();
+  function renameStorage() {
+    var p = activeStorage();
     var name = prompt('New name:', p.name);
     if (!name) return;
     p.name = name;
     persist();
-    renderPaletteSelect();
+    renderStorageMenu();
   }
 
-  function deletePalette() {
-    if (store.palettes.length < 2) {
-      alert('You need at least one palette.');
+  function deleteStorage() {
+    var shared = teamList(store.active);
+    if (shared) {
+      if (!confirm('Delete "' + shared.name + '" from the team, for everyone in it?')) return;
+      window.TeamLibrary.deleteList(shared.id).then(function () {
+        store.active = store.palettes[0].id;
+        persist();
+        renderStorageMenu();
+        renderStorage();
+      }, function (err) { alert('Could not delete the shared list: ' + err.message); });
       return;
     }
-    var p = activePalette();
+    if (store.palettes.length < 2) {
+      alert('You need at least one storage list.');
+      return;
+    }
+    var p = activeStorage();
     if (!confirm('Delete "' + p.name + '"?')) return;
     store.palettes = store.palettes.filter(function (x) { return x.id !== p.id; });
     store.active = store.palettes[0].id;
     persist();
-    renderPaletteSelect();
-    renderPalette();
+    renderStorageMenu();
+    renderStorage();
   }
 
-  function exportPalette() {
-    var p = activePalette();
+  /* Puts a copy of this list in the team and switches to it, so from then on
+     everyone in the team works out of the same list. */
+  function shareStorage() {
+    var lib = window.TeamLibrary;
+    if (!lib || !lib.team()) {
+      alert('Create or join a team first, under Account in the top bar.');
+      return;
+    }
+    var p = activeStorage();
+    if (teamList(store.active)) {
+      alert('"' + p.name + '" is already shared with the team.');
+      return;
+    }
+    lib.createList(p.name, p.items.slice(), customFor(p)).then(function (list) {
+      store.active = 'team:' + list.id;
+      persist();
+      renderStorageMenu();
+      renderStorage();
+    }, function (err) { alert('Could not share the list: ' + err.message); });
+  }
+
+  function exportStorage() {
+    var p = activeStorage();
     var payload = {
-      stageplanner: 'palette',
+      stageplanner: 'storage',
       version: 1,
       name: p.name,
       items: p.items,
@@ -364,14 +547,14 @@ window.EquipmentPanel = (function () {
     var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = p.name.replace(/[^a-z0-9]+/gi, '_').toLowerCase() + '-palette.json';
+    a.download = p.name.replace(/[^a-z0-9]+/gi, '_').toLowerCase() + '-storage.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   }
 
-  function importPalette() {
+  function importStorage() {
     var input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json,.json';
@@ -390,8 +573,8 @@ window.EquipmentPanel = (function () {
           store.palettes.push(p);
           store.active = p.id;
           persist();
-          renderPaletteSelect();
-          renderPalette();
+          renderStorageMenu();
+          renderStorage();
         } catch (e) {
           alert('Could not read the file.');
         }
@@ -401,11 +584,11 @@ window.EquipmentPanel = (function () {
     input.click();
   }
 
-  function resetPalette() {
-    if (!confirm('Reset this palette to the default selection?')) return;
-    activePalette().items = Cat.defaultPalette.slice();
+  function resetStorage() {
+    if (!confirm('Reset this storage list to the default selection?')) return;
+    activeStorage().items = Cat.defaultStorage.slice();
     persist();
-    renderPalette();
+    renderStorage();
   }
 
   /* ---------------- custom items ---------------- */
@@ -468,7 +651,7 @@ window.EquipmentPanel = (function () {
       };
       Cat.register(item);
       store.custom.push(item);
-      addToPalette(item.id);
+      addToStorage(item.id);
       persist();
       name.value = '';
       box.hidden = true;
@@ -488,61 +671,126 @@ window.EquipmentPanel = (function () {
     return box;
   }
 
+  /* ---------------- the edit window ---------------- */
+
+  /* Searching the catalogue, browsing it and taking things back out are all
+     one job, so they share one window instead of crowding the rail. The rail
+     keeps the strip you drag from. */
+  function buildEditDialog() {
+    var wrap = el('div', 'modal eqEditModal');
+    wrap.id = 'eqEditDialog';
+    wrap.hidden = true;
+
+    var box = el('div', 'modalBox eqEditBox');
+    wrap.appendChild(box);
+
+    var close = el('button', 'modalClose', '✖');
+    close.title = 'Close';
+    close.addEventListener('click', closeEditDialog);
+    box.appendChild(close);
+
+    box.appendChild(el('div', 'modalTitle', 'Edit storage'));
+
+    var grid = el('div', 'eqEditGrid');
+    box.appendChild(grid);
+
+    /* left: the catalogue, searched or browsed */
+    var left = el('div', 'eqEditCol');
+    left.appendChild(el('div', 'eqEditHead', 'Catalogue'));
+
+    var searchWrap = el('div', 'eqSearchWrap');
+    var search = el('input', 'eqSearch');
+    search.id = 'eqSearch';
+    search.type = 'search';
+    search.autocomplete = 'off';
+    search.placeholder = 'Search: sm58, d&b v8, wedge, riser…';
+    searchWrap.appendChild(search);
+
+    var browseBtn = el('button', 'eqBtn eqBrowse', '⊞ Browse all');
+    browseBtn.title = 'Browse the whole catalogue';
+    searchWrap.appendChild(browseBtn);
+    left.appendChild(searchWrap);
+
+    var results = el('div', 'eqResults');
+    results.id = 'eqResults';
+    left.appendChild(results);
+    grid.appendChild(left);
+
+    var timer = null;
+    search.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () { renderResults(search.value.trim()); }, 90);
+    });
+    browseBtn.addEventListener('click', function () {
+      search.value = '';
+      renderBrowse();
+      search.focus();
+    });
+
+    /* right: what is in storage as you work */
+    var right = el('div', 'eqEditCol');
+    var head = el('div', 'eqEditHead', 'In ');
+    var name = el('span', 'eqEditStorageName');
+    name.id = 'eqEditStorageName';
+    head.appendChild(name);
+    right.appendChild(head);
+
+    var storage = el('div', 'eqStorage isEditing');
+    storage.id = 'eqStorageEdit';
+    right.appendChild(storage);
+    right.appendChild(el('div', 'eqEditHint',
+      'Drag a tile to reorder it. ✕ takes it out of storage.'));
+    grid.appendChild(right);
+
+    var foot = el('div', 'eqEditFoot');
+    var done = el('button', 'btn btn--primary', 'Done');
+    done.addEventListener('click', closeEditDialog);
+    foot.appendChild(done);
+    box.appendChild(foot);
+
+    wrap.addEventListener('click', function (e) {
+      if (e.target === wrap) closeEditDialog();
+    });
+
+    return wrap;
+  }
+
+  function openEditDialog() {
+    var dlg = document.getElementById('eqEditDialog');
+    if (!dlg) return;
+    editMode = true;
+    dlg.hidden = false;
+
+    var search = document.getElementById('eqSearch');
+    if (search) search.value = '';
+    renderBrowse();
+    renderStorage();
+    if (search) search.focus();
+  }
+
+  function closeEditDialog() {
+    var dlg = document.getElementById('eqEditDialog');
+    if (!dlg) return;
+    editMode = false;
+    dragFrom = -1;
+    dlg.hidden = true;
+  }
+
   /* ---------------- scale controls ---------------- */
 
+  /* How the gear is drawn, which is the rail's business. How big the
+     stage is belongs to the stage itself, and is set under Stage Setup. */
   function buildScaleControls() {
     var wrap = el('div', 'eqScale');
 
-    var r1 = el('div', 'eqScaleRow');
-    r1.appendChild(el('label', 'eqScaleLabel', 'Stage width'));
-    var width = el('input', 'eqField eqNum');
-    width.type = 'number'; width.min = '2'; width.max = '80'; width.step = '0.5';
-    width.value = String(Scale.settings.stageWidthM);
-    width.title = 'How wide the house plan is in reality. Everything drawn to scale follows this number.';
-    width.addEventListener('change', function () {
-      var v = parseFloat(width.value);
-      if (v > 0) Scale.set('stageWidthM', v);
-    });
-    r1.appendChild(width);
-    r1.appendChild(el('span', 'eqUnit', 'm'));
-    wrap.appendChild(r1);
-
-    /* A stage drawn from measurements already states its own scale, so the
-       manual width only applies to the built-in house plan. */
-    var note = el('div', 'eqScaleNote');
-    wrap.appendChild(note);
-
-    function syncScaleSource() {
-      var fromPlan = Scale.scaleSource() === 'plan';
-      width.disabled = fromPlan;
-      r1.classList.toggle('isMuted', fromPlan);
-      note.textContent = fromPlan
-        ? 'Scale comes from the stage you defined.'
-        : 'Applies to the built-in house plan.';
-    }
-    syncScaleSource();
-    Scale.onChange(syncScaleSource);
-
-    var r2 = el('div', 'eqScaleRow');
-    r2.appendChild(el('label', 'eqScaleLabel', 'Symbol size'));
-    var sym = el('input', 'eqRange');
-    sym.type = 'range'; sym.min = '12'; sym.max = '48'; sym.step = '1';
-    sym.value = String(Scale.settings.symbolPx);
-    sym.title = 'The size of microphones and other small gear, which is not drawn to scale.';
-    sym.addEventListener('input', function () {
-      Scale.set('symbolPx', parseInt(sym.value, 10));
-    });
-    r2.appendChild(sym);
-    wrap.appendChild(r2);
-
-    var r3 = el('label', 'eqScaleRow eqCheckRow');
+    var row = el('label', 'eqScaleRow eqCheckRow');
     var chk = el('input');
     chk.type = 'checkbox';
     chk.checked = Scale.settings.showLabels;
     chk.addEventListener('change', function () { Scale.set('showLabels', chk.checked); });
-    r3.appendChild(chk);
-    r3.appendChild(el('span', null, 'Show names on stage'));
-    wrap.appendChild(r3);
+    row.appendChild(chk);
+    row.appendChild(el('span', null, 'Show names on stage'));
+    wrap.appendChild(row);
 
     return wrap;
   }
@@ -553,100 +801,68 @@ window.EquipmentPanel = (function () {
     var host = document.getElementById('eqPanel');
     if (!host) return;
 
-    /* palette chooser */
-    var bar = el('div', 'eqBar');
-    var sel = el('select', 'eqPaletteSelect');
-    sel.id = 'eqPaletteSelect';
-    sel.title = 'Switch palette';
-    sel.addEventListener('change', function () {
-      store.active = sel.value;
-      persist();
-      renderPalette();
-    });
-    bar.appendChild(sel);
-
-    var editBtn = el('button', 'eqIconBtn', '✎');
-    editBtn.title = 'Edit the palette: remove and reorder items';
-    editBtn.addEventListener('click', function () {
-      editMode = !editMode;
-      editBtn.classList.toggle('isOn', editMode);
-      renderPalette();
-    });
-    bar.appendChild(editBtn);
-
-    var menuBtn = el('button', 'eqIconBtn', '⋯');
-    menuBtn.title = 'Save, copy, import and export palettes';
-    bar.appendChild(menuBtn);
-    host.appendChild(bar);
+    /* Storage lists and everything you can do to one, behind one floppy in
+       the rail's own heading: the menu answers which list you are in before it
+       offers the actions, so the button itself needs no label. It sits in the
+       heading rather than in the panel, which is why this reaches past its
+       host; the menu goes with it so it still hangs off the button. */
+    var titleRow = document.querySelector('.railTitle') || host;
+    var menuBtn = el('button', 'eqStorageBtn', '💾');
+    menuBtn.id = 'eqStorageBtn';
+    menuBtn.type = 'button';
+    menuBtn.setAttribute('aria-label', 'Storage lists');
+    menuBtn.setAttribute('aria-haspopup', 'true');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    titleRow.appendChild(menuBtn);
 
     var menu = el('div', 'eqMenu');
+    menu.id = 'eqStorageMenu';
     menu.hidden = true;
+    menu.appendChild(el('div', 'eqMenuHead', 'Storage lists'));
+    // The lists themselves, rebuilt by renderStorageMenu whenever they change.
+    var picks = el('div', 'eqMenuPicks');
+    picks.id = 'eqStoragePicks';
+    menu.appendChild(picks);
+    menu.appendChild(el('div', 'eqMenuSep'));
     [
-      ['New palette', function () { newPalette(false); }],
-      ['Save as copy', function () { newPalette(true); }],
-      ['Rename', renamePalette],
-      ['Reset', resetPalette],
-      ['Export file', exportPalette],
-      ['Import file', importPalette],
-      ['Delete palette', deletePalette]
+      ['New storage', function () { newStorage(false); }],
+      ['Save as copy', function () { newStorage(true); }],
+      ['Share with team', shareStorage],
+      ['Rename', renameStorage],
+      ['Reset', resetStorage],
+      ['Export file', exportStorage],
+      ['Import file', importStorage],
+      ['Delete storage', deleteStorage]
     ].forEach(function (row) {
       var b = el('button', 'eqMenuItem', row[0]);
-      b.addEventListener('click', function () { menu.hidden = true; row[1](); });
+      b.type = 'button';
+      b.addEventListener('click', function () { openStorageMenu(false); row[1](); });
       menu.appendChild(b);
     });
-    host.appendChild(menu);
+    titleRow.appendChild(menu);
 
     menuBtn.addEventListener('click', function (e) {
       e.stopPropagation();
-      menu.hidden = !menu.hidden;
+      openStorageMenu(menu.hidden);
     });
-    document.addEventListener('click', function () { menu.hidden = true; });
+    menu.addEventListener('click', function (e) { e.stopPropagation(); });
+    document.addEventListener('click', function () { openStorageMenu(false); });
 
-    /* search */
-    var searchWrap = el('div', 'eqSearchWrap');
-    var search = el('input', 'eqSearch');
-    search.id = 'eqSearch';
-    search.type = 'search';
-    search.autocomplete = 'off';
-    search.placeholder = 'Search: sm58, d&b v8, wedge, riser…';
-    searchWrap.appendChild(search);
+    /* storage strip, with its own heading so Edit sits on the thing it edits */
+    var box = el('div', 'eqStorageBox');
+    var head = el('div', 'eqStorageHead');
+    head.appendChild(el('span', 'eqStorageHeadName', 'Storage'));
 
-    var browseBtn = el('button', 'eqIconBtn eqBrowse', '⊞');
-    browseBtn.title = 'Browse the whole catalogue';
-    searchWrap.appendChild(browseBtn);
-    host.appendChild(searchWrap);
+    var editBtn = el('button', 'eqEditBtn', 'Edit');
+    editBtn.title = 'Search the catalogue, and remove or reorder what is in storage';
+    editBtn.addEventListener('click', openEditDialog);
+    head.appendChild(editBtn);
+    box.appendChild(head);
 
-    var results = el('div', 'eqResults');
-    results.id = 'eqResults';
-    results.hidden = true;
-    host.appendChild(results);
-
-    var timer = null;
-    search.addEventListener('input', function () {
-      clearTimeout(timer);
-      timer = setTimeout(function () { renderResults(search.value.trim()); }, 90);
-    });
-    search.addEventListener('focus', function () {
-      if (search.value.trim()) renderResults(search.value.trim());
-    });
-    browseBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var box = document.getElementById('eqResults');
-      if (!box.hidden && !search.value.trim()) { box.hidden = true; return; }
-      search.value = '';
-      renderBrowse();
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        var box = document.getElementById('eqResults');
-        if (box) box.hidden = true;
-      }
-    });
-
-    /* palette strip */
-    var palette = el('div', 'equipment-container eqPalette');
-    palette.id = 'eqPalette';
-    host.appendChild(palette);
+    var storage = el('div', 'equipment-container eqStorage');
+    storage.id = 'eqStorage';
+    box.appendChild(storage);
+    host.appendChild(box);
 
     /* custom item */
     var customBtn = el('button', 'eqBtn eqCustomBtn', '+ Custom item');
@@ -658,13 +874,19 @@ window.EquipmentPanel = (function () {
     /* scale */
     host.appendChild(buildScaleControls());
 
-    renderPaletteSelect();
-    renderPalette();
-    bindPaletteReorder();
+    /* the edit window, on the page from the start so its ids always resolve */
+    document.body.appendChild(buildEditDialog());
 
-    window.addEventListener('resize', positionResults);
-    var rail = document.querySelector('.rail');
-    if (rail) rail.addEventListener('scroll', positionResults);
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var dlg = document.getElementById('eqEditDialog');
+      if (dlg && !dlg.hidden) closeEditDialog();
+      openStorageMenu(false);
+    });
+
+    renderStorageMenu();
+    renderStorage();
+    bindStorageReorder();
   }
 
   function init() {
@@ -675,9 +897,28 @@ window.EquipmentPanel = (function () {
   document.addEventListener('DOMContentLoaded', init);
 
   return {
-    addToPalette: addToPalette,
-    activePalette: function () { return activePalette(); },
+    addToStorage: addToStorage,
+    activeStorage: function () { return activeStorage(); },
     isEditing: function () { return editMode; },
-    refresh: renderPalette
+    openEditor: openEditDialog,
+    refresh: renderStorage,
+    // stageBuilder.js: the custom items a stage setup uses, to carry in its file
+    customItems: function (ids) {
+      return store.custom.filter(function (c) { return ids.indexOf(c.id) !== -1; });
+    },
+    // ...and on the way back in, kept here so they are still known after a reload
+    adoptCustom: function (list) {
+      var added = false;
+      (list || []).forEach(function (c) {
+        if (c && c.id && Cat.register(c)) { store.custom.push(c); added = true; }
+      });
+      if (added) persist();
+    },
+    // teams.js, when the team's lists change underneath the rail
+    refreshLists: function () {
+      if (!store || !document.getElementById('eqStorage')) return;
+      renderStorageMenu();
+      renderStorage();
+    }
   };
 })();

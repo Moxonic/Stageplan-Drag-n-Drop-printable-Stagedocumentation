@@ -19,7 +19,9 @@ window.EquipmentCatalog = (function () {
     { id: 'speaker',  label: 'Speakers' },
     { id: 'mic',      label: 'Microphones' },
     { id: 'backline', label: 'Backline' },
+    { id: 'orchestra', label: 'Orchestra' },
     { id: 'stage',    label: 'Stage' },
+    { id: 'light',    label: 'Lighting' },
     { id: 'other',    label: 'Other' }
   ];
 
@@ -302,13 +304,24 @@ window.EquipmentCatalog = (function () {
     ['Rode', 'NT5',                   20, 20, 117, 'mic-pencil', 'small diaphragm overhead pair'],
     ['Rode', 'NT1',                   50, 50, 187, 'mic-condenser-large', 'large diaphragm studio'],
     ['Earthworks', 'SR20',            22, 22, 200, 'mic-pencil', 'small diaphragm high definition'],
-    ['Earthworks', 'QTC40',           22, 22, 210, 'mic-pencil', 'omni measurement']
+    ['Earthworks', 'QTC40',           22, 22, 210, 'mic-pencil', 'omni measurement'],
+    ['Schoeps', 'CMC 6 MK 4',         20, 20, 140, 'mic-pencil', 'schöps colette small diaphragm cardioid overhead acoustic'],
+    ['Schoeps', 'CMC 6 MK 2H',        20, 20, 140, 'mic-pencil', 'schöps colette small diaphragm omni orchestra'],
+    ['Schoeps', 'CMC 6 MK 21',        20, 20, 140, 'mic-pencil', 'schöps colette small diaphragm wide cardioid'],
+    ['Schoeps', 'CMC 6 MK 41',        20, 20, 140, 'mic-pencil', 'schöps colette small diaphragm supercardioid'],
+    ['Schoeps', 'CMC 6 MK 8',         20, 20, 140, 'mic-pencil', 'schöps colette small diaphragm figure 8 ms stereo'],
+    ['Schoeps', 'CCM 4',              20, 20, 85, 'mic-pencil', 'schöps compact small diaphragm cardioid overhead'],
+    ['Schoeps', 'CCM 41',             20, 20, 85, 'mic-pencil', 'schöps compact small diaphragm supercardioid'],
+    ['Schoeps', 'CCM 2H',             20, 20, 85, 'mic-pencil', 'schöps compact small diaphragm omni'],
+    ['Schoeps', 'V4 U',               60, 60, 175, 'mic-condenser-large', 'schöps large diaphragm studio vocal']
   ]);
 
   add('mic', 'Specialist', 'symbol', [
     ['Sennheiser', 'MKH 416',         19, 19, 250, 'mic-shotgun', 'shotgun boom film retning'],
     ['Rode', 'NTG3',                  19, 19, 255, 'mic-shotgun', 'shotgun boom film retning'],
     ['Audio-Technica', 'BP4073',      21, 21, 230, 'mic-shotgun', 'shotgun line gradient'],
+    ['Schoeps', 'CMIT 5 U',           21, 21, 250, 'mic-shotgun', 'schöps shotgun boom film retning'],
+    ['Schoeps', 'SuperCMIT 2 U',      21, 21, 250, 'mic-shotgun', 'schöps shotgun digital boom film retning'],
     ['Crown', 'PCC-160',             155, 60, 25, 'mic-boundary', 'boundary floor pzm scenekant'],
     ['Crown', 'PZM-30D',             160, 160, 20, 'mic-boundary', 'boundary plate pzm'],
     ['Audix', 'ADX60',               150, 60, 20, 'mic-boundary', 'boundary floor pzm scenekant'],
@@ -360,6 +373,38 @@ window.EquipmentCatalog = (function () {
     ['', 'Platform 1x2 m',        1000, 2000, 400, 'riser', 'riser platform praktikabel 1x2 m']
   ]);
 
+  /* Rise 200 mm, going 300 mm, which is what stage steps are built to. The
+     name says the height it reaches, so a flight can be matched to a riser
+     without doing the sum. */
+  add('stage', 'Stairs', 'real', [
+    ['', 'Stairs 2 steps 0.4 m',    1000, 600, 400, 'stairs-2', 'stairs steps trapp trappetrinn 2 step 0 4 m'],
+    ['', 'Stairs 3 steps 0.6 m',    1000, 900, 600, 'stairs-3', 'stairs steps trapp trappetrinn 3 step 0 6 m'],
+    ['', 'Stairs 4 steps 0.8 m',   1000, 1200, 800, 'stairs-4', 'stairs steps trapp trappetrinn 4 step 0 8 m'],
+    ['', 'Stairs 5 steps 1 m',     1000, 1500, 1000, 'stairs-5', 'stairs steps trapp trappetrinn 5 step 1 m'],
+    ['', 'Stairs 6 steps 1.2 m',   1000, 1800, 1200, 'stairs-6', 'stairs steps trapp trappetrinn 6 step 1 2 m'],
+    ['', 'Stairs 8 steps 1.6 m',   1000, 2400, 1600, 'stairs-8', 'stairs steps trapp trappetrinn 8 step 1 6 m'],
+    ['', 'Stairs 2 m wide, 3 steps', 2000, 900, 600, 'stairs-3', 'stairs steps wide trapp bred 3 step 2 m'],
+    ['', 'Stairs 2 m wide, 4 steps', 2000, 1200, 800, 'stairs-4', 'stairs steps wide trapp bred 4 step 2 m'],
+    ['', 'Stairs 2 m wide, 6 steps', 2000, 1800, 1200, 'stairs-6', 'stairs steps wide trapp bred 6 step 2 m'],
+    ['', 'Step unit 0.2 m',         1000, 300, 200, 'stairs-1', 'step unit single trinn opptrinn 0 2 m']
+  ]);
+
+  /* Drapes are given hung: the width they cover and the drop they hang. The
+     depth is the gather, which is what the plan symbol draws. */
+  add('stage', 'Curtains and masking', 'real', [
+    ['', 'Curtain leg 2x8 m',      2000, 300, 8000, 'curtain', 'leg masking sidekulisse kulisse teppe drape 2x8 m'],
+    ['', 'Curtain leg 3x6 m',      3000, 300, 6000, 'curtain', 'leg masking sidekulisse kulisse teppe drape 3x6 m'],
+    ['', 'Border 10x2 m',         10000, 300, 2000, 'curtain', 'border masking sufitt teppe drape 10x2 m'],
+    ['', 'Border 12x3 m',         12000, 300, 3000, 'curtain', 'border masking sufitt teppe drape 12x3 m'],
+    ['', 'Backdrop 8x6 m',         8000, 300, 6000, 'curtain', 'backdrop bakteppe teppe drape 8x6 m'],
+    ['', 'Backdrop 12x8 m',       12000, 350, 8000, 'curtain', 'backdrop bakteppe teppe drape 12x8 m'],
+    ['', 'Traveller 8 m',          8000, 400, 6000, 'curtain', 'traveller trekkteppe mellomteppe teppe drape 8 m'],
+    ['', 'Traveller 12 m',        12000, 400, 7000, 'curtain', 'traveller trekkteppe mellomteppe teppe drape 12 m'],
+    ['', 'Cyclorama 12x7 m',      12000, 250, 7000, 'curtain', 'cyclorama cyc rundhorisont horisont 12x7 m'],
+    ['', 'Blackout 6x4 m',         6000, 300, 4000, 'curtain', 'blackout blending blendingsteppe teppe drape 6x4 m'],
+    ['', 'Gauze 10x6 m',          10000, 200, 6000, 'curtain', 'gauze scrim gasvev tyll teppe drape 10x6 m']
+  ]);
+
   add('stage', 'Stands and furniture', 'real', [
     ['', 'Mic stand (boom)',    350, 350, 1600, 'stand-mic', 'mic stand boom mikrofonstativ galge'],
     ['', 'Mic stand (short)',     300, 300, 500, 'stand-mic', 'short boom mic stand lavt stativ mikrofonstativ'],
@@ -380,6 +425,141 @@ window.EquipmentCatalog = (function () {
     ['', 'Conductor',                  550, 550, 1750, 'person', 'person conductor dirigent']
   ]);
 
+  /* ==================== orchestra ==================== */
+
+  /* A player and their instrument as one footprint: the chair, the person and
+     the space the instrument takes when it is being played, so a section laid
+     out with these has room to bow. Seen from above and facing the front of the
+     stage. Sizes are the space a player needs, not the instrument alone. */
+
+  add('orchestra', 'Strings', 'real', [
+    ['', 'Violin I',           850, 1000, 1300, 'orch-violin', 'violin first violins strings fiolin geige 1'],
+    ['', 'Violin II',          850, 1000, 1300, 'orch-violin', 'violin second violins strings fiolin geige 2'],
+    ['', 'Viola',              900, 1050, 1300, 'orch-viola', 'viola strings bratsj bratsche'],
+    ['', 'Cello',              950, 1300, 1300, 'orch-cello', 'cello violoncello strings cello'],
+    ['', 'Double bass',       1000, 1400, 1950, 'orch-double-bass', 'double bass contrabass upright bass strings kontrabass'],
+    ['', 'Harp',              1200, 1300, 1850, 'orch-harp', 'harp harpe harfe strings']
+  ]);
+
+  add('orchestra', 'Woodwinds', 'real', [
+    ['', 'Flute', 1000, 1000, 1300, 'orch-flute', 'flute woodwind fløyte floete querfloete'],
+    ['', 'Piccolo',  800, 1000, 1300, 'orch-piccolo', 'piccolo flute woodwind pikkolo'],
+    ['', 'Oboe',  800, 1000, 1300, 'orch-oboe', 'oboe woodwind obo'],
+    ['', 'Cor anglais',  800, 1050, 1300, 'orch-cor-anglais', 'cor anglais english horn woodwind engelsk horn englischhorn'],
+    ['', 'Clarinet',  800, 1000, 1300, 'orch-clarinet', 'clarinet woodwind klarinett klarinette'],
+    ['', 'Bass clarinet',  850, 1100, 1300, 'orch-bass-clarinet', 'bass clarinet woodwind bassklarinett bassklarinette'],
+    ['', 'Bassoon',  900, 1050, 1400, 'orch-bassoon', 'bassoon woodwind fagott'],
+    ['', 'Contrabassoon', 1000, 1150, 1500, 'orch-contrabassoon', 'contrabassoon double bassoon woodwind kontrafagott'],
+    ['', 'Saxophone',  850, 1000, 1300, 'orch-saxophone', 'saxophone sax woodwind saksofon']
+  ]);
+
+  add('orchestra', 'Brass', 'real', [
+    ['', 'Horn',  950, 1000, 1300, 'orch-horn', 'horn french horn brass valthorn waldhorn'],
+    ['', 'Trumpet',  800, 1100, 1300, 'orch-trumpet', 'trumpet brass trompet trompete'],
+    ['', 'Trombone',  850, 1450, 1300, 'orch-trombone', 'trombone brass trombone posaune'],
+    ['', 'Bass trombone',  900, 1550, 1300, 'orch-bass-trombone', 'bass trombone brass basstrombone bassposaune'],
+    ['', 'Tuba', 1050, 1100, 1300, 'orch-tuba', 'tuba brass']
+  ]);
+
+  add('orchestra', 'Percussion', 'real', [
+    ['', 'Timpani (4)',       2600, 1800, 1000, 'orch-timpani', 'timpani kettle drums pauker pauken percussion'],
+    ['', 'Snare drum',         800, 1000,  900, 'orch-snare-drum', 'snare drum side drum percussion skarptromme kleine trommel'],
+    ['', 'Bass drum',         1300, 1200, 1100, 'orch-bass-drum', 'concert bass drum gran cassa percussion stortromme grosse trommel'],
+    ['', 'Cymbals',            900,  900, 1750, 'orch-cymbals', 'clash cymbals crash percussion cymbaler becken'],
+    ['', 'Marimba',           2600, 1400,  950, 'orch-marimba', 'marimba mallets percussion'],
+    ['', 'Xylophone',         1800, 1100,  950, 'orch-xylophone', 'xylophone mallets percussion xylofon'],
+    ['', 'Vibraphone',        1600, 1100,  950, 'orch-vibraphone', 'vibraphone vibes mallets percussion vibrafon'],
+    ['', 'Glockenspiel',      1000,  900,  900, 'orch-glockenspiel', 'glockenspiel bells mallets percussion klokkespill'],
+    ['', 'Tubular bells',     1200, 1000, 2000, 'orch-tubular-bells', 'tubular bells chimes percussion rørklokker roehrenglocken'],
+    ['', 'Tam-tam',           1400, 1100, 1900, 'orch-tam-tam', 'tam-tam gong percussion']
+  ]);
+
+  add('orchestra', 'Keyboards', 'real', [
+    ['', 'Celesta',           1100, 1300, 1100, 'orch-celesta', 'celesta celeste keyboard'],
+    ['', 'Harpsichord', 1100, 3000, 1000, 'orch-harpsichord', 'harpsichord cembalo keyboard']
+  ]);
+
+  add('orchestra', 'Conductor', 'real', [
+    ['', 'Conductor podium',  1000, 1100,  300, 'orch-podium', 'conductor podium desk dirigent dirigentpult']
+  ]);
+
+  /* A player with their instrument as one footprint: the space they take up
+     while playing, from above, facing the front of the stage. */
+  add('stage', 'Musicians', 'real', [
+    ['', 'Acoustic guitar',      1250, 1000, 1300, 'mus-guitar-acoustic', 'guitarist acoustic guitar western steel string gitarre gitar akustisk'],
+    ['', 'Classical guitar',     1250, 1000, 1300, 'mus-guitar-classical', 'guitarist classical guitar nylon spanish konzertgitarre klassisk gitar'],
+    ['', 'Electric guitar',      1200,  750, 1750, 'mus-guitar-electric', 'guitarist electric guitar e-gitarre elgitar'],
+    ['', 'Bass guitar',          1350,  750, 1750, 'mus-bass-electric', 'bassist electric bass guitar e-bass bassgitar'],
+    ['', 'Ukulele',               850,  650, 1750, 'mus-ukulele', 'ukulele uke'],
+    ['', 'Mandolin',              950,  650, 1750, 'mus-mandolin', 'mandolin mandoline mandolin'],
+    ['', 'Banjo',                1150, 1000, 1300, 'mus-banjo', 'banjo'],
+    ['', 'Fiddle',                850,  750, 1750, 'mus-fiddle', 'fiddle violin folk geige fele'],
+    ['', 'Accordion',             850,  750, 1300, 'mus-accordion', 'accordion akkordeon trekkspill'],
+    ['', 'Keyboard player',      1500,  950, 1300, 'mus-keys', 'keyboardist keys synth piano player keyboarder'],
+    ['', 'Pianist (grand piano)', 1600, 2600, 1000, 'mus-pianist', 'pianist grand piano flygel klavier'],
+    ['', 'Drummer',              2200, 1900, 1300, 'mus-drummer', 'drummer drum kit schlagzeuger trommeslager'],
+    ['', 'Congas',               1300,  950, 1750, 'mus-congas', 'percussionist congas tumba perkusjon'],
+    ['', 'Cajón',                 700,  750, 1000, 'mus-cajon', 'cajon cajón percussion box'],
+    ['', 'Bongos',                800,  800, 1300, 'mus-bongos', 'bongos percussion'],
+    ['', 'Singer with mic stand', 700,  800, 1750, 'mus-singer', 'singer vocalist mic stand sanger saenger'],
+    ['', 'Saxophonist',           800,  800, 1750, 'mus-saxophone', 'saxophonist saxophone sax saksofon'],
+    ['', 'Trumpet player',        700,  950, 1750, 'mus-trumpet', 'trumpeter trumpet trompete trompet'],
+    ['', 'DJ',                   1500,  950, 1750, 'mus-dj', 'dj turntables decks mixer controller']
+  ]);
+
+  /* ==================== lighting ==================== */
+
+  /* Single fixtures are symbols, not footprints. A PAR can is 200 mm across,
+     which is three pixels on a 12 m stage, and a lighting plot has always
+     been drawn with readable symbols rather than to scale. The bars and
+     floods below are long enough to earn their real size. */
+
+  add('light', 'PARs and washes', 'symbol', [
+    ['', 'PAR 16',                    85, 120, 85, 'light-par', 'par16 birdie can lys lyskaster parlampe'],
+    ['', 'PAR 20',                  105, 145, 105, 'light-par', 'par20 can lys lyskaster parlampe'],
+    ['', 'PAR 30',                  125, 165, 125, 'light-par', 'par30 can lys lyskaster parlampe'],
+    ['', 'PAR 38',                  140, 185, 140, 'light-par', 'par38 can lys lyskaster parlampe'],
+    ['', 'PAR 64',                  205, 310, 205, 'light-par', 'par64 can lys lyskaster parlampe'],
+    ['', 'PAR 64 floor can',        205, 310, 250, 'light-par', 'par64 floor can gulv lys lyskaster parlampe'],
+    ['', 'LED PAR 12x10 W',         200, 230, 210, 'light-par', 'led par wash lys lyskaster parlampe 12'],
+    ['', 'LED PAR 18x18 W',         250, 285, 260, 'light-par', 'led par wash lys lyskaster parlampe 18'],
+    ['', 'LED PAR 36x18 W',         320, 335, 330, 'light-par', 'led par wash lys lyskaster parlampe 36'],
+    ['', 'Fresnel 650 W',           200, 255, 300, 'light-fresnel', 'fresnel spot lys lyskaster 650w'],
+    ['', 'Fresnel 1 kW',            250, 305, 360, 'light-fresnel', 'fresnel spot lys lyskaster 1kw'],
+    ['', 'Fresnel 2 kW',            320, 385, 450, 'light-fresnel', 'fresnel spot lys lyskaster 2kw']
+  ]);
+
+  add('light', 'Profiles and spots', 'symbol', [
+    ['', 'Profile 575 W 19°',       250, 555, 330, 'light-profile', 'profile ellipsoidal spot profilkaster lys 19 grader'],
+    ['', 'Profile 575 W 26°',       250, 520, 330, 'light-profile', 'profile ellipsoidal spot profilkaster lys 26 grader'],
+    ['', 'Profile 575 W 36°',       250, 480, 330, 'light-profile', 'profile ellipsoidal spot profilkaster lys 36 grader'],
+    ['', 'Profile 750 W zoom',      280, 620, 360, 'light-profile', 'profile ellipsoidal zoom spot profilkaster lys 750w'],
+    ['', 'LED profile 200 W',       260, 560, 340, 'light-profile', 'led profile ellipsoidal spot profilkaster lys'],
+    ['', 'Follow spot 1.2 kW',      400, 900, 500, 'light-profile', 'follow spot forfolgningslys followspot lys'],
+    ['', 'Follow spot LED',         350, 750, 450, 'light-profile', 'follow spot forfolgningslys followspot led lys']
+  ]);
+
+  add('light', 'Moving lights', 'symbol', [
+    ['', 'Moving wash, compact',    300, 300, 385, 'light-moving', 'moving head wash bevegelig lys lyskaster kompakt'],
+    ['', 'Moving wash',             400, 400, 550, 'light-moving', 'moving head wash bevegelig lys lyskaster'],
+    ['', 'Moving wash, large',      480, 480, 700, 'light-moving', 'moving head wash bevegelig lys lyskaster stor'],
+    ['', 'Moving beam',             350, 350, 520, 'light-moving', 'moving head beam bevegelig lys lyskaster'],
+    ['', 'Moving spot',             400, 400, 600, 'light-moving', 'moving head spot bevegelig lys lyskaster'],
+    ['', 'Moving spot, large',      500, 500, 755, 'light-moving', 'moving head spot hybrid bevegelig lys lyskaster stor']
+  ]);
+
+  add('light', 'Bars, floods and blinders', 'real', [
+    ['', 'LED bar 0.5 m',           500, 100, 120, 'light-bar', 'led bar batten pixel lysbar lysrampe 0 5 m'],
+    ['', 'LED bar 1 m',            1000, 100, 130, 'light-bar', 'led bar batten pixel lysbar lysrampe 1 m'],
+    ['', 'LED bar 2 m',            2000, 110, 140, 'light-bar', 'led bar batten pixel lysbar lysrampe 2 m'],
+    ['', 'Floor bar 1 m',          1000, 200, 200, 'light-bar', 'floor bar groundrow gulvbar lysbar 1 m'],
+    ['', 'Cyc flood 1 m, 4 cell',  1000, 350, 300, 'light-flood', 'cyc flood cyclorama horisontlys flomlys 4 cell 1 m'],
+    ['', 'Cyc flood 2 m, 8 cell',  2000, 350, 300, 'light-flood', 'cyc flood cyclorama horisontlys flomlys 8 cell 2 m'],
+    ['', 'Groundrow 2 m',          2000, 400, 350, 'light-flood', 'groundrow cyc flood horisontlys flomlys 2 m'],
+    ['', 'Blinder 4',               500, 500, 500, 'light-blinder', 'blinder molefay acl 4 lamp publikumslys'],
+    ['', 'Blinder 8',              1000, 500, 500, 'light-blinder', 'blinder molefay acl 8 lamp publikumslys']
+  ]);
+
   /* ==================== other ==================== */
 
   add('other', 'Signal and power', 'symbol', [
@@ -391,6 +571,30 @@ window.EquipmentCatalog = (function () {
     ['', 'Power outlet',               200, 200, 100, 'power', 'power drop strøm 230v uttak strømuttak'],
     ['', 'Power 16A',           250, 250, 150, 'power', 'power 16a cee strøm kraftuttak'],
     ['', 'Multicore / stagebox',    400, 300, 150, 'di-box', 'stagebox multicore multikabel snake']
+  ]);
+
+  /* The five splits that actually turn up on a stage, named the way they are
+     called out: sends in, returns back. 8/4 is twelve holes in the box. */
+  add('other', 'Stageboxes', 'symbol', [
+    ['', 'Stagebox 8/4',    300, 160, 130, 'di-box', 'stagebox multicore snake multikabel 8 4 12 channel kanaler'],
+    ['', 'Stagebox 12/4',   360, 180, 140, 'di-box', 'stagebox multicore snake multikabel 12 4 16 channel kanaler'],
+    ['', 'Stagebox 16/4',   420, 200, 150, 'di-box', 'stagebox multicore snake multikabel 16 4 20 channel kanaler'],
+    ['', 'Stagebox 24/8',   500, 230, 170, 'di-box', 'stagebox multicore snake multikabel 24 8 32 channel kanaler'],
+    ['', 'Stagebox 32/8',   560, 250, 180, 'di-box', 'stagebox multicore snake multikabel 32 8 40 channel kanaler']
+  ]);
+
+  /* Built from 500 mm panels, so the sizes are the ones a panel count
+     actually adds up to. Depth is the panel plus its frame. */
+  add('other', 'LED wall', 'real', [
+    ['', 'LED panel 0.5x0.5 m',     500, 90, 500, 'led-wall', 'led panel modul ledvegg storskjerm 0 5 m'],
+    ['', 'LED wall 2x2 m',         2000, 120, 2000, 'led-wall', 'led wall ledvegg storskjerm videovegg 2x2 m'],
+    ['', 'LED wall 3x2 m',         3000, 120, 2000, 'led-wall', 'led wall ledvegg storskjerm videovegg 3x2 m'],
+    ['', 'LED wall 4x2.5 m',       4000, 150, 2500, 'led-wall', 'led wall ledvegg storskjerm videovegg 4x2 5 m'],
+    ['', 'LED wall 5x3 m',         5000, 150, 3000, 'led-wall', 'led wall ledvegg storskjerm videovegg 5x3 m'],
+    ['', 'LED wall 6x3.5 m',       6000, 180, 3500, 'led-wall', 'led wall ledvegg storskjerm videovegg 6x3 5 m'],
+    ['', 'LED wall 8x4.5 m',       8000, 200, 4500, 'led-wall', 'led wall ledvegg storskjerm videovegg 8x4 5 m'],
+    ['', 'LED column 1x3 m',       1000, 120, 3000, 'led-wall', 'led wall column sidepanel ledvegg storskjerm 1x3 m'],
+    ['', 'LED column 1.5x4 m',     1500, 150, 4000, 'led-wall', 'led wall column sidepanel ledvegg storskjerm 1 5x4 m']
   ]);
 
   add('other', 'Screens and video', 'real', [
@@ -407,8 +611,8 @@ window.EquipmentCatalog = (function () {
 
 
   /* Item IDs are derived from brand + model, so translating a name moves its
-     ID. Palettes are stored by ID, so every rename is recorded here and
-     resolved on lookup — a palette saved before the UI was translated still
+     ID. Storage is saved by ID, so every rename is recorded here and
+     resolved on lookup — a list saved before the UI was translated still
      finds its items. */
   var LEGACY_IDS = {
     'generic-tr-dl-s-h-ndholdt': 'generic-wireless-handheld',
@@ -524,8 +728,8 @@ window.EquipmentCatalog = (function () {
     return out;
   }
 
-  /* Items that reproduce the palette the tool shipped with. */
-  var DEFAULT_PALETTE = [
+  /* Items that fill the storage the tool ships with. */
+  var DEFAULT_STORAGE = [
     'vue-audiotechnik-al-8',
     'vue-audiotechnik-al-4',
     'vue-audiotechnik-h-5',
@@ -548,7 +752,7 @@ window.EquipmentCatalog = (function () {
     categoryLabel: categoryLabel,
     inCategory: inCategory,
     subcategories: subcategories,
-    defaultPalette: DEFAULT_PALETTE,
+    defaultStorage: DEFAULT_STORAGE,
     resolveId: resolveId,
     /* let a user-defined item join the library at runtime */
     register: function (item) {

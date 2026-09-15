@@ -42,10 +42,9 @@ window.StageScale = (function () {
 
   function dropZone() { return document.getElementById('dropZone'); }
 
-  /* Where the scale comes from: a stage drawn from real measurements in
-     the New stage dialog states its own metres per pixel, and that always wins.
-     The built-in house plan is just a picture, so there the user tells us how
-     wide it is. */
+  /* Where the scale comes from. Every stage is drawn from real measurements
+     and states its own metres per pixel, so 'plan' is the normal answer; the
+     fallback only covers the moment before the first stage is on screen. */
   function stageScaleSource() {
     var fromPlan = (window.StageBuilder && typeof window.StageBuilder.pxPerMeter === 'function')
       ? window.StageBuilder.pxPerMeter() : null;
@@ -84,7 +83,7 @@ window.StageScale = (function () {
     return { w: b.w * k, h: b.h * k };
   }
 
-  // Size for a palette tile or search result: real gear keeps some of its
+  // Size for a storage tile or search result: real gear keeps some of its
   // relative bulk so the strip reads at a glance, but stays clickable.
   function thumbSize(item) {
     if (item.mode !== 'real') return 26;
@@ -117,7 +116,7 @@ window.StageScale = (function () {
       (item.mode === 'real' ? ' (to scale)' : ' (symbol)');
   }
 
-  /* A small preview image, used by palette tiles and search results. */
+  /* A small preview image, used by storage tiles and search results. */
   function thumb(item, px) {
     px = px || thumbSize(item);
     var a = iconAspect(item);

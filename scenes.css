@@ -1,0 +1,375 @@
+/* scenes.css — the scene strip under the stage and the shift editor.
+   Uses the tokens from ui.css; the chips borrow the look of the top bar so
+   the strip reads as part of the frame rather than as something on the plot. */
+
+/* ---------------- the strip ---------------- */
+
+.sceneBar {
+  position: relative;
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: none;
+  height: 46px;
+  padding: 0 var(--s-3);
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-line);
+}
+
+.sceneBarLabel {
+  flex: none;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.sceneTrack {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--s-1);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.sceneTrack::-webkit-scrollbar { height: 6px; }
+.sceneTrack::-webkit-scrollbar-thumb { background: var(--c-scroll); border-radius: var(--r-pill); }
+.sceneTrack::-webkit-scrollbar-thumb:hover { background: var(--c-scroll-hover); }
+
+/* ---------------- a scene ---------------- */
+
+.sceneChip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  max-width: 240px;
+  height: 30px;
+  padding: 0 6px 0 5px;
+  color: var(--c-text-2);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  user-select: none;
+}
+
+.sceneChip:hover { background: var(--c-surface); border-color: var(--c-line-2); }
+
+.sceneChip.is-active {
+  color: var(--c-accent-dark);
+  background: var(--c-accent-soft);
+  border-color: var(--c-accent-line);
+  box-shadow: var(--e-1);
+}
+
+.sceneNum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+}
+
+.sceneChip.is-active .sceneNum {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.sceneName {
+  overflow: hidden;
+  font-size: var(--t-md);
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sceneRename {
+  width: 130px;
+  padding: 1px 4px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  font-weight: 600;
+  color: var(--c-text);
+  background: var(--c-surface);
+  border: 1px solid var(--c-accent);
+  border-radius: var(--r-sm);
+  outline: none;
+}
+
+.sceneMenuBtn {
+  display: none;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--c-text-3);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.sceneChip.is-active .sceneMenuBtn,
+.sceneChip:hover .sceneMenuBtn { display: block; }
+.sceneMenuBtn:hover { color: var(--c-text); background: var(--c-sunken); }
+
+/* ---------------- a shift between two scenes ---------------- */
+
+.shiftChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 30px;
+  padding: 0 8px;
+  color: var(--c-text-2);
+  background: repeating-linear-gradient(
+    -45deg, var(--c-surface-2), var(--c-surface-2) 5px, var(--c-sunken) 5px, var(--c-sunken) 10px);
+  border: 1px dashed var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  user-select: none;
+}
+
+.shiftChip:hover { border-color: var(--c-accent); color: var(--c-accent-dark); }
+
+.shiftGlyph {
+  flex: none;
+  font-size: 13px;
+  color: var(--c-text-3);
+}
+
+.shiftChipBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+}
+
+.shiftChipName {
+  max-width: 150px;
+  overflow: hidden;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.shiftChipMeta {
+  font-size: 10px;
+  color: var(--c-text-3);
+  white-space: nowrap;
+}
+
+/* ---------------- the menu on a chip ---------------- */
+
+.sceneMenu {
+  position: fixed;
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+  padding: var(--s-1);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-3);
+}
+
+.sceneMenuItem {
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  text-align: left;
+  color: var(--c-text);
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.sceneMenuItem:hover { background: var(--c-surface-2); }
+.sceneMenuItem:disabled { color: var(--c-text-3); cursor: default; background: none; }
+.sceneMenuItem.isDanger { color: var(--c-danger); }
+.sceneMenuItem.isDanger:hover { background: var(--c-danger-soft); }
+.sceneMenuItem.isDanger:disabled { color: var(--c-text-3); }
+
+/* ---------------- the shift editor ---------------- */
+
+.shiftLead {
+  margin: 2px 0 var(--s-4);
+  font-size: var(--t-md);
+  color: var(--c-text-2);
+}
+
+.shiftFields {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+
+.shiftFields .field { margin: 0; }
+
+.shiftListHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-2);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.shiftList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 320px;
+  padding: var(--s-2);
+  overflow-y: auto;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+}
+
+.shiftEmpty {
+  padding: var(--s-3);
+  font-size: var(--t-md);
+  line-height: 1.45;
+  color: var(--c-text-3);
+}
+
+.shiftRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 5px 7px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-left-width: 3px;
+  border-radius: var(--r-sm);
+  cursor: grab;
+}
+
+.shiftRow.isDragging { opacity: 0.45; }
+.shiftRow.is-out { border-left-color: var(--c-danger); }
+.shiftRow.is-in { border-left-color: var(--c-ok); }
+.shiftRow.is-moved { border-left-color: var(--c-warn); }
+
+.shiftRowNum {
+  flex: none;
+  width: 18px;
+  font-size: var(--t-sm);
+  font-weight: 700;
+  text-align: right;
+  color: var(--c-text-3);
+}
+
+.shiftRowTag {
+  flex: none;
+  width: 48px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  padding: 2px 0;
+  border-radius: var(--r-sm);
+}
+
+.is-out .shiftRowTag { color: var(--c-danger); background: var(--c-danger-soft); }
+.is-in .shiftRowTag { color: var(--c-ok-text); background: var(--c-ok-soft); }
+.is-moved .shiftRowTag { color: var(--c-warn-text); background: var(--c-warn-soft); }
+
+.shiftRowText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.shiftRowLabel {
+  overflow: hidden;
+  font-size: var(--t-md);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.shiftRowDetail {
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+}
+
+.shiftRowNote {
+  flex: none;
+  width: 130px;
+  padding: 3px 6px;
+  font-family: inherit;
+  font-size: var(--t-sm);
+  color: var(--c-text);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+  cursor: text;
+}
+
+.shiftRowNote:focus { background: var(--c-surface); border-color: var(--c-accent); outline: none; }
+
+.shiftRowGrip {
+  flex: none;
+  font-size: 12px;
+  color: var(--c-text-3);
+}
+
+#shiftNote {
+  width: 100%;
+  min-height: 54px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: var(--t-md);
+  color: var(--c-text);
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+#shiftNote:focus { background: var(--c-surface); border-color: var(--c-accent); outline: none; }
+
+.shiftActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--s-4);
+}
+
+.shiftDialogFoot { margin-top: var(--s-3); }
+
+/* Show file buttons, sitting in the Show popover under the details. */
+.showFileRow {
+  display: flex;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+
+.showFileRow .btn { flex: 1; }

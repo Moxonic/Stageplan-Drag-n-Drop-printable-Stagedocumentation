@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Stage Planner</title>
+    <!-- before the stylesheets: picks light or dark before the first paint -->
+    <script src="theme.js"></script>
     <link rel="stylesheet" href="./ui.css">
-    <link rel="stylesheet" href="./housePlan.css">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="./equipment/panel.css">
     <link rel="stylesheet" href="./stageDialog.css">
+    <link rel="stylesheet" href="./scenes.css">
+    <!-- last: it narrows the shell for phones and tablets -->
+    <link rel="stylesheet" href="./responsive.css">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -19,31 +23,48 @@
 
     <!-- ============================= top bar ============================= -->
     <header class="topbar">
-        <div class="wordmark">Stage<b>Planner</b></div>
+        <!-- phones only: the equipment rail comes over the stage -->
+        <button type="button" class="menuBtn railToggle" id="railToggleBtn" aria-expanded="false" aria-controls="sidebar" title="Equipment storage">Storage</button>
+        <div class="wordmark" role="img" aria-label="StagePlanner by Daniel Soto Delgado">
+            <span class="wordmarkName" aria-hidden="true">StagePlanner</span>
+            <span class="wordmarkBy" aria-hidden="true">by Daniel Soto Delgado</span>
+        </div>
 
         <div class="topbarGroup">
-            <button type="button" class="menuBtn" id="showMenuBtn" aria-expanded="false">Show Details</button>
-            <button type="button" class="menuBtn" id="stageMenuBtn" aria-expanded="false">Stage Setup</button>
+            <button type="button" class="menuBtn" id="showMenuBtn" aria-expanded="false" title="Show details">
+                <span class="lblLong">Show Details</span><span class="lblShort">Show</span>
+            </button>
+            <button type="button" class="menuBtn" id="stageMenuBtn" aria-expanded="false" title="Stage setup">
+                <span class="lblLong">Stage Setup</span><span class="lblShort">Stage</span>
+            </button>
         </div>
 
         <div class="topbarDivider"></div>
 
-        <div class="topbarGroup">
+        <div class="topbarGroup topbarTools">
             <div class="splitBtn">
-                <button type="button" class="iconBtn" id="penButton" title="Pen — draw cable runs">✏️</button>
-                <button type="button" class="iconBtn" id="penColourBtn" aria-expanded="false" aria-haspopup="true" title="Pen colour">
+                <button type="button" class="iconBtn" id="penButton" aria-pressed="false" title="Pen — draw cable runs">
+                    <span class="penGlyph" aria-hidden="true">✏️</span>
                     <span id="penColourDot"></span>
                 </button>
+                <button type="button" class="iconBtn" id="penColourBtn" aria-expanded="false" aria-haspopup="true" title="Pen colour"></button>
             </div>
+            <button type="button" class="iconBtn" id="straightLineBtn" aria-pressed="false" title="Straight lines only">📏</button>
+            <button type="button" class="iconBtn" id="eraserButton" aria-pressed="false" title="Eraser — rub out drawn lines">🧽</button>
             <div class="topbarDivider"></div>
             <button type="button" class="iconBtn" id="undoBtn" title="Undo (Ctrl+Z)" disabled>↺</button>
             <button type="button" class="iconBtn" id="redoBtn" title="Redo (Ctrl+Y)" disabled>↻</button>
         </div>
 
+        <!-- phones only: pushes the export button to the end of the first row -->
         <div class="topbarSpacer"></div>
 
-        <button type="button" class="iconBtn" id="infoButton" title="Keyboard and mouse shortcuts">?</button>
-        <button type="button" class="btn btn--primary" id="export">Export PDF</button>
+        <!-- as wide as the wordmark's side on a desktop, so the tools between sit centred -->
+        <div class="topbarEnd">
+            <button type="button" class="iconBtn" id="themeBtn" aria-pressed="false" aria-label="Dark mode" title="Dark mode">🌙</button>
+            <button type="button" class="iconBtn" id="infoButton" title="Keyboard and mouse shortcuts">?</button>
+            <button type="button" class="btn btn--primary" id="export">Export PDF</button>
+        </div>
 
         <!-- ---- Show details, printed on the PDF ---- -->
         <div class="popover" id="showMenu" hidden>
@@ -66,28 +87,39 @@
                 <input type="text" id="playLiveprofessorInput" placeholder="Plugins...">
             </div>
             <div class="field">
+                <label for="playChecklist">Checklist <span class="fieldReq">one per line</span></label>
+                <textarea id="playChecklist" placeholder="Check talkback&#10;Tape the DI lines&#10;Batteries in the packs..."></textarea>
+            </div>
+            <div class="field">
                 <label for="playComments">Comments</label>
                 <textarea id="playComments" placeholder="Comments..."></textarea>
             </div>
-            <div class="popoverHint">Loads you leave empty are left off the PDF.</div>
+            <div class="popoverHint">Loads you leave empty are left off the PDF. The loads and your checklist print at the top of page one, each with a square to tick.</div>
+            <div class="showFileRow">
+                <button type="button" class="btn" id="showNewBtn">New show…</button>
+            </div>
+            <div class="showFileRow">
+                <button type="button" class="btn" id="showOpenFileBtn">Open show file…</button>
+                <button type="button" class="btn" id="showSaveFileBtn">Save show to file…</button>
+            </div>
+            <div class="popoverHint">The show, its scenes and its shifts are kept in this browser as you work.</div>
         </div>
 
         <!-- ---- Which stage the plot is drawn on ---- -->
         <div class="popover" id="stageMenu" hidden>
             <div class="popoverTitle">Stage</div>
-            <div id="stageSummary" class="stageSummary">House plan</div>
+            <!-- the stage and its size: filled in by stageBuilder.js -->
+            <div id="stageSummary" class="stageSummary"></div>
             <button type="button" class="btn btn--primary" id="newStageBtn">New stage…</button>
-            <label class="checkRow">
-                <input type="checkbox" id="toggleHSCPlan" checked>
-                <span>Use the built-in house plan</span>
-            </label>
+            <button type="button" class="btn" id="saveSetupBtn">Save stage with equipment…</button>
+            <div class="popoverHint">Saves this stage together with everything on it — gear, labels and lines. Open it again, or export it as a file, from New stage… → Use an existing stage.</div>
         </div>
 
         <!-- ---- Pen and colours ---- -->
         <div class="popover popover--compact" id="drawMenu" hidden>
             <div class="popoverTitle">Pen colour</div>
             <div class="field">
-                <label>Used for new lines</label>
+                <label>Picking a colour takes up the pen</label>
                 <div class="swatchRow">
                     <button type="button" id="black" class="swatch color is-on" data-color="#1d2329" title="Black"></button>
                     <button type="button" id="red" class="swatch color" data-color="#d3382c" title="Red"></button>
@@ -95,17 +127,22 @@
                     <button type="button" id="green" class="swatch color" data-color="#2e9e5b" title="Green"></button>
                 </div>
             </div>
-            <div class="popoverHint">Hold a line still for five seconds to snap it straight.</div>
+            <div class="popoverHint">For straight lines, press the ruler beside the pen, or hold <kbd>Shift</kbd> as you drag. The sponge beside it rubs lines out.</div>
         </div>
     </header>
 
     <!-- ============================ workspace ============================ -->
     <div class="workspace">
         <aside class="rail" id="sidebar">
+            <!-- upright phones: drag this to raise, lower or dismiss the sheet -->
+            <button type="button" class="railHandle" id="railHandle" aria-expanded="false" aria-controls="sidebar" aria-label="Storage sheet height"><span class="railGrip"></span></button>
             <div class="railTitle">Equipment</div>
-            <!-- Search, equipment palette and scale: built by equipment/panel.js -->
+            <!-- Search, equipment storage and scale: built by equipment/panel.js -->
             <div id="eqPanel"></div>
         </aside>
+
+        <!-- dims the stage while the rail is over it, and closes it when tapped -->
+        <div class="railBackdrop" id="railBackdrop" hidden></div>
 
         <div class="stageContainer">
             <div id="stage">
@@ -117,10 +154,19 @@
         </div>
     </div>
 
+    <!-- ===================== scenes and the shifts between ===================== -->
+    <div class="sceneBar" id="sceneBar">
+        <div class="sceneBarLabel">Scenes</div>
+        <!-- Scene and shift chips: built by scenes.js -->
+        <div class="sceneTrack" id="sceneTrack"></div>
+        <button type="button" class="btn" id="sceneAddBtn" title="Add a scene that starts as a copy of this one">+ Scene</button>
+    </div>
+
     <!-- ============================ status bar =========================== -->
     <footer class="statusbar">
-        <span id="statusScale">House plan</span>
+        <span id="statusScale">Stage</span>
         <span id="statusCount">0 items</span>
+        <span id="sceneCount">1 scene</span>
         <span class="statusHint">
             <kbd>Click</kbd> select · <kbd>Drag</kbd> move · <kbd>Dbl-click</kbd> add text ·
             <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo
@@ -153,20 +199,66 @@
                 <h4>Plot</h4>
                 <dl>
                     <dt><kbd>Dbl-click</kbd></dt><dd>Add a text box on empty stage</dd>
+                    <dt><kbd>Shift</kbd>+<kbd>drag</kbd></dt><dd>Draw one straight line with the pen</dd>
+                    <dt><kbd>Drag</kbd></dt><dd>With the eraser, rub out a line, or just the part you cross</dd>
                     <dt><kbd>Ctrl</kbd>+<kbd>Z</kbd></dt><dd>Undo, including drawn lines</dd>
                     <dt><kbd>Ctrl</kbd>+<kbd>Y</kbd></dt><dd>Redo</dd>
                     <dt><kbd>Esc</kbd></dt><dd>Deselect, or close a dialog</dd>
                     <dt><kbd>+</kbd> <kbd>-</kbd></dt><dd>Zoom the whole page</dd>
                 </dl>
+                <h4>Scenes</h4>
+                <dl>
+                    <dt><kbd>Click</kbd></dt><dd>Open a scene from the strip under the stage</dd>
+                    <dt><kbd>Dbl-click</kbd></dt><dd>Rename a scene on its chip</dd>
+                    <dt><kbd>Ctrl</kbd>+<kbd>←</kbd> <kbd>→</kbd></dt><dd>Step to the scene before or after</dd>
+                    <dt>Shift</dt><dd>Click the divider between two scenes for its change list</dd>
+                </dl>
                 <h4>Getting set up</h4>
                 <dl>
                     <dt>Stage</dt><dd>Define the room in meters so gear is drawn to scale</dd>
-                    <dt>Search</dt><dd>Find gear by brand, model or type</dd>
-                    <dt>Palette</dt><dd>Press + on a result to keep it in the rail</dd>
+                    <dt>Edit</dt><dd>Opens storage: search or browse the catalogue</dd>
+                    <dt>Storage</dt><dd>Press + on a result to keep it in the rail</dd>
                 </dl>
             </div>
         </div>
         <div class="modalHint">Chrome gives the best results, especially for PDF export.</div>
+    </div>
+</div>
+
+<!-- The change between two scenes. What goes out, in and across is the
+     difference between the two plots; the name, time and notes are yours. -->
+<div id="shiftDialog" class="modal" hidden>
+    <div class="modalBox modalBox--wide">
+        <button type="button" class="modalClose" title="Close">✖</button>
+        <div class="modalTitle" id="shiftDialogTitle">Shift</div>
+        <p class="shiftLead" id="shiftLead"></p>
+
+        <div class="shiftFields">
+            <div class="field">
+                <label for="shiftNameInput">Shift name</label>
+                <input type="text" class="input" id="shiftNameInput" placeholder="Into the ballroom…">
+            </div>
+            <div class="field">
+                <label for="shiftTimeInput">Time</label>
+                <input type="text" class="input" id="shiftTimeInput" placeholder="2:30, 20:15, after Q34…">
+            </div>
+        </div>
+
+        <div class="shiftListHead">
+            <span>What happens, in order</span>
+            <button type="button" class="btn btn--ghost" id="shiftResetOrder">Recorded order</button>
+        </div>
+        <!-- Rows: built by scenes.js, dragged to reorder -->
+        <div class="shiftList" id="shiftList"></div>
+
+        <div class="field shiftDialogFoot">
+            <label for="shiftNote">Notes</label>
+            <textarea id="shiftNote" placeholder="Crew, trucks, anything the list does not say…"></textarea>
+        </div>
+
+        <div class="shiftActions">
+            <button type="button" class="btn btn--primary" id="shiftDone">Done</button>
+        </div>
     </div>
 </div>
 
@@ -207,6 +299,10 @@
                 <input type="number" id="sideRW" min="0.5" max="100" step="0.1" value="6" disabled>
                 <input type="number" id="sideRD" min="0.5" max="100" step="0.1" value="8" disabled>
 
+                <label class="dimLabel"><input type="checkbox" id="backOn"> Backstage</label>
+                <input type="number" id="backW" min="0.5" max="100" step="0.1" value="12" disabled>
+                <input type="number" id="backD" min="0.5" max="100" step="0.1" value="4" disabled>
+
                 <label class="dimLabel"><input type="checkbox" id="pitOn"> Orchestra pit</label>
                 <input type="number" id="pitW" min="0.5" max="100" step="0.1" value="10" disabled>
                 <input type="number" id="pitD" min="0.5" max="100" step="0.1" value="3" disabled>
@@ -228,15 +324,19 @@
                 <button type="button" id="stageBackFromExisting" class="stageBtn">Back</button>
                 <button type="button" id="deleteStage" class="stageBtn">Delete</button>
                 <button type="button" id="exportStage" class="stageBtn">Export…</button>
+                <button type="button" id="shareStage" class="stageBtn" hidden>Share with team</button>
                 <button type="button" id="openStage" class="stageBtn stageBtnPrimary">Open</button>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+<!-- 1.4.1 for its scale option, which is what keeps the printed plot sharp -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="equipment/icons.js"></script>
+<!-- players and their instruments, drawn from above; adds to icons.js -->
+<script src="equipment/musicians.js"></script>
 <script src="equipment/catalog.js"></script>
 <script src="equipment/scale.js"></script>
 <script src="equipment/panel.js"></script>
@@ -244,12 +344,22 @@
 <script src="dragnDrop.js"></script>
 <script src="selection.js"></script>
 <script src="addText.js"></script>
-<script src="toggleHSCplan.js"></script>
 <script src="printPDF.js"></script>
 <script src="zoom.js"></script>
 <script src="topbar.js"></script>
 <script src="draw.js"></script>
 <!-- after draw.js: reuses its canvas state when the stage is resized -->
 <script src="stageBuilder.js"></script>
+<!-- it puts a stored scene back, so the stage must already be drawn -->
+<script src="scenes.js"></script>
+<!-- the shell on small screens: the rail drawer and the real top bar height -->
+<script src="responsive.js"></script>
+<!-- touch: drawing, dragging gear, and tapping the rail to place it -->
+<script src="touch.js"></script>
+<!-- the nine events, behind Track.event(). Sends nothing without app.config.js -->
+<script src="track.js"></script>
+<!-- Sign-in, cloud shows, billing and teams are switched off for now. To turn
+     them back on, load app.config.js, account.js, cloud.js, showSync.js,
+     billing.js and teams.js here, and restore the gate markup from git. -->
 </body>
 </html>

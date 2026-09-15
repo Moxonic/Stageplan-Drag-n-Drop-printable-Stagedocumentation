@@ -92,7 +92,7 @@
   cursor: pointer;
 }
 
-.stageBtn:hover { background: var(--c-surface-2); border-color: #b3b9c3; }
+.stageBtn:hover { background: var(--c-surface-2); border-color: var(--c-line-hover); }
 
 .stageBtn:disabled {
   color: var(--c-text-3);
@@ -106,8 +106,8 @@
   border-color: var(--c-accent);
 }
 
-.stageBtnPrimary:hover { background: var(--c-accent-dark); border-color: var(--c-accent-dark); }
-.stageBtnPrimary:disabled { background: #a9c0de; border-color: #a9c0de; color: #fff; }
+.stageBtnPrimary:hover { background: var(--c-accent-hover); border-color: var(--c-accent-hover); }
+.stageBtnPrimary:disabled { background: var(--c-accent-disabled); border-color: var(--c-accent-disabled); color: #fff; }
 
 /* The choice step reads better as one action per line. */
 #stageStepChoice .stageModalActions { flex-direction: column; }
@@ -137,6 +137,7 @@
   padding: 4px;
   font-family: inherit;
   font-size: var(--t-md);
+  color: var(--c-text);
   background: var(--c-surface);
   border: 1px solid var(--c-line-2);
   border-radius: var(--r-md);

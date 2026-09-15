@@ -1,0 +1,11 @@
+# Source artwork for the venue: the plan drawings, the PDF and the
+# speaker photos. Nothing in the app links to them, and they would only be
+# weight in every deploy. Kept on disk, out of the repo.
+pics/
+
+# app.config.js is NOT ignored on purpose: every value in it is public, and a
+# static host deploying from git needs it. Secrets live in Supabase only.
+
+# Supabase CLI working files
+supabase/.branches/
+supabase/.temp/

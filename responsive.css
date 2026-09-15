@@ -1,0 +1,303 @@
+/* responsive.css — the shell at small sizes.
+ *
+ * Loaded last, so everything here overrides the desktop rules in ui.css,
+ * style.css, scenes.css and the panel stylesheets.
+ *
+ * Two ideas carry the phone layout. The top bar wraps onto a second row and
+ * responsive.js measures it into --topbar-real-h, which is what the popovers
+ * and the rail hang from. And the equipment rail stops being a column beside
+ * the stage: it comes over it, so the stage keeps the full width.
+ *
+ * Which edge it comes from is a question of room. A phone held upright gets a
+ * sheet up from the bottom with a handle on it; anything shorter gets the
+ * drawer in from the left.
+ */
+
+:root {
+  /* the top bar's real height, which grows when it wraps. responsive.js
+     keeps it true; this value is the one-row case. */
+  --topbar-real-h: var(--topbar-h);
+  --rail-drawer-w: min(320px, 88vw);
+}
+
+/* The drawer toggle and the short button labels belong to the phone layout,
+   so they stay out of the way until the layout asks for them. */
+.railToggle { display: none; }
+.lblShort { display: none; }
+.railBackdrop { display: none; }
+.railHandle { display: none; }
+
+/* ============================ tablets ============================ */
+
+@media (max-width: 1000px) {
+  :root { --rail-w: 200px; }
+
+  .stageContainer { padding: var(--s-4); }
+}
+
+/* ======================= phones and narrow tablets ======================= */
+
+@media (max-width: 760px) {
+  /* ---- the top bar wraps: menus and export first, drawing tools under ---- */
+
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: var(--topbar-h);
+    row-gap: var(--s-2);
+    padding: var(--s-2);
+    padding-top: max(var(--s-2), env(safe-area-inset-top));
+  }
+
+  .wordmark { display: none; }
+  .topbarDivider { display: none; }
+
+  /* No centring on a phone: the end group dissolves so its buttons are laid
+     out as the bar's own, and the spacer comes back to push export right. */
+  .topbarEnd { display: contents; }
+  .topbarSpacer { display: block; }
+  .railToggle { display: inline-flex; }
+
+  /* The chevron every other top-bar button wears would point nowhere here;
+     upright, where storage does come up from below, it earns one back. */
+  .railToggle::after { display: none; }
+
+  /* The keyboard-and-mouse list has nothing to say to a touch screen. */
+  #infoButton { display: none; }
+
+  .lblLong { display: none; }
+  .lblShort { display: inline; }
+
+  /* The drawing tools take the second row; order moves the export button up
+     beside the menus, which is where the eye looks for it. */
+  .topbarTools { order: 2; flex-basis: 100%; }
+  .topbarSpacer,
+  #themeBtn,
+  #export { order: 1; }
+
+  .menuBtn { padding: 0 var(--s-2); }
+  #export { padding: 0 var(--s-3); }
+
+  /* ---- room to aim ---- */
+
+  .iconBtn { width: 40px; height: 40px; }
+  #penColourBtn { width: 20px; }
+  .btn { height: 40px; }
+
+  /* ---- the rail slides over the stage ---- */
+
+  .rail {
+    position: fixed;
+    top: var(--topbar-real-h);
+    bottom: 0;
+    left: 0;
+    z-index: 340;
+    width: var(--rail-drawer-w);
+    padding-bottom: max(var(--s-3), env(safe-area-inset-bottom));
+    border-right: 1px solid var(--c-line);
+    box-shadow: var(--e-3);
+    transform: translateX(-101%);
+    transition: transform 180ms ease;
+  }
+
+  #app.rail-open .rail { transform: none; }
+
+  .railBackdrop {
+    position: fixed;
+    inset: var(--topbar-real-h) 0 0 0;
+    z-index: 330;
+    display: block;
+    background: rgba(16, 24, 32, 0.45);
+  }
+
+  .railBackdrop[hidden] { display: none; }
+
+  /* ---- the stage gets what is left ---- */
+
+  .stageContainer { padding: var(--s-2); }
+
+  /* ---- popovers become sheets across the width ---- */
+
+  .popover,
+  .popover--compact {
+    position: fixed;
+    top: var(--topbar-real-h);
+    left: var(--s-2) !important;     /* beats the inline left from topbar.js */
+    right: var(--s-2);
+    width: auto;
+    max-height: calc(100vh - var(--topbar-real-h) - var(--s-4));
+    overflow-y: auto;
+  }
+
+  /* ---- the strips along the bottom ---- */
+
+  .sceneBar {
+    height: 44px;
+    padding: 0 var(--s-2);
+  }
+
+  .sceneBarLabel { display: none; }
+
+  .statusbar {
+    padding: 0 var(--s-2);
+    padding-bottom: env(safe-area-inset-bottom);
+    gap: var(--s-2);
+  }
+
+  /* Keyboard shortcuts in a strip nobody can press. */
+  .statusHint { display: none; }
+
+  /* ---- dialogs fit the screen and scroll inside it ---- */
+
+  .modal,
+  .stageModal { padding: var(--s-2); }
+
+  .modalBox,
+  .modalBox--wide,
+  .stageModalBox {
+    width: 100%;
+    max-width: none;
+    max-height: 92vh;
+    padding: var(--s-4);
+    overflow-y: auto;
+  }
+
+  .shortcutGrid { grid-template-columns: minmax(0, 1fr); }
+
+  .shiftFields { grid-template-columns: minmax(0, 1fr); }
+
+  /* Width, depth and their labels need all three columns, so only the
+     numbers give ground. */
+  .dimGrid { gap: var(--s-1); }
+  .dimGrid input[type="number"] { min-width: 0; }
+
+  .stageModalActions,
+  .shiftActions { flex-wrap: wrap; }
+}
+
+/* ---- very narrow: one more turn of the same screw ---- */
+
+@media (max-width: 420px) {
+  :root { --rail-drawer-w: 86vw; }
+
+  .topbar { gap: var(--s-1); }
+  #export { font-size: var(--t-sm); }
+  .sceneBar { gap: var(--s-1); }
+}
+
+/* ================== upright phone: storage comes up from below ================== */
+
+/* Held upright a phone has height to give away, so storage arrives as a sheet
+ * over the bottom edge, where the thumb already rests, with a handle to drag it
+ * taller, shorter or away. Lying down it has no height to spare, so the rules
+ * above stand and storage keeps coming in from the side.
+ *
+ * Upright is asked as an orientation rather than a height, because an on-screen
+ * keyboard can take a third of the height on some phones and the layout must
+ * not change shape under someone mid-word. The floor underneath it only rules
+ * out a screen too short for a sheet to be worth the gesture.
+ */
+
+@media (max-width: 760px) and (orientation: portrait) and (min-height: 480px) {
+  :root {
+    /* where the sheet rests, and how far up the handle can pull it */
+    --sheet-h: 46vh;
+    --sheet-h-full: calc(100vh - var(--topbar-real-h));
+    --sheet-h-full: calc(100dvh - var(--topbar-real-h));
+  }
+
+  .rail {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: var(--sheet-h);
+    max-height: var(--sheet-h-full);
+    padding-top: 0;
+    border-top: 1px solid var(--c-line);
+    border-right: 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    transform: translateY(101%);
+    transition: transform 200ms ease, height 200ms ease;
+  }
+
+  #app.rail-full .rail { height: var(--sheet-h-full); }
+
+  /* While a finger is on the handle the sheet tracks it, so nothing eases. */
+  #app.rail-dragging .rail { transition: none; }
+
+  /* The handle holds the top edge while the storage scrolls under it, and the
+     negative margins let it sit on the corners the rail's padding leaves. */
+  .railHandle {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: auto;
+    height: 28px;
+    margin: 0 calc(var(--s-3) * -1) var(--s-1);
+    padding: 0;
+    background: var(--c-surface);
+    border: 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    cursor: grab;
+    touch-action: none;              /* the drag is the sheet's, not the page's */
+  }
+
+  .railHandle:active { cursor: grabbing; }
+  .railHandle:focus-visible { outline: 2px solid var(--c-accent); outline-offset: -3px; }
+
+  .railGrip {
+    width: 40px;
+    height: 4px;
+    background: var(--c-line-2);
+    border-radius: var(--r-pill);
+  }
+
+  /* The toggle points the way the sheet is about to go. */
+  .railToggle::after { display: inline; content: '⌃'; transform: translateY(2px); }
+  .railToggle[aria-expanded="true"]::after { content: '⌄'; transform: translateY(-2px); }
+
+  /* Full screen width instead of a rail, so more gear fits on a row. */
+  .eqStorage { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
+}
+
+/* ---- phone in landscape: vertical room is the scarce thing ---- */
+
+@media (max-width: 900px) and (max-height: 520px) {
+  .sceneBar { height: 40px; }
+  .statusbar { height: 24px; }
+  .iconBtn { width: 36px; height: 36px; }
+  .btn { height: 36px; }
+}
+
+/* ============================ touch screens ============================ */
+
+/* Keyed to the pointer, not the width: a small laptop still gets the fine
+   targets, and a large tablet still gets the big ones. */
+@media (pointer: coarse) {
+  /* The stage handles its own gestures — a drag draws or moves something
+     rather than scrolling the page or zooming into it. */
+  #stage,
+  #dropZone,
+  #canvas { touch-action: none; }
+
+  /* Handles a fingertip can actually land on, and far enough out that the
+     finger does not cover what it is moving. */
+  .selHandle { width: 30px; height: 30px; font-size: 15px; }
+  .selRotate { left: -38px; margin-top: -15px; }
+  .selResize { right: -15px; bottom: -15px; }
+
+  .selAction { width: 30px; height: 30px; font-size: 15px; }
+  .selBar { gap: var(--s-1); padding: var(--s-1); margin-bottom: 14px; }
+
+  .eqStorageBtn { width: 36px; height: 36px; font-size: 16px; }
+
+  /* Rail rows are tap targets for placing gear, so give them a row to tap. */
+  .eqResult { min-height: 44px; }
+  .eqTile { min-height: 44px; }
+}

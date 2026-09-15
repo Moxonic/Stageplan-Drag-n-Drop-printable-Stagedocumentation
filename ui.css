@@ -3,13 +3,16 @@
    need to, and so every panel stylesheet can rely on these variables. */
 
 :root {
+  color-scheme: light;
+
   /* neutrals */
-  --c-bg:        #eef0f3;
-  --c-surface:   #ffffff;
-  --c-surface-2: #f6f7f9;
-  --c-sunken:    #e7eaee;
-  --c-line:      #dcdfe5;
-  --c-line-2:    #c8cdd5;
+  --c-bg:         #eef0f3;
+  --c-surface:    #ffffff;
+  --c-surface-2:  #f6f7f9;
+  --c-sunken:     #e7eaee;
+  --c-line:       #dcdfe5;
+  --c-line-2:     #c8cdd5;
+  --c-line-hover: #b3b9c3;
 
   /* text */
   --c-text:      #1d2329;
@@ -17,17 +20,35 @@
   --c-text-3:    #8a95a1;
   --c-on-accent: #ffffff;
 
-  /* accent and status */
-  --c-accent:      #2f6dbd;
-  --c-accent-dark: #255a9e;
-  --c-accent-soft: #e8f0fa;
+  /* accent and status. accent-dark is text on accent-soft; accent-hover is
+     the ground of a primary button under the pointer. */
+  --c-accent:          #2f6dbd;
+  --c-accent-dark:     #255a9e;
+  --c-accent-hover:    #255a9e;
+  --c-accent-soft:     #e8f0fa;
+  --c-accent-line:     #b6cdea;
+  --c-accent-disabled: #a9c0de;
   --c-danger:      #c0392b;
+  --c-danger-soft: #fdf0ee;
+  --c-danger-line: #edc3bd;
   --c-warn:        #d08700;
+  --c-warn-soft:   #fdf4e2;
+  --c-warn-text:   #8a5a00;
+  --c-ok:          #2e9e5b;
+  --c-ok-soft:     #e9f6ee;
+  --c-ok-text:     #1f7a45;
 
   /* the work surface */
   --c-stage-bg:   #4a4f57;
   --c-stage-dot:  #5b616a;
   --c-stage-deck: #ffffff;
+
+  /* odds and ends */
+  --c-scroll:       #d3d7dd;
+  --c-scroll-hover: #bcc2ca;
+  --c-swatch-ring:  rgba(0, 0, 0, 0.18);
+  --c-thumb-bg:     transparent;   /* behind a gear symbol in the rail */
+  --c-wordmark-ink: rgba(30, 38, 46, 0.55);
 
   /* spacing scale */
   --s-1: 4px;
@@ -59,6 +80,60 @@
 
   --topbar-h: 52px;
   --rail-w: 236px;
+}
+
+/* ---------------- dark mode ----------------
+
+   theme.js sets data-theme on <html> before the page paints: the system
+   setting, until a choice made with the top-bar toggle overrides it. Only the
+   tokens change. The plot itself stays paper, see style.css. */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-bg:         #121417;
+  --c-surface:    #1c1f23;
+  --c-surface-2:  #24282d;
+  --c-sunken:     #2c3137;
+  --c-line:       #32373e;
+  --c-line-2:     #444a52;
+  --c-line-hover: #5a616a;
+
+  --c-text:   #e3e7eb;
+  --c-text-2: #aab3bc;
+  --c-text-3: #7e8892;
+
+  --c-accent:          #3a78c9;
+  --c-accent-dark:     #8fb9ee;
+  --c-accent-hover:    #2f64a8;
+  --c-accent-soft:     #1d3149;
+  --c-accent-line:     #34557d;
+  --c-accent-disabled: #2b3f58;
+  --c-danger:      #e8675c;
+  --c-danger-soft: #3a2220;
+  --c-danger-line: #6b3530;
+  --c-warn:        #e2a33a;
+  --c-warn-soft:   #3a2e17;
+  --c-warn-text:   #eec170;
+  --c-ok:          #45b877;
+  --c-ok-soft:     #1a3325;
+  --c-ok-text:     #7fd6a3;
+
+  --c-stage-bg:  #0d0f12;
+  --c-stage-dot: #1c2025;
+
+  --c-scroll:       #3a4048;
+  --c-scroll-hover: #4c535c;
+  --c-swatch-ring:  rgba(255, 255, 255, 0.28);
+  /* the symbols are drawn dark for paper, so in the rail they get a light card */
+  --c-thumb-bg:     #d7dbe0;
+  /* a lit upper wall reads on a dark bar where a shadowed one would vanish */
+  --c-wordmark-ink: rgba(255, 255, 255, 0.3);
+
+  --e-1: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --e-2: 0 2px 8px rgba(0, 0, 0, 0.40);
+  --e-3: 0 8px 24px rgba(0, 0, 0, 0.50);
+  --e-4: 0 18px 48px rgba(0, 0, 0, 0.60);
 }
 
 /* ---------------- shell ---------------- */
@@ -97,24 +172,84 @@ html, body {
   box-shadow: var(--e-1);
 }
 
+/* The name in the corner, stamped into the metal of the bar: steel-grey
+   capitals, each with a shadow along its upper edge and a highlight along its
+   lower one, which is how light falls into a letter pressed below the
+   surface. The author underneath, the same way, smaller and spaced wide. */
 .wordmark {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-right: var(--s-3);
-  font-size: var(--t-lg);
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  color: var(--c-text);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  /* one of the two equal sides around the centred tools; see .topbarEnd */
+  flex: 1 1 0;
+  min-width: max-content;
   white-space: nowrap;
+  user-select: none;
 }
 
-.wordmark b {
-  font-weight: 650;
-  color: var(--c-accent);
+/* The same material as the bar, cut into it: the shadow falls inside each
+   letter, along its upper wall, and fades to the bar's own colour below.
+
+   CSS has no inset text-shadow, so it is built from two layers. The letter
+   is filled dark (the background, clipped to the glyphs), and a shadow in the
+   bar's colour is laid over that fill, dropped a little and blurred. Because
+   the text itself is transparent, the shadow only shows inside the glyphs,
+   and the dark fill is left uncovered only at the top of each letter. */
+.wordmarkName,
+.wordmarkBy {
+  font-family: var(--f-ui);
+  line-height: 1;
+  text-transform: uppercase;
+  color: #c9cfd6;   /* where text cannot be clipped: a faint grey instead */
 }
 
-.topbarSpacer { flex: 1; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .wordmarkName,
+  .wordmarkBy {
+    color: transparent;
+    background-color: var(--c-wordmark-ink);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .wordmarkName { text-shadow: 0 2.5px 2px var(--c-surface); }
+  .wordmarkBy { text-shadow: 0 1.5px 1px var(--c-surface); }
+}
+
+.wordmarkName {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin-right: -0.2em;   /* the spacing trails the last letter */
+}
+
+/* The author's spacing is a starting point: topbar.js widens it until the
+   line is exactly as wide as the name above. */
+
+.wordmarkBy {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  margin-right: -0.3em;
+}
+
+/* The menus and drawing tools sit in the middle of the bar. The wordmark on
+   the left and .topbarEnd on the right both grow from nothing at the same
+   rate, so they end up the same width and whatever is between them is centred,
+   however long the name or the buttons at the end. The spacer only does work
+   in the wrapped phone bar (responsive.css). */
+.topbarSpacer { flex: 1; display: none; }
+
+.topbarEnd {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  flex: 1 1 0;
+  min-width: max-content;
+}
 
 .topbarGroup {
   display: flex;
@@ -150,7 +285,7 @@ html, body {
   transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
-.btn:hover { background: var(--c-surface-2); border-color: #b3b9c3; }
+.btn:hover { background: var(--c-surface-2); border-color: var(--c-line-hover); }
 .btn:active { background: var(--c-sunken); }
 
 .btn:focus-visible,
@@ -174,8 +309,8 @@ html, body {
   border-color: var(--c-accent);
 }
 
-.btn--primary:hover { background: var(--c-accent-dark); border-color: var(--c-accent-dark); }
-.btn--primary:disabled { background: #a9c0de; border-color: #a9c0de; color: #fff; }
+.btn--primary:hover { background: var(--c-accent-hover); border-color: var(--c-accent-hover); }
+.btn--primary:disabled { background: var(--c-accent-disabled); border-color: var(--c-accent-disabled); color: #fff; }
 
 .btn--ghost {
   background: transparent;
@@ -185,7 +320,7 @@ html, body {
 .btn--ghost:hover { background: var(--c-surface-2); border-color: transparent; }
 
 .btn--danger { color: var(--c-danger); }
-.btn--danger:hover { background: #fdf0ee; border-color: #edc3bd; }
+.btn--danger:hover { background: var(--c-danger-soft); border-color: var(--c-danger-line); }
 
 /* square icon button */
 .iconBtn {
@@ -230,17 +365,25 @@ html, body {
 .menuBtn[aria-expanded="true"] { background: var(--c-accent-soft); color: var(--c-accent-dark); }
 .menuBtn::after { content: '⌄'; font-size: 11px; line-height: 1; opacity: 0.65; transform: translateY(-2px); }
 
-/* pen, with its colour dropdown joined onto the right */
+/* One pen control: the pencil carries the colour it will draw in, and the
+   narrow half beside it opens the colours. */
 .splitBtn {
   display: inline-flex;
   align-items: center;
   gap: 1px;
 }
 
-#penColourBtn {
-  width: auto;
+#penButton {
+  flex-direction: column;
   gap: 3px;
-  padding: 0 5px;
+  padding-top: 3px;
+}
+
+#penButton .penGlyph { line-height: 1; }
+
+#penColourBtn {
+  width: 16px;
+  padding: 0;
 }
 
 #penColourBtn[aria-expanded="true"] {
@@ -256,13 +399,13 @@ html, body {
   transform: translateY(-2px);
 }
 
-/* shows which colour the next line will be drawn in */
+/* the bar under the pencil: which colour the next line will be drawn in */
 #penColourDot {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 3px;
   background: #1d2329;
   border-radius: var(--r-pill);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7);
 }
 
 /* ---------------- top-bar popovers ---------------- */
@@ -327,6 +470,7 @@ html, body {
 
 .input,
 .popover input[type="text"],
+.popover input[type="number"],
 .popover textarea,
 .popover select {
   width: 100%;
@@ -394,10 +538,12 @@ input[type="number"] { font-variant-numeric: tabular-nums; }
 }
 
 .rail::-webkit-scrollbar { width: 10px; }
-.rail::-webkit-scrollbar-thumb { background: #d3d7dd; border: 3px solid var(--c-surface); border-radius: var(--r-pill); }
-.rail::-webkit-scrollbar-thumb:hover { background: #bcc2ca; }
+.rail::-webkit-scrollbar-thumb { background: var(--c-scroll); border: 3px solid var(--c-surface); border-radius: var(--r-pill); }
+.rail::-webkit-scrollbar-thumb:hover { background: var(--c-scroll-hover); }
 
+/* position: the storage menu hangs off the floppy that sits in this row */
 .railTitle {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -458,13 +604,13 @@ kbd {
   padding: 0;
   border: 2px solid transparent;
   border-radius: var(--r-pill);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 0 0 1px var(--c-swatch-ring);
   cursor: pointer;
 }
 
 .swatch.is-on {
   border-color: var(--c-accent);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 0 0 2px var(--c-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--c-swatch-ring), 0 0 0 2px var(--c-accent-soft);
 }
 
 #black { background: #1d2329; }

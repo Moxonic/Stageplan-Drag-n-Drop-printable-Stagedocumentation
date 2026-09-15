@@ -1,5 +1,6 @@
-/* panel.css — the equipment rail: palette chooser, search, the palette
-   itself, custom items and the scale controls. Tokens come from ui.css. */
+/* panel.css — the equipment rail: storage chooser, the storage strip itself,
+   custom items and the scale controls, plus the edit window that search and
+   the catalogue browser live in. Tokens come from ui.css. */
 
 #eqPanel {
   position: relative;
@@ -11,56 +12,43 @@
 
 /* display:flex below would otherwise beat the hidden attribute. */
 .eqMenu[hidden],
-.eqCustomForm[hidden],
-.eqResults[hidden] { display: none !important; }
+.eqCustomForm[hidden] { display: none !important; }
 
-/* ---- palette chooser ---- */
+/* ---- storage chooser ---- */
 
-.eqBar {
+/* One floppy for the storage lists, in the rail's heading. The menu under it
+   holds the other lists and everything that can be done to this one, so the
+   button needs no label of its own. */
+.eqStorageBtn {
   display: flex;
   align-items: center;
-  gap: var(--s-1);
-}
-
-.eqPaletteSelect {
-  flex: 1;
-  min-width: 0;
-  height: 30px;
-  padding: 0 6px;
-  font-family: inherit;
-  font-size: var(--t-sm);
-  color: var(--c-text);
-  background: var(--c-surface);
-  border: 1px solid var(--c-line-2);
-  border-radius: var(--r-md);
-}
-
-.eqIconBtn {
+  justify-content: center;
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1;
-  color: var(--c-text-2);
+  color: var(--c-text);
   background: var(--c-surface);
   border: 1px solid var(--c-line-2);
   border-radius: var(--r-md);
   cursor: pointer;
 }
 
-.eqIconBtn:hover { background: var(--c-surface-2); color: var(--c-text); }
+.eqStorageBtn:hover { background: var(--c-surface-2); }
 
-.eqIconBtn.isOn {
-  color: var(--c-on-accent);
-  background: var(--c-accent);
-  border-color: var(--c-accent);
+.eqStorageBtn[aria-expanded="true"] {
+  background: var(--c-surface-2);
+  border-color: var(--c-line);
 }
 
+/* Hangs from the heading the floppy sits in, rather than from the panel. */
 .eqMenu {
   position: absolute;
-  top: 34px;
+  top: calc(100% + 4px);
+  left: 0;
   right: 0;
   z-index: 120;
   display: flex;
@@ -71,6 +59,28 @@
   border: 1px solid var(--c-line);
   border-radius: var(--r-lg);
   box-shadow: var(--e-3);
+}
+
+.eqMenuHead {
+  padding: 5px 10px 3px;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.eqMenuPicks {
+  display: flex;
+  flex-direction: column;
+  max-height: 190px;
+  overflow-y: auto;
+}
+
+.eqMenuSep {
+  height: 1px;
+  margin: var(--s-1) 6px;
+  background: var(--c-line);
 }
 
 .eqMenuItem {
@@ -87,11 +97,36 @@
 
 .eqMenuItem:hover { background: var(--c-accent-soft); color: var(--c-accent-dark); }
 
-/* ---- search ---- */
+/* A list to switch to, with the one you are in already ticked. */
+.eqMenuPick {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eqMenuPick.is-on { font-weight: 600; }
+
+.eqPickMark {
+  flex: none;
+  width: 12px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--c-accent);
+}
+
+.eqPickName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- search, inside the edit window ---- */
 
 .eqSearchWrap {
   display: flex;
-  gap: var(--s-1);
+  gap: var(--s-2);
 }
 
 .eqSearch {
@@ -115,17 +150,16 @@
   box-shadow: 0 0 0 3px rgba(47, 109, 189, 0.16);
 }
 
-/* Wider than the rail: search results need room for a full model name. */
+/* Results and the browse list share this box; it scrolls on its own so the
+   window stays the same size whichever is showing. */
 .eqResults {
-  position: fixed;
-  z-index: 400;
-  width: 320px;
-  max-height: min(60vh, 420px);
+  flex: 1;
+  min-height: 240px;
+  max-height: min(52vh, 420px);
   overflow-y: auto;
   background: var(--c-surface);
   border: 1px solid var(--c-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--e-3);
 }
 
 .eqGroupHead {
@@ -146,7 +180,7 @@
   align-items: center;
   gap: var(--s-2);
   padding: 6px 10px;
-  cursor: grab;
+  cursor: pointer;
   border-bottom: 1px solid var(--c-surface-2);
 }
 
@@ -160,6 +194,8 @@
   justify-content: center;
   width: 30px;
   height: 30px;
+  background: var(--c-thumb-bg);
+  border-radius: var(--r-sm);
 }
 
 .eqResultText { flex: 1; min-width: 0; }
@@ -204,21 +240,188 @@
   color: var(--c-text-3);
 }
 
-/* ---- the palette ---- */
+/* ---- browsing the catalogue: one dropdown per category ---- */
 
-.eqPalette {
+.eqCatGroup { border-bottom: 1px solid var(--c-line); }
+.eqCatGroup:last-child { border-bottom: none; }
+
+.eqCatHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 9px 12px;
+  font-size: var(--t-md);
+  font-weight: 500;
+  color: var(--c-text);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+/* the default triangle, in both engines, replaced by the caret below */
+.eqCatHead::-webkit-details-marker { display: none; }
+.eqCatHead::marker { content: ''; }
+
+.eqCatHead::before {
+  content: '›';
+  flex: none;
+  display: inline-block;
+  width: 9px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--c-text-3);
+  transition: transform 120ms ease;
+}
+
+.eqCatGroup[open] > .eqCatHead::before { transform: rotate(90deg); }
+.eqCatHead:hover { background: var(--c-surface-2); }
+.eqCatGroup[open] > .eqCatHead { background: var(--c-surface-2); }
+
+.eqCatName { flex: 1; }
+
+.eqCatCount {
+  flex: none;
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+}
+
+.eqSubHead {
+  padding: 6px 12px;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+  border-top: 1px solid var(--c-surface-2);
+}
+
+/* ---- the edit window ---- */
+
+.eqEditBox {
+  display: flex;
+  flex-direction: column;
+  width: 840px;
+  max-width: 100%;
+}
+
+/* the catalogue takes the room, the storage a fixed column beside it */
+.eqEditGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--s-1);
-  min-height: 64px;
-  padding: var(--s-2);
+  grid-template-columns: minmax(0, 1fr) 264px;
+  gap: var(--s-5);
+  align-items: start;
+}
+
+.eqEditCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.eqEditHead {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.eqBrowse {
+  flex: none;
+  height: 32px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+/* Away from the rail the storage has no box around it, so it brings its own. */
+.eqEditBox .eqStorage {
+  max-height: min(46vh, 360px);
+  overflow-y: auto;
   background: var(--c-surface-2);
   border: 1px solid var(--c-line);
   border-radius: var(--r-lg);
 }
 
-/* The palette is a grid, so a message in it has to span every column. */
-.eqPalette .eqEmpty {
+.eqEditHint {
+  font-size: var(--t-xs);
+  line-height: 1.5;
+  color: var(--c-text-3);
+}
+
+.eqEditFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--s-5);
+}
+
+/* Too narrow for two columns: the storage drops under the catalogue. */
+@media (max-width: 880px) {
+  .eqEditGrid { grid-template-columns: minmax(0, 1fr); }
+  .eqEditBox .eqStorage { max-height: 30vh; }
+  .eqResults { max-height: 40vh; }
+}
+
+/* ---- the storage ---- */
+
+.eqStorageBox {
+  display: flex;
+  flex-direction: column;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+
+.eqStorageHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: 5px 5px 5px 10px;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.eqStorageHeadName {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
+}
+
+.eqEditBtn {
+  flex: none;
+  height: 24px;
+  padding: 0 10px;
+  font-family: inherit;
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: var(--c-text-2);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line-2);
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+
+.eqEditBtn:hover { background: var(--c-surface-2); color: var(--c-text); }
+
+.eqEditBtn.isOn {
+  color: var(--c-on-accent);
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.eqStorage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-1);
+  min-height: 64px;
+  padding: var(--s-2);
+}
+
+/* The storage is a grid, so a message in it has to span every column. */
+.eqStorage .eqEmpty {
   grid-column: 1 / -1;
   text-align: center;
   padding: var(--s-3) var(--s-2);
@@ -248,6 +451,13 @@
 
 .eqTile .eqThumb { display: block; flex: none; }
 
+/* The symbols are dark ink for paper; on a dark tile they sit on a light card. */
+:root[data-theme="dark"] .eqTile .eqThumb {
+  padding: 2px;
+  background: var(--c-thumb-bg);
+  border-radius: var(--r-sm);
+}
+
 .eqTileCap {
   max-width: 100%;
   font-size: 9px;
@@ -259,17 +469,31 @@
   text-overflow: ellipsis;
 }
 
-.eqPalette.isEditing .eqTile {
+.eqStorage.isEditing .eqTile {
   border-style: dashed;
   border-color: var(--c-line-2);
 }
 
-.eqTile.isDragging { opacity: 0.4; }
+/* Fading the tile being dragged makes a stacking context of it, which would
+   trap its own cross at the tile's level again, so it is lifted over the row
+   it is being dragged through. */
+.eqTile.isDragging { opacity: 0.4; z-index: 4; }
 
+/* Under the pointer the whole tile comes forward, so its cross reads as part
+   of that tile rather than as a corner poking out from behind the one in
+   front. focus-within does the same for a keyboard. */
+.eqStorage.isEditing .eqTile:hover,
+.eqStorage.isEditing .eqTile:focus-within { z-index: 2; }
+
+/* The cross hangs over the tile's corner, into ground the next tile in the
+   grid covers. Grid items paint in order and make no stacking context of their
+   own, so without a z-index the cross on every tile but the last sits behind
+   its neighbour. Kept well under .eqMenu, which still opens over all of them. */
 .eqTileRemove {
   position: absolute;
   top: -5px;
   right: -5px;
+  z-index: 3;
   width: 16px;
   height: 16px;
   padding: 0;
@@ -305,7 +529,7 @@
   border-color: var(--c-accent);
 }
 
-.eqBtnPrimary:hover { background: var(--c-accent-dark); }
+.eqBtnPrimary:hover { background: var(--c-accent-hover); }
 
 .eqCustomForm {
   display: flex;
@@ -368,20 +592,6 @@
   height: auto;
 }
 
-.eqScaleLabel {
-  flex: none;
-  width: 84px;
-  font-size: var(--t-xs);
-  font-weight: 500;
-  color: var(--c-text-2);
-}
-
-.eqRange {
-  flex: 1;
-  min-width: 0;
-  accent-color: var(--c-accent);
-}
-
 .eqCheckRow {
   font-size: var(--t-xs);
   color: var(--c-text-2);
@@ -389,15 +599,6 @@
 }
 
 .eqCheckRow input { margin: 0; accent-color: var(--c-accent); }
-
-.eqScaleNote {
-  font-size: var(--t-xs);
-  line-height: 1.4;
-  color: var(--c-text-3);
-}
-
-.eqScaleRow.isMuted .eqScaleLabel,
-.eqScaleRow.isMuted .eqUnit { color: var(--c-text-3); }
 
 /* ---- items placed on the stage ---- */
 

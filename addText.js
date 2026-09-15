@@ -30,7 +30,6 @@ window.StageText = (function () {
         if (opts.text) div.textContent = opts.text;
         if (opts.rotation) div.style.transform = 'rotate(' + opts.rotation + 'deg)';
 
-        div.draggable = !opts.editing;
         if (opts.editing) div.contentEditable = 'true';
 
         bind(div);
@@ -40,34 +39,12 @@ window.StageText = (function () {
     function bind(div) {
         div.addEventListener('blur', () => {
             div.contentEditable = 'false';
-            div.draggable = true;
             record();
         });
 
-        div.addEventListener('dragstart', (e) => {
-            e.stopPropagation();
-            const rect = div.getBoundingClientRect();
-            try {
-                e.dataTransfer.setData('text/plain', '');     // Firefox needs a payload
-                e.dataTransfer.setDragImage(div, rect.width / 2, rect.height / 2);
-            } catch (err) { /* older browsers */ }
-            div.dataset.grabX = e.clientX - rect.left;
-            div.dataset.grabY = e.clientY - rect.top;
-            div.style.opacity = '0.5';
-        });
-
-        div.addEventListener('dragend', (e) => {
-            const dz = dropZone();
-            const dzRect = dz.getBoundingClientRect();
-            const gx = parseFloat(div.dataset.grabX || '0');
-            const gy = parseFloat(div.dataset.grabY || '0');
-            div.style.left = (e.clientX - dzRect.left - gx) + 'px';
-            div.style.top = (e.clientY - dzRect.top - gy) + 'px';
-            div.style.opacity = '1';
-            if (window.StageScale) window.StageScale.rememberPosition(div);
-            if (window.Selection) window.Selection.sync();
-            record();
-        });
+        // A label moves the same way gear does: it follows the pointer rather
+        // than sending a ghost ahead and jumping at the end.
+        if (window.StageMove) window.StageMove.makeMovable(div);
 
         // Each box keeps its own angle, rather than sharing one counter.
         div.addEventListener('contextmenu', (e) => {
@@ -89,7 +66,7 @@ window.StageText = (function () {
         }
 
         dz.addEventListener('dblclick', (event) => {
-            if (window.penEnabled) return;
+            if (window.penEnabled || window.eraserEnabled) return;
 
             // equipment has its own double-click meaning, handled elsewhere
             if (event.target.closest('.gear, .dropped-equipment, .selLayer')) return;
