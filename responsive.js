@@ -51,11 +51,83 @@ window.RailDrawer = (function () {
 
     /* ---------------- the real top bar height ---------------- */
 
+    /* The drawing tools only take a row of their own when the first one has no
+       room for them. Try them up there, and send them back down if that made
+       the bar wrap: the menus, the tools and the export button not all on one
+       row. Both happen before the browser paints, so nothing is seen to jump. */
+    function fitTools(bar) {
+        const tools = bar.querySelector('.topbarTools');
+        const start = byId('showMenuBtn');
+        const end = byId('export');
+        if (!tools || !start || !end) return;
+        bar.classList.add('tools-inline');
+        if (!isDrawer()) return;
+        const top = start.getBoundingClientRect().top;
+        // buttons of different heights are centred, so their tops differ a little
+        const offRow = (el) => Math.abs(el.getBoundingClientRect().top - top) > 16;
+        if (offRow(tools) || offRow(end)) bar.classList.remove('tools-inline');
+    }
+
     function measure() {
         const bar = document.querySelector('.topbar');
         if (!bar) return;
+        fitTools(bar);
         const h = Math.round(bar.getBoundingClientRect().height);
         if (h > 0) document.documentElement.style.setProperty('--topbar-real-h', h + 'px');
+    }
+
+    /* ---------------- keeping the page in place ---------------- */
+
+    /* The page is laid out to fit the screen and is never meant to scroll.
+       A phone scrolls it anyway when a text field takes focus and the keyboard
+       comes up, and does not always scroll it back when the keyboard goes,
+       which leaves the top bar pushed up out of sight until the phone is
+       turned. responsive.css pins the page so there is nothing to scroll; this
+       puts it back for any browser that moves it regardless.
+
+       Not while someone is typing: then the phone has moved the page on
+       purpose, to keep the field they are typing in above the keyboard. */
+    const TYPING = ['INPUT', 'TEXTAREA', 'SELECT'];
+
+    function typing() {
+        const on = document.activeElement;
+        if (!on || on === document.body) return false;
+        if (!(TYPING.includes(on.tagName) || on.isContentEditable)) return false;
+        // a field inside a window that has just closed no longer counts
+        return !!(on.offsetParent || on.getClientRects().length);
+    }
+
+    function pinPage() {
+        if (typing()) return;
+        if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+        [document.scrollingElement, document.documentElement, document.body, app].forEach((node) => {
+            if (node && (node.scrollTop || node.scrollLeft)) {
+                node.scrollTop = 0;
+                node.scrollLeft = 0;
+            }
+        });
+        measure();
+    }
+
+    // After the event has run its course: a new field may be about to take
+    // focus, and a keyboard takes a moment to finish going away.
+    let pinTimer = 0;
+    function pinSoon(delay) {
+        window.clearTimeout(pinTimer);
+        pinTimer = window.setTimeout(pinPage, delay || 120);
+    }
+
+    function wirePin() {
+        document.addEventListener('focusout', () => pinSoon(), true);
+        // closing a window with a tap does not always move the focus on a phone
+        document.addEventListener('click', () => pinSoon(350), true);
+        window.addEventListener('orientationchange', () => pinSoon(300));
+        window.addEventListener('pageshow', () => pinSoon());
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) pinSoon(); });
+        if (window.visualViewport) {
+            // the keyboard coming and going resizes the visible part of the page
+            window.visualViewport.addEventListener('resize', () => pinSoon());
+        }
     }
 
     /* ---------------- the drawer ---------------- */
@@ -171,6 +243,7 @@ window.RailDrawer = (function () {
 
         measure();
         wireHandle();
+        wirePin();
 
         if (toggle) {
             toggle.addEventListener('click', (e) => {
@@ -190,6 +263,7 @@ window.RailDrawer = (function () {
         // Turning the phone on its side ends the sheet the same way.
         window.addEventListener('resize', () => {
             measure();
+            pinSoon();
             // A keyboard opening over the custom-item fields is not a change of
             // layout, so leave the sheet where it is until typing is finished.
             if (typingInRail()) return;
@@ -203,6 +277,8 @@ window.RailDrawer = (function () {
         if (bar && typeof ResizeObserver !== 'undefined') {
             new ResizeObserver(measure).observe(bar);
         }
+        // the button labels can change width once the fonts arrive
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
     }
 
     if (document.readyState === 'loading') {

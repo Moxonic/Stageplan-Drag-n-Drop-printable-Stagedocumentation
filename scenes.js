@@ -383,8 +383,13 @@ window.Scenes = (function () {
         });
 
         const current = track.querySelector('.sceneChip.is-active');
-        if (current && current.scrollIntoView) {
-            current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        // Scroll the strip alone. scrollIntoView also scrolls every box around
+        // it, the page included, which on a phone can push the top bar away.
+        if (current) {
+            const strip = track.getBoundingClientRect();
+            const chip = current.getBoundingClientRect();
+            if (chip.left < strip.left) track.scrollLeft -= strip.left - chip.left;
+            else if (chip.right > strip.right) track.scrollLeft += chip.right - strip.right;
         }
 
         const count = byId('sceneCount');

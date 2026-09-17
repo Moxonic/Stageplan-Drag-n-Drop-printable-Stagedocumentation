@@ -38,6 +38,26 @@
 /* ======================= phones and narrow tablets ======================= */
 
 @media (max-width: 760px) {
+  /* ---- the page never moves ----
+
+     Everything scrolls inside its own box, so the page itself has nothing to
+     scroll. A phone scrolls a page up to keep a focused field above the
+     keyboard and does not always scroll it back, which pushed the top bar out
+     of sight until the phone was turned. Pinned to the screen, there is nowhere
+     for it to go; responsive.js puts it back if a browser moves it anyway. */
+  html,
+  body {
+    position: fixed;
+    inset: 0;
+    overscroll-behavior: none;
+  }
+
+  #app {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
+
   /* ---- the top bar wraps: menus and export first, drawing tools under ---- */
 
   .topbar {
@@ -68,12 +88,18 @@
   .lblLong { display: none; }
   .lblShort { display: inline; }
 
-  /* The drawing tools take the second row; order moves the export button up
-     beside the menus, which is where the eye looks for it. */
+  /* The drawing tools take the second row; order moves the account, theme and
+     export buttons up beside the menus, pushed to the right by the spacer. */
   .topbarTools { order: 2; flex-basis: 100%; }
   .topbarSpacer,
+  #accountBtn,
   #themeBtn,
   #export { order: 1; }
+
+  /* When they fit, responsive.js brings the tools up into the first row,
+     between the menu buttons and the icon buttons on the right, and the second
+     row goes away. */
+  .topbar.tools-inline .topbarTools { order: 0; flex-basis: auto; }
 
   .menuBtn { padding: 0 var(--s-2); }
   #export { padding: 0 var(--s-3); }
@@ -126,6 +152,7 @@
     right: var(--s-2);
     width: auto;
     max-height: calc(100vh - var(--topbar-real-h) - var(--s-4));
+    max-height: calc(100dvh - var(--topbar-real-h) - var(--s-4));
     overflow-y: auto;
   }
 
@@ -158,6 +185,7 @@
     width: 100%;
     max-width: none;
     max-height: 92vh;
+    max-height: 92dvh;   /* the part of the screen that is actually visible */
     padding: var(--s-4);
     overflow-y: auto;
   }

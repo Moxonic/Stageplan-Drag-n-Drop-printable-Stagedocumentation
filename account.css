@@ -33,6 +33,8 @@
 }
 
 .authBox .wordmark {
+  flex: none;
+  align-items: center;
   font-size: 22px;
   text-align: center;
 }
@@ -113,6 +115,8 @@
   text-align: center;
   color: var(--c-text-3);
 }
+
+.authPrivacy a { color: inherit; }
 
 /* ---------------- the top-bar panel ---------------- */
 
@@ -265,6 +269,8 @@
   #accountBtn { width: 40px; padding: 0; justify-content: center; }
   .authGate { padding: var(--s-4); align-items: flex-start; }
   .authBox { padding: var(--s-5) var(--s-4); }
+  /* responsive.css hides the top bar's wordmark on a phone; this one stays */
+  .authBox .wordmark { display: flex; }
   .cloudRow { flex-wrap: wrap; }
   .cloudRowText { flex-basis: 100%; }
 }

@@ -154,6 +154,9 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  /* the screen as it really is: on a phone 100vh counts the space behind the
+     browser's own bars, which leaves the page taller than what is visible */
+  height: 100dvh;
 }
 
 /* ---------------- top bar ---------------- */

@@ -765,7 +765,10 @@ window.EquipmentPanel = (function () {
     if (search) search.value = '';
     renderBrowse();
     renderStorage();
-    if (search) search.focus();
+    // On a touch screen focus would throw the keyboard up over the window, and
+    // the phone scrolls the page to make room for it. The search is one tap away.
+    var touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if (search && !touch) search.focus();
   }
 
   function closeEditDialog() {

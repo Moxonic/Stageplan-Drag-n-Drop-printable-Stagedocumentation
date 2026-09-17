@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./equipment/panel.css">
     <link rel="stylesheet" href="./stageDialog.css">
     <link rel="stylesheet" href="./scenes.css">
+    <link rel="stylesheet" href="./account.css">
     <!-- last: it narrows the shell for phones and tablets -->
     <link rel="stylesheet" href="./responsive.css">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -61,6 +62,9 @@
 
         <!-- as wide as the wordmark's side on a desktop, so the tools between sit centred -->
         <div class="topbarEnd">
+            <button type="button" class="iconBtn" id="accountBtn" aria-expanded="false" title="Account">
+                <span id="accountBtnLabel">Account</span>
+            </button>
             <button type="button" class="iconBtn" id="themeBtn" aria-pressed="false" aria-label="Dark mode" title="Dark mode">🌙</button>
             <button type="button" class="iconBtn" id="infoButton" title="Keyboard and mouse shortcuts">?</button>
             <button type="button" class="btn btn--primary" id="export">Export PDF</button>
@@ -103,6 +107,17 @@
                 <button type="button" class="btn" id="showSaveFileBtn">Save show to file…</button>
             </div>
             <div class="popoverHint">The show, its scenes and its shifts are kept in this browser as you work.</div>
+        </div>
+
+        <!-- ---- Who is signed in: filled in by account.js ---- -->
+        <div class="popover" id="accountMenu" hidden>
+            <div class="popoverTitle">Account</div>
+            <div class="accountWho">
+                <b id="accountLabel"></b>
+                <span id="accountKind"></span>
+            </div>
+            <div class="popoverHint" id="accountPrivacy" hidden>Anonymous usage counts — which features are used, never the plot — go to PostHog to help improve the app.</div>
+            <button type="button" class="btn" id="accountSignOut">Sign out</button>
         </div>
 
         <!-- ---- Which stage the plot is drawn on ---- -->
@@ -331,6 +346,69 @@
     </div>
 </div>
 
+<!-- ============================= sign-in ============================= -->
+<!-- Outside #app, which account.js makes inert until someone is signed in.
+     The steps are shown one at a time by account.js. -->
+<div class="authGate" id="authGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="authBox">
+        <div class="wordmark" id="gateTitle">
+            <span class="wordmarkName">StagePlanner</span>
+        </div>
+
+        <!-- checking a stored session, or finishing the Google round trip -->
+        <div class="authStep" id="gateBusy">
+            <p class="authLead">Signing in…</p>
+        </div>
+
+        <!-- no app.config.js: nothing to sign in against -->
+        <div class="authStep" id="gateSetup" hidden>
+            <p class="authLead">Sign-in has not been set up on this copy of StagePlanner. Copy app.config.example.js to app.config.js, fill it in, and serve the folder from a web address.</p>
+        </div>
+
+        <div class="authStep" id="gateStart" hidden>
+            <p class="authLead">Sign in to plan your stage.</p>
+            <button type="button" class="btn authGoogle" id="gateGoogle">
+                <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Continue with Google
+            </button>
+            <!-- Email codes are off until Supabase sends through our own SMTP: its
+                 built-in mailer only reaches the project's team. Remove hidden
+                 to bring them back; account.js expects this markup either way. -->
+            <div hidden>
+                <div class="authOr">or</div>
+                <form id="gateEmailForm" novalidate>
+                    <div class="field">
+                        <label for="gateEmail">Email</label>
+                        <input type="email" class="input" id="gateEmail" autocomplete="email" placeholder="you@example.com">
+                    </div>
+                    <button type="submit" class="btn btn--primary" id="gateSendCode">Email me a code</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="authStep" id="gateCode" hidden>
+            <p class="authLead" id="gateCodeLead"></p>
+            <form id="gateCodeForm" novalidate>
+                <input type="text" class="input authCode" id="gateCodeInput" inputmode="numeric" autocomplete="one-time-code" maxlength="10" aria-label="Code from the email">
+                <button type="submit" class="btn btn--primary" id="gateVerify">Sign in</button>
+            </form>
+            <div class="authRow">
+                <button type="button" class="authLink" id="gateBack">Use another address</button>
+                <button type="button" class="authLink" id="gateResend">Send a new code</button>
+            </div>
+        </div>
+
+        <div class="fieldError" id="gateError" role="alert" hidden></div>
+
+        <p class="authPrivacy">By continuing you agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.</p>
+    </div>
+</div>
+
 <!-- 1.4.1 for its scale option, which is what keeps the printed plot sharp -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -356,10 +434,14 @@
 <script src="responsive.js"></script>
 <!-- touch: drawing, dragging gear, and tapping the rail to place it -->
 <script src="touch.js"></script>
+<!-- the public Supabase and PostHog settings; track.js reads them as it loads.
+     Missing, the sign-in window says sign-in is not set up. -->
+<script src="app.config.js"></script>
 <!-- the nine events, behind Track.event(). Sends nothing without app.config.js -->
 <script src="track.js"></script>
-<!-- Sign-in, cloud shows, billing and teams are switched off for now. To turn
-     them back on, load app.config.js, account.js, cloud.js, showSync.js,
-     billing.js and teams.js here, and restore the gate markup from git. -->
+<!-- sign-in with Google or an emailed code; the app stays locked until then -->
+<script src="account.js"></script>
+<!-- Cloud shows, billing and teams are switched off for now. To turn them back
+     on, load cloud.js, showSync.js, billing.js and teams.js here, with their markup. -->
 </body>
 </html>

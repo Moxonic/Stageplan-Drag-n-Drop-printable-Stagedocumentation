@@ -1,0 +1,101 @@
+/* legal.css — the privacy policy and the terms.
+   Tokens from ui.css, which also locks the page to the screen for the app;
+   these are ordinary documents, so they scroll. */
+
+html, body {
+  height: auto;
+  overflow: auto;
+}
+
+body {
+  padding: var(--s-6) var(--s-4);
+  font-size: var(--t-lg);
+  line-height: 1.6;
+}
+
+.legal {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--s-6);
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+}
+
+.legalBack {
+  display: inline-block;
+  margin-bottom: var(--s-4);
+  font-size: var(--t-md);
+  color: var(--c-accent);
+  text-decoration: none;
+}
+
+.legalBack:hover { text-decoration: underline; }
+
+.legal h1 {
+  margin: 0 0 var(--s-1);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.legalDate {
+  margin: 0 0 var(--s-5);
+  font-size: var(--t-md);
+  color: var(--c-text-3);
+}
+
+.legal h2 {
+  margin: var(--s-6) 0 var(--s-2);
+  font-size: var(--t-xl);
+  line-height: 1.3;
+}
+
+.legal p,
+.legal ul { margin: 0 0 var(--s-3); }
+
+.legal ul { padding-left: var(--s-5); }
+.legal li { margin-bottom: var(--s-1); }
+
+.legal a { color: var(--c-accent); }
+:root[data-theme="dark"] .legal a { color: var(--c-accent-dark); }
+
+.legalTable {
+  width: 100%;
+  margin: 0 0 var(--s-4);
+  border-collapse: collapse;
+  font-size: var(--t-md);
+}
+
+.legalTable th,
+.legalTable td {
+  padding: var(--s-2);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.legalTable th {
+  font-weight: 600;
+  color: var(--c-text-2);
+}
+
+.legalFoot {
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  font-size: var(--t-md);
+  color: var(--c-text-3);
+  border-top: 1px solid var(--c-line);
+}
+
+@media (max-width: 760px) {
+  body { padding: var(--s-4); }
+  .legal { padding: var(--s-5) var(--s-4); }
+  .legal h1 { font-size: 24px; }
+
+  /* three columns do not fit a phone; each row becomes a small block */
+  .legalTable thead { display: none; }
+  .legalTable tr { display: block; padding: var(--s-2) 0; border-bottom: 1px solid var(--c-line); }
+  .legalTable td { display: block; padding: 2px 0; border: 0; }
+  .legalTable td:first-child { font-weight: 600; }
+}
