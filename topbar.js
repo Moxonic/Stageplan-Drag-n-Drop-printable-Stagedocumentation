@@ -12,11 +12,47 @@
     /* ---------------- popover menus ---------------- */
 
     const MENUS = [
-        ['showMenuBtn', 'showMenu'],
-        ['stageMenuBtn', 'stageMenu'],
-        ['penColourBtn', 'drawMenu'],
-        ['accountBtn', 'accountMenu']
+        ['mainMenuBtn', 'mainMenu'],   // show, stage, and who is signed in
+        ['penColourBtn', 'drawMenu']
     ];
+
+    /* The show details and the stage setup share the menu behind the
+       hamburger, as two tabs. The panels keep the ids they had when each was a
+       menu of its own, so asking for one opens the menu on that tab. */
+    const TABS = [
+        ['tabShow', 'showMenu'],
+        ['tabStage', 'stageMenu']
+    ];
+
+    function selectTab(panelId) {
+        TABS.forEach(([tabId, id]) => {
+            const tab = byId(tabId);
+            const panel = byId(id);
+            const on = id === panelId;
+            if (tab) {
+                tab.setAttribute('aria-selected', String(on));
+                tab.tabIndex = on ? 0 : -1;
+            }
+            if (panel) panel.hidden = !on;
+        });
+    }
+
+    function wireTabs() {
+        TABS.forEach(([tabId, panelId], i) => {
+            const tab = byId(tabId);
+            if (!tab) return;
+            tab.addEventListener('click', () => selectTab(panelId));
+            // arrow keys move between the tabs, as a tab list is expected to
+            tab.addEventListener('keydown', (e) => {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                e.preventDefault();
+                const next = TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length];
+                selectTab(next[1]);
+                const nextTab = byId(next[0]);
+                if (nextTab) nextTab.focus();
+            });
+        });
+    }
 
     function closeMenus(except) {
         MENUS.forEach(([btnId, menuId]) => {
@@ -44,6 +80,10 @@
     // Open one menu, closing the others. Also used from outside, to send
     // someone to the field they still have to fill in.
     function openMenu(menuId) {
+        if (TABS.some(([, id]) => id === menuId)) {
+            selectTab(menuId);
+            menuId = 'mainMenu';
+        }
         const pair = MENUS.find(([, id]) => id === menuId);
         if (!pair) return;
         const btn = byId(pair[0]);
@@ -69,8 +109,10 @@
                     return;
                 }
                 openMenu(menuId);
+                // On a touch screen focus would throw the keyboard up at once.
+                const touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
                 const first = menu.querySelector('input, textarea, select, button');
-                if (first && first.tagName !== 'BUTTON') first.focus();
+                if (!touch && first && first.tagName !== 'BUTTON') first.focus();
             });
 
             // clicks inside a menu should not dismiss it
@@ -173,6 +215,7 @@
 
     function init() {
         wireMenus();
+        wireTabs();
         wireInfo();
         wireHistoryButtons();
         wireWordmark();

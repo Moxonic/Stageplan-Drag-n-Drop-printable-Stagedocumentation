@@ -57,7 +57,7 @@ window.RailDrawer = (function () {
        row. Both happen before the browser paints, so nothing is seen to jump. */
     function fitTools(bar) {
         const tools = bar.querySelector('.topbarTools');
-        const start = byId('showMenuBtn');
+        const start = byId('mainMenuBtn');
         const end = byId('export');
         if (!tools || !start || !end) return;
         bar.classList.add('tools-inline');

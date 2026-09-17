@@ -24,23 +24,19 @@
 
     <!-- ============================= top bar ============================= -->
     <header class="topbar">
-        <!-- phones only: the equipment rail comes over the stage -->
-        <button type="button" class="menuBtn railToggle" id="railToggleBtn" aria-expanded="false" aria-controls="sidebar" title="Equipment storage">Storage</button>
-        <div class="wordmark" role="img" aria-label="StagePlanner by Daniel Soto Delgado">
-            <span class="wordmarkName" aria-hidden="true">StagePlanner</span>
-            <span class="wordmarkBy" aria-hidden="true">by Daniel Soto Delgado</span>
-        </div>
-
-        <div class="topbarGroup">
-            <button type="button" class="menuBtn" id="showMenuBtn" aria-expanded="false" title="Show details">
-                <span class="lblLong">Show Details</span><span class="lblShort">Show</span>
+        <!-- The left side: the menu, the storage drawer on phones, and the name.
+             As wide as .topbarEnd on a desktop, so the tools between sit centred. -->
+        <div class="topbarStart">
+            <button type="button" class="iconBtn" id="mainMenuBtn" aria-expanded="false" aria-haspopup="true" aria-controls="mainMenu" aria-label="Show and stage menu" title="Show details and stage setup">
+                <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
             </button>
-            <button type="button" class="menuBtn" id="stageMenuBtn" aria-expanded="false" title="Stage setup">
-                <span class="lblLong">Stage Setup</span><span class="lblShort">Stage</span>
-            </button>
+            <!-- phones only: the equipment rail comes over the stage -->
+            <button type="button" class="menuBtn railToggle" id="railToggleBtn" aria-expanded="false" aria-controls="sidebar" title="Equipment storage">Storage</button>
+            <div class="wordmark" role="img" aria-label="StagePlanner by Daniel Soto Delgado">
+                <span class="wordmarkName" aria-hidden="true">StagePlanner</span>
+                <span class="wordmarkBy" aria-hidden="true">by Daniel Soto Delgado</span>
+            </div>
         </div>
-
-        <div class="topbarDivider"></div>
 
         <div class="topbarGroup topbarTools">
             <div class="splitBtn">
@@ -62,17 +58,20 @@
 
         <!-- as wide as the wordmark's side on a desktop, so the tools between sit centred -->
         <div class="topbarEnd">
-            <button type="button" class="iconBtn" id="accountBtn" aria-expanded="false" title="Account">
-                <span id="accountBtnLabel">Account</span>
-            </button>
             <button type="button" class="iconBtn" id="themeBtn" aria-pressed="false" aria-label="Dark mode" title="Dark mode">🌙</button>
             <button type="button" class="iconBtn" id="infoButton" title="Keyboard and mouse shortcuts">?</button>
-            <button type="button" class="btn btn--primary" id="export">Export PDF</button>
+            <button type="button" class="btn btn--primary" id="export">Export</button>
         </div>
 
-        <!-- ---- Show details, printed on the PDF ---- -->
-        <div class="popover" id="showMenu" hidden>
-            <div class="popoverTitle">Show details</div>
+        <!-- ---- The show and the stage: one menu, two tabs ---- -->
+        <div class="popover mainMenu" id="mainMenu" hidden>
+            <div class="menuTabs" role="tablist" aria-label="Menu">
+                <button type="button" class="menuTab" id="tabShow" role="tab" aria-selected="true" aria-controls="showMenu">Show details</button>
+                <button type="button" class="menuTab" id="tabStage" role="tab" aria-selected="false" aria-controls="stageMenu" tabindex="-1">Stage setup</button>
+            </div>
+
+        <!-- Show details, printed on the PDF -->
+        <div class="menuPanel" id="showMenu" role="tabpanel" aria-labelledby="tabShow">
             <div class="field">
                 <label for="playNameInput">Show title <span class="fieldReq">required</span></label>
                 <input type="text" id="playNameInput" placeholder="Show title..." required aria-describedby="playNameError">
@@ -109,26 +108,29 @@
             <div class="popoverHint">The show, its scenes and its shifts are kept in this browser as you work.</div>
         </div>
 
-        <!-- ---- Who is signed in: filled in by account.js ---- -->
-        <div class="popover" id="accountMenu" hidden>
-            <div class="popoverTitle">Account</div>
-            <div class="accountWho">
-                <b id="accountLabel"></b>
-                <span id="accountKind"></span>
-            </div>
-            <div class="popoverHint" id="accountPrivacy" hidden>Anonymous usage counts — which features are used, never the plot — go to PostHog to help improve the app.</div>
-            <button type="button" class="btn" id="accountSignOut">Sign out</button>
-        </div>
-
-        <!-- ---- Which stage the plot is drawn on ---- -->
-        <div class="popover" id="stageMenu" hidden>
-            <div class="popoverTitle">Stage</div>
+        <!-- Which stage the plot is drawn on -->
+        <div class="menuPanel" id="stageMenu" role="tabpanel" aria-labelledby="tabStage" hidden>
             <!-- the stage and its size: filled in by stageBuilder.js -->
             <div id="stageSummary" class="stageSummary"></div>
             <button type="button" class="btn btn--primary" id="newStageBtn">New stage…</button>
             <button type="button" class="btn" id="saveSetupBtn">Save stage with equipment…</button>
             <div class="popoverHint">Saves this stage together with everything on it — gear, labels and lines. Open it again, or export it as a file, from New stage… → Use an existing stage.</div>
         </div>
+
+        <!-- Who is signed in, under both tabs: filled in by account.js -->
+        <div class="menuAccount" id="menuAccount" hidden>
+            <div class="menuAccountRow">
+                <div class="accountWho">
+                    <span class="menuAccountLead">Signed in as</span>
+                    <b id="accountLabel"></b>
+                    <span id="accountKind"></span>
+                </div>
+                <button type="button" class="btn" id="accountSignOut">Sign out</button>
+            </div>
+            <div class="popoverHint" id="accountPrivacy" hidden>Anonymous usage counts — which features are used, never the plot — go to PostHog to help improve the app.</div>
+        </div>
+        </div>
+
 
         <!-- ---- Pen and colours ---- -->
         <div class="popover popover--compact" id="drawMenu" hidden>
@@ -376,19 +378,16 @@
                 </svg>
                 Continue with Google
             </button>
-            <!-- Email codes are off until Supabase sends through our own SMTP: its
-                 built-in mailer only reaches the project's team. Remove hidden
-                 to bring them back; account.js expects this markup either way. -->
-            <div hidden>
-                <div class="authOr">or</div>
-                <form id="gateEmailForm" novalidate>
-                    <div class="field">
-                        <label for="gateEmail">Email</label>
-                        <input type="email" class="input" id="gateEmail" autocomplete="email" placeholder="you@example.com">
-                    </div>
-                    <button type="submit" class="btn btn--primary" id="gateSendCode">Email me a code</button>
-                </form>
-            </div>
+            <!-- The codes go out through the SMTP account set in Supabase: its
+                 built-in mailer only reaches the project's own team. -->
+            <div class="authOr">or</div>
+            <form id="gateEmailForm" novalidate>
+                <div class="field">
+                    <label for="gateEmail">Email</label>
+                    <input type="email" class="input" id="gateEmail" autocomplete="email" placeholder="you@example.com">
+                </div>
+                <button type="submit" class="btn btn--primary" id="gateSendCode">Email me a code</button>
+            </form>
         </div>
 
         <div class="authStep" id="gateCode" hidden>

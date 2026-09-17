@@ -165,6 +165,31 @@
   color: var(--c-text-2);
 }
 
+/* Who is signed in, at the foot of the show and stage menu. */
+.menuAccount {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--c-line);
+}
+
+.menuAccount[hidden] { display: none !important; }
+
+.menuAccountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.menuAccountRow .accountWho { flex: 1; min-width: 0; }
+.menuAccountRow .btn { flex: none; }
+
+.accountWho .menuAccountLead {
+  font-size: var(--t-xs);
+  color: var(--c-text-3);
+}
+
 .accountSection {
   display: flex;
   flex-direction: column;

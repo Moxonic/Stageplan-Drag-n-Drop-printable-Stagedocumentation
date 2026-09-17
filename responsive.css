@@ -74,6 +74,7 @@
 
   /* No centring on a phone: the end group dissolves so its buttons are laid
      out as the bar's own, and the spacer comes back to push export right. */
+  .topbarStart,
   .topbarEnd { display: contents; }
   .topbarSpacer { display: block; }
   .railToggle { display: inline-flex; }
@@ -92,7 +93,6 @@
      export buttons up beside the menus, pushed to the right by the spacer. */
   .topbarTools { order: 2; flex-basis: 100%; }
   .topbarSpacer,
-  #accountBtn,
   #themeBtn,
   #export { order: 1; }
 
@@ -155,6 +155,8 @@
     max-height: calc(100dvh - var(--topbar-real-h) - var(--s-4));
     overflow-y: auto;
   }
+
+  .popover.mainMenu { width: auto; }
 
   /* ---- the strips along the bottom ---- */
 
@@ -308,6 +310,17 @@
 /* Keyed to the pointer, not the width: a small laptop still gets the fine
    targets, and a large tablet still gets the big ones. */
 @media (pointer: coarse) {
+  /* A phone zooms the whole page in when a field with text under 16px takes
+     focus, and leaves it zoomed, so tapping a field in Show details threw the
+     window out of shape. At 16px nothing zooms. Every text field in the app,
+     not only those in the menu; the sign-in code keeps its larger size. Zoom is
+     not switched off for the page, so pinching the plot still works. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not(.authCode),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
   /* The stage handles its own gestures — a drag draws or moves something
      rather than scrolling the page or zooming into it. */
   #stage,

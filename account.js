@@ -334,10 +334,13 @@ window.Account = (function () {
         const btn = byId('accountBtn');
         if (btn) btn.classList.toggle('is-signed-in', !!session);
         setText('accountBtnLabel', session ? (session.email || 'Account') : 'Account');
+        // the foot of the show and stage menu, only while someone is signed in
+        const box = byId('menuAccount');
+        if (box) box.hidden = !session;
         setText('accountLabel', session ? session.email : '');
         setText('accountKind', !session ? '' : session.provider === 'google'
-            ? 'Signed in with Google.'
-            : 'Signed in with an emailed code.');
+            ? 'with Google'
+            : 'with an emailed code');
     }
 
     function wirePanel() {

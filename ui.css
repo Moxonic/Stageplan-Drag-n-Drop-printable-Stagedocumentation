@@ -185,9 +185,7 @@ html, body {
   align-items: flex-start;
   justify-content: center;
   gap: 4px;
-  /* one of the two equal sides around the centred tools; see .topbarEnd */
-  flex: 1 1 0;
-  min-width: max-content;
+  flex: none;
   white-space: nowrap;
   user-select: none;
 }
@@ -254,10 +252,50 @@ html, body {
   min-width: max-content;
 }
 
+/* The menu and the name: one of the two equal sides around the centred tools;
+   see .topbarEnd. */
+.topbarStart {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: 1 1 0;
+  min-width: max-content;
+}
+
 .topbarGroup {
   display: flex;
   align-items: center;
   gap: var(--s-1);
+}
+
+/* Three bars that turn into a cross while the menu is open. */
+.hamburger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  width: 16px;
+}
+
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 160ms ease, opacity 160ms ease;
+}
+
+#mainMenuBtn[aria-expanded="true"] {
+  color: var(--c-accent-dark);
+  background: var(--c-accent-soft);
+}
+
+#mainMenuBtn[aria-expanded="true"] .hamburger span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+#mainMenuBtn[aria-expanded="true"] .hamburger span:nth-child(2) { opacity: 0; }
+#mainMenuBtn[aria-expanded="true"] .hamburger span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hamburger span { transition: none; }
 }
 
 .topbarDivider {
@@ -367,6 +405,48 @@ html, body {
 .menuBtn:hover { background: var(--c-surface-2); }
 .menuBtn[aria-expanded="true"] { background: var(--c-accent-soft); color: var(--c-accent-dark); }
 .menuBtn::after { content: '⌄'; font-size: 11px; line-height: 1; opacity: 0.65; transform: translateY(-2px); }
+
+/* ---- the show and stage menu: two tabs over two panels ---- */
+
+.popover.mainMenu { width: 320px; }
+
+.menuTabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--c-sunken);
+  border-radius: var(--r-md);
+}
+
+.menuTab {
+  flex: 1;
+  height: 30px;
+  font-family: inherit;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--c-text-2);
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+
+.menuTab:hover { color: var(--c-text); }
+.menuTab:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 1px; }
+
+.menuTab[aria-selected="true"] {
+  color: var(--c-text);
+  background: var(--c-surface);
+  box-shadow: var(--e-1);
+}
+
+.menuPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.menuPanel[hidden] { display: none !important; }
 
 /* One pen control: the pencil carries the colour it will draw in, and the
    narrow half beside it opens the colours. */
